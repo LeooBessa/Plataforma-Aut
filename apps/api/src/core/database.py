@@ -78,6 +78,18 @@ async def get_session() -> AsyncIterator[AsyncSession]:
     async with get_session_factory()() as session:
         try:
             yield session
+            # COMMIT no fim da requisição bem-sucedida.
+            #
+            # Sem esta linha, os repositórios chamam `flush()` (que envia o SQL e
+            # devolve os ids gerados), a API responde 201 com o recurso criado —
+            # e a transação é DESCARTADA quando a sessão fecha. Ou seja: o
+            # agendamento do cliente sumia em silêncio, com a API dizendo "deu
+            # certo".
+            #
+            # É a fronteira transacional da requisição: ou tudo é confirmado, ou
+            # nada é. Um caso de uso que grave em duas tabelas não pode deixar
+            # uma delas para trás.
+            await session.commit()
         except Exception:
             await session.rollback()
             raise
