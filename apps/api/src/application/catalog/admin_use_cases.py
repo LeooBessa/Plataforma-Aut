@@ -7,7 +7,7 @@ from uuid import UUID
 
 from src.application.ports import SignedUpload, StorageService
 from src.core.exceptions import AuthorizationError, ConflictError, NotFoundError, ValidationError
-from src.domain.catalog.entities import Image, VehicleDetail, VehicleSummary
+from src.domain.catalog.entities import AdminCatalog, Image, VehicleDetail, VehicleSummary
 from src.domain.catalog.enums import VehicleStatus
 from src.domain.catalog.repositories import VehicleAdminRepository
 from src.domain.catalog.value_objects import Page, Pagination, VehicleFilters
@@ -43,6 +43,21 @@ class GetAdminVehicleUseCase:
         if vehicle is None:
             raise NotFoundError("Veículo não encontrado.")
         return vehicle
+
+
+@dataclass(frozen=True, slots=True)
+class GetAdminCatalogUseCase:
+    """Alimenta os selects do formulário de cadastro.
+
+    Devolve TODAS as marcas e opcionais — inclusive os que ainda não têm veículo
+    nenhum. É o oposto do endpoint público de filtros, e o motivo está em
+    `AdminCatalog`.
+    """
+
+    repository: VehicleAdminRepository
+
+    async def execute(self) -> AdminCatalog:
+        return await self.repository.get_catalog()
 
 
 @dataclass(frozen=True, slots=True)

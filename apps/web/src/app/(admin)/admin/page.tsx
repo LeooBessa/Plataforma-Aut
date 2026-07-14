@@ -45,7 +45,7 @@ export default function DashboardPage() {
     return (
       <div
         role="alert"
-        className="flex items-start gap-3 rounded-card bg-danger-50 p-5 text-sm text-danger-700 ring-1 ring-inset ring-danger-500/20"
+        className="rounded-card bg-danger-50 text-danger-700 ring-danger-500/20 flex items-start gap-3 p-5 text-sm ring-1 ring-inset"
       >
         <AlertCircle className="mt-0.5 size-5 shrink-0" />
         <div>
@@ -60,8 +60,8 @@ export default function DashboardPage() {
     <div className="space-y-8">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-ink-950">Dashboard</h1>
-          <p className="mt-1 text-sm text-ink-500">Visão geral do estoque e dos agendamentos</p>
+          <h1 className="text-ink-950 text-2xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-ink-500 mt-1 text-sm">Visão geral do estoque e dos agendamentos</p>
         </div>
         <ButtonLink href="/admin/veiculos">
           <Car className="size-4" />
@@ -75,19 +75,19 @@ export default function DashboardPage() {
       {stats && stats.pending_appointments > 0 && (
         <Link
           href="/admin/agendamentos"
-          className="flex items-center gap-4 rounded-card bg-success-50 p-5 ring-1 ring-inset ring-success-500/25 transition-shadow hover:shadow-card"
+          className="rounded-card bg-success-50 ring-success-500/25 hover:shadow-card flex items-center gap-4 p-5 ring-1 transition-shadow ring-inset"
         >
-          <span className="flex size-11 shrink-0 items-center justify-center rounded-btn bg-success-600 text-white">
+          <span className="rounded-btn bg-success-600 flex size-11 shrink-0 items-center justify-center text-white">
             <CalendarClock className="size-5" />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="font-semibold text-success-700">
+            <p className="text-success-700 font-semibold">
               {stats.pending_appointments}{' '}
               {stats.pending_appointments === 1
                 ? 'visita aguardando confirmação'
                 : 'visitas aguardando confirmação'}
             </p>
-            <p className="mt-0.5 text-sm text-success-700/80">
+            <p className="text-success-700/80 mt-0.5 text-sm">
               Cada uma é um cliente esperando seu retorno.
             </p>
           </div>
@@ -96,7 +96,7 @@ export default function DashboardPage() {
       )}
 
       <section>
-        <h2 className="text-sm font-semibold text-ink-700">Estoque</h2>
+        <h2 className="text-ink-700 text-sm font-semibold">Estoque</h2>
         <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Stat
             label="Total de veículos"
@@ -127,7 +127,7 @@ export default function DashboardPage() {
       </section>
 
       <section>
-        <h2 className="text-sm font-semibold text-ink-700">Movimento</h2>
+        <h2 className="text-ink-700 text-sm font-semibold">Movimento</h2>
         <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Stat
             label="Valor do estoque"
@@ -176,10 +176,12 @@ function Stat({
   }[tone];
 
   return (
-    <div className="rounded-card bg-white p-5 shadow-card ring-1 ring-ink-100">
+    <div className="rounded-card shadow-card ring-ink-100 bg-white p-5 ring-1">
       <div className="flex items-start justify-between gap-3">
-        <p className="text-sm text-ink-500">{label}</p>
-        <span className={`flex size-9 shrink-0 items-center justify-center rounded-btn ${toneClass}`}>
+        <p className="text-ink-500 text-sm">{label}</p>
+        <span
+          className={`rounded-btn flex size-9 shrink-0 items-center justify-center ${toneClass}`}
+        >
           {icon}
         </span>
       </div>
@@ -187,12 +189,12 @@ function Stat({
       {/* O esqueleto tem a MESMA altura do número. Sem isso, a tela "pula"
           quando os dados chegam — e o admin clica no lugar errado. */}
       {value === undefined ? (
-        <div className="mt-3 h-8 w-20 animate-pulse rounded bg-ink-100" />
+        <div className="bg-ink-100 mt-3 h-8 w-20 animate-pulse rounded" />
       ) : (
-        <p className="mt-3 text-2xl font-bold tracking-tight text-ink-950">{value}</p>
+        <p className="text-ink-950 mt-3 text-2xl font-bold tracking-tight">{value}</p>
       )}
 
-      {hint && <p className="mt-1 text-xs text-ink-400">{hint}</p>}
+      {hint && <p className="text-ink-400 mt-1 text-xs">{hint}</p>}
     </div>
   );
 }

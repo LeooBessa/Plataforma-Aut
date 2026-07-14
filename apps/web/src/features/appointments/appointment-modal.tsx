@@ -19,10 +19,7 @@ import { errorMessage, http } from '@/lib/http';
  */
 
 const schema = z.object({
-  customer_name: z
-    .string()
-    .min(2, 'Informe seu nome.')
-    .max(120, 'Nome muito longo.'),
+  customer_name: z.string().min(2, 'Informe seu nome.').max(120, 'Nome muito longo.'),
   phone: z
     .string()
     // Validamos os DÍGITOS, não a máscara. O usuário digita "(11) 99999-8888";
@@ -42,8 +39,17 @@ const schema = z.object({
 type FormValues = z.infer<typeof schema>;
 
 const HOURS = [
-  '08:00', '09:00', '10:00', '11:00', '12:00',
-  '13:00', '14:00', '15:00', '16:00', '17:00', '18:00',
+  '08:00',
+  '09:00',
+  '10:00',
+  '11:00',
+  '12:00',
+  '13:00',
+  '14:00',
+  '15:00',
+  '16:00',
+  '17:00',
+  '18:00',
 ];
 
 function todayISO(): string {
@@ -139,15 +145,15 @@ export function AppointmentModal({
         aria-labelledby="agendamento-titulo"
         // No celular o modal sobe da base e ocupa a largura toda — é onde o
         // polegar alcança. Um card centralizado obrigaria a esticar o dedo.
-        className="max-h-[92dvh] w-full overflow-y-auto rounded-t-card bg-white p-6 shadow-2xl sm:max-w-lg sm:rounded-card"
+        className="rounded-t-card sm:rounded-card max-h-[92dvh] w-full overflow-y-auto bg-white p-6 shadow-2xl sm:max-w-lg"
       >
         {success ? (
           <div className="py-6 text-center">
-            <span className="mx-auto flex size-14 items-center justify-center rounded-full bg-success-50 text-success-600">
+            <span className="bg-success-50 text-success-600 mx-auto flex size-14 items-center justify-center rounded-full">
               <CheckCircle2 className="size-7" />
             </span>
-            <h2 className="mt-5 text-xl font-bold text-ink-950">Visita agendada!</h2>
-            <p className="mt-2 text-sm leading-relaxed text-ink-600">
+            <h2 className="text-ink-950 mt-5 text-xl font-bold">Visita agendada!</h2>
+            <p className="text-ink-600 mt-2 text-sm leading-relaxed">
               Recebemos seu pedido. Entraremos em contato em breve para confirmar o horário.
             </p>
             <Button onClick={onClose} size="lg" className="mt-7 w-full">
@@ -158,15 +164,15 @@ export function AppointmentModal({
           <>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 id="agendamento-titulo" className="text-lg font-bold text-ink-950">
+                <h2 id="agendamento-titulo" className="text-ink-950 text-lg font-bold">
                   Agendar visita
                 </h2>
-                <p className="mt-0.5 text-sm text-ink-500">{vehicleTitle}</p>
+                <p className="text-ink-500 mt-0.5 text-sm">{vehicleTitle}</p>
               </div>
               <button
                 type="button"
                 onClick={onClose}
-                className="-mr-2 -mt-1 flex size-9 shrink-0 items-center justify-center rounded-btn text-ink-400 transition-colors hover:bg-ink-100 hover:text-ink-700"
+                className="rounded-btn text-ink-400 hover:bg-ink-100 hover:text-ink-700 -mt-1 -mr-2 flex size-9 shrink-0 items-center justify-center transition-colors"
                 aria-label="Fechar"
               >
                 <X className="size-5" />
@@ -177,7 +183,7 @@ export function AppointmentModal({
               {serverError && (
                 <div
                   role="alert"
-                  className="flex items-start gap-2.5 rounded-btn bg-danger-50 p-3.5 text-sm text-danger-700 ring-1 ring-inset ring-danger-500/20"
+                  className="rounded-btn bg-danger-50 text-danger-700 ring-danger-500/20 flex items-start gap-2.5 p-3.5 text-sm ring-1 ring-inset"
                 >
                   <AlertCircle className="mt-0.5 size-4 shrink-0" />
                   <p>{serverError}</p>
@@ -260,7 +266,7 @@ export function AppointmentModal({
                 >
                   <select
                     id="scheduled_time"
-                    className="w-full cursor-pointer rounded-btn border border-ink-200 bg-white px-3.5 py-2.5 pr-9 text-sm text-ink-900 hover:border-ink-300 focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15 focus:outline-none"
+                    className="rounded-btn border-ink-200 text-ink-900 hover:border-ink-300 focus:border-brand-600 focus:ring-brand-600/15 w-full cursor-pointer border bg-white px-3.5 py-2.5 pr-9 text-sm focus:ring-2 focus:outline-none"
                     aria-invalid={!!errors.scheduled_time}
                     {...register('scheduled_time')}
                   >
@@ -290,12 +296,7 @@ export function AppointmentModal({
               {/* Honeypot. Invisível para humanos (inclusive leitores de tela,
                   graças ao aria-hidden + tabIndex -1), irresistível para robôs. */}
               <div className="absolute left-[-9999px]" aria-hidden="true">
-                <input
-                  type="text"
-                  tabIndex={-1}
-                  autoComplete="off"
-                  {...register('website')}
-                />
+                <input type="text" tabIndex={-1} autoComplete="off" {...register('website')} />
               </div>
 
               <Button
@@ -318,7 +319,7 @@ export function AppointmentModal({
                 )}
               </Button>
 
-              <p className="text-center text-xs text-ink-400">
+              <p className="text-ink-400 text-center text-xs">
                 Sem compromisso. Entraremos em contato para confirmar.
               </p>
             </form>

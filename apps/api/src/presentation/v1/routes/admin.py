@@ -24,6 +24,7 @@ from src.domain.catalog.value_objects import (
 from src.domain.scheduling.enums import AppointmentStatus
 from src.domain.scheduling.value_objects import AppointmentFilters
 from src.presentation.v1.deps import (
+    AdminCatalogDep,
     AdminUser,
     ArchiveVehicleDep,
     ChangeVehicleStatusDep,
@@ -44,6 +45,7 @@ from src.presentation.v1.deps import (
     require_admin,
 )
 from src.presentation.v1.schemas.admin_vehicle import (
+    AdminCatalogOut,
     ImageRegisterIn,
     ImageReorderIn,
     UploadUrlIn,
@@ -80,6 +82,21 @@ router = APIRouter(
 @router.get("/stats", response_model=DashboardStatsOut, summary="Números do dashboard")
 async def get_stats(use_case: DashboardStatsDep) -> DashboardStatsOut:
     return DashboardStatsOut.model_validate(await use_case.execute())
+
+
+@router.get(
+    "/catalog",
+    response_model=AdminCatalogOut,
+    summary="Marcas, modelos e opcionais (para o formulário)",
+)
+async def get_catalog(use_case: AdminCatalogDep) -> AdminCatalogOut:
+    """TODAS as marcas e opcionais, inclusive os sem veículo algum.
+
+    Diferente de `/vehicles/filters` (público), que só mostra o que tem anúncio
+    publicado. Se este endpoint filtrasse por status, seria impossível cadastrar
+    o primeiro carro de uma marca nova — ela não apareceria na lista.
+    """
+    return AdminCatalogOut.model_validate(await use_case.execute())
 
 
 # -------------------------------------------------------------------- veículos

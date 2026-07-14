@@ -3,18 +3,18 @@ import { Car, Mail, MapPin, Phone } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="mt-24 border-t border-ink-800 bg-ink-950 text-ink-300">
+    <footer className="border-ink-800 bg-ink-950 text-ink-300 mt-24 border-t">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3 lg:px-8">
         <div>
           <div className="flex items-center gap-2">
-            <span className="flex size-9 items-center justify-center rounded-btn bg-white text-ink-950">
+            <span className="rounded-btn text-ink-950 flex size-9 items-center justify-center bg-white">
               <Car className="size-5" />
             </span>
             <span className="text-lg font-bold text-white">
               Auto<span className="text-brand-400">Premium</span>
             </span>
           </div>
-          <p className="mt-4 max-w-xs text-sm leading-relaxed text-ink-400">
+          <p className="text-ink-400 mt-4 max-w-xs text-sm leading-relaxed">
             Seminovos selecionados, com procedência verificada e revisão completa.
           </p>
         </div>
@@ -46,13 +46,13 @@ export function Footer() {
           <h2 className="text-sm font-semibold text-white">Contato</h2>
           <ul className="mt-4 space-y-2.5 text-sm">
             <li className="flex items-center gap-2.5">
-              <Phone className="size-4 shrink-0 text-ink-500" />
+              <Phone className="text-ink-500 size-4 shrink-0" />
               <a href="tel:+551133334444" className="transition-colors hover:text-white">
                 (11) 3333-4444
               </a>
             </li>
             <li className="flex items-center gap-2.5">
-              <Mail className="size-4 shrink-0 text-ink-500" />
+              <Mail className="text-ink-500 size-4 shrink-0" />
               <a
                 href="mailto:contato@autopremium.com.br"
                 className="transition-colors hover:text-white"
@@ -61,14 +61,14 @@ export function Footer() {
               </a>
             </li>
             <li className="flex items-start gap-2.5">
-              <MapPin className="mt-0.5 size-4 shrink-0 text-ink-500" />
+              <MapPin className="text-ink-500 mt-0.5 size-4 shrink-0" />
               <span>São Paulo, SP</span>
             </li>
           </ul>
         </div>
       </div>
 
-      <div className="border-t border-ink-800 px-4 py-6 text-center text-xs text-ink-500">
+      <div className="border-ink-800 text-ink-500 border-t px-4 py-6 text-center text-xs">
         © {new Date().getFullYear()} AutoPremium. Todos os direitos reservados.
       </div>
     </footer>

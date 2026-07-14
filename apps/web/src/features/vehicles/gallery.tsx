@@ -51,7 +51,7 @@ export function Gallery({ images, title }: { images: VehicleImage[]; title: stri
 
   if (total === 0) {
     return (
-      <div className="flex aspect-[4/3] items-center justify-center rounded-card bg-ink-100 text-sm text-ink-400">
+      <div className="rounded-card bg-ink-100 text-ink-400 flex aspect-[4/3] items-center justify-center text-sm">
         Sem fotos
       </div>
     );
@@ -62,7 +62,7 @@ export function Gallery({ images, title }: { images: VehicleImage[]; title: stri
   return (
     <>
       <div className="space-y-3">
-        <div className="group relative aspect-[4/3] overflow-hidden rounded-card bg-ink-100">
+        <div className="group rounded-card bg-ink-100 relative aspect-[4/3] overflow-hidden">
           <Image
             src={active.url}
             alt={active.alt_text ?? `${title} — foto ${current + 1} de ${total}`}
@@ -78,7 +78,7 @@ export function Gallery({ images, title }: { images: VehicleImage[]; title: stri
           <button
             type="button"
             onClick={() => setZoomed(true)}
-            className="absolute right-3 top-3 flex size-10 items-center justify-center rounded-btn bg-black/50 text-white opacity-0 backdrop-blur transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
+            className="rounded-btn absolute top-3 right-3 flex size-10 items-center justify-center bg-black/50 text-white opacity-0 backdrop-blur transition-opacity group-hover:opacity-100 focus-visible:opacity-100"
             aria-label="Ampliar foto"
           >
             <ZoomIn className="size-5" />
@@ -89,7 +89,7 @@ export function Gallery({ images, title }: { images: VehicleImage[]; title: stri
               <NavButton side="left" onClick={() => go(-1)} />
               <NavButton side="right" onClick={() => go(1)} />
 
-              <p className="absolute bottom-3 right-3 rounded-full bg-black/50 px-2.5 py-1 text-xs font-medium text-white backdrop-blur">
+              <p className="absolute right-3 bottom-3 rounded-full bg-black/50 px-2.5 py-1 text-xs font-medium text-white backdrop-blur">
                 {current + 1} / {total}
               </p>
             </>
@@ -106,19 +106,13 @@ export function Gallery({ images, title }: { images: VehicleImage[]; title: stri
                   aria-label={`Ver foto ${index + 1}`}
                   aria-current={index === current}
                   className={cn(
-                    'relative aspect-[4/3] w-full overflow-hidden rounded-btn ring-2 transition-all',
+                    'rounded-btn relative aspect-[4/3] w-full overflow-hidden ring-2 transition-all',
                     index === current
                       ? 'ring-brand-600'
                       : 'opacity-60 ring-transparent hover:opacity-100',
                   )}
                 >
-                  <Image
-                    src={image.url}
-                    alt=""
-                    fill
-                    sizes="120px"
-                    className="object-cover"
-                  />
+                  <Image src={image.url} alt="" fill sizes="120px" className="object-cover" />
                 </button>
               </li>
             ))}
@@ -139,7 +133,7 @@ export function Gallery({ images, title }: { images: VehicleImage[]; title: stri
           <button
             type="button"
             onClick={() => setZoomed(false)}
-            className="absolute right-4 top-4 flex size-11 items-center justify-center rounded-btn text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+            className="rounded-btn absolute top-4 right-4 flex size-11 items-center justify-center text-white/70 transition-colors hover:bg-white/10 hover:text-white"
             aria-label="Fechar"
           >
             <X className="size-6" />
@@ -192,7 +186,7 @@ function NavButton({
         side === 'left' ? 'left-3' : 'right-3',
         dark
           ? 'bg-white/10 text-white hover:bg-white/20'
-          : 'bg-white/85 text-ink-900 hover:bg-white',
+          : 'text-ink-900 bg-white/85 hover:bg-white',
       )}
     >
       <Icon className="size-5" />

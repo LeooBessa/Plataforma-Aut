@@ -341,6 +341,8 @@ def _to_detail(vehicle: Vehicle) -> VehicleDetail:
     return VehicleDetail(
         id=vehicle.id,
         slug=vehicle.slug,
+        brand_id=vehicle.brand_id,
+        model_id=vehicle.model_id,
         brand_name=vehicle.brand_name,
         model_name=vehicle.model_name,
         version=vehicle.version,

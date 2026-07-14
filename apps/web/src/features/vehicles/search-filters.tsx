@@ -96,9 +96,16 @@ export function SearchFilters({
   const selectedBrand = searchParams.get('brand') ?? '';
   const brandModels = options.brands.find((b) => b.slug === selectedBrand)?.models ?? [];
 
-  const activeCount = ['brand', 'model', 'city', 'fuel', 'transmission', 'body', 'price_max', 'year_min'].filter(
-    (key) => searchParams.has(key),
-  ).length;
+  const activeCount = [
+    'brand',
+    'model',
+    'city',
+    'fuel',
+    'transmission',
+    'body',
+    'price_max',
+    'year_min',
+  ].filter((key) => searchParams.has(key)).length;
 
   const clearAll = () => {
     setQuery('');
@@ -108,7 +115,7 @@ export function SearchFilters({
   return (
     <div
       className={cn(
-        'rounded-card bg-white p-4 shadow-card ring-1 ring-ink-100 sm:p-5',
+        'rounded-card shadow-card ring-ink-100 bg-white p-4 ring-1 sm:p-5',
         // O esmaecimento durante a transição é a única indicação de "carregando".
         // Trocar a lista por um spinner faria a tela piscar a cada tecla.
         isPending && 'opacity-60 transition-opacity',
@@ -116,7 +123,7 @@ export function SearchFilters({
     >
       <div className="flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-ink-400" />
+          <Search className="text-ink-400 pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
           <Input
             type="search"
             value={query}
@@ -150,7 +157,7 @@ export function SearchFilters({
             <SlidersHorizontal className="size-4" />
             Filtros
             {activeCount > 0 && (
-              <span className="ml-1 rounded-full bg-brand-600 px-1.5 text-xs text-white">
+              <span className="bg-brand-600 ml-1 rounded-full px-1.5 text-xs text-white">
                 {activeCount}
               </span>
             )}
@@ -159,7 +166,7 @@ export function SearchFilters({
       </div>
 
       {(!compact || showAdvanced) && (
-        <div className="mt-4 grid grid-cols-1 gap-3 border-t border-ink-100 pt-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="border-ink-100 mt-4 grid grid-cols-1 gap-3 border-t pt-4 sm:grid-cols-2 lg:grid-cols-4">
           <Select
             value={selectedBrand}
             onChange={(e) =>
@@ -214,7 +221,12 @@ export function SearchFilters({
             <option value="">Qualquer preço</option>
             {[50_000, 80_000, 100_000, 130_000, 160_000, 200_000].map((price) => (
               <option key={price} value={price}>
-                Até {price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 })}
+                Até{' '}
+                {price.toLocaleString('pt-BR', {
+                  style: 'currency',
+                  currency: 'BRL',
+                  maximumFractionDigits: 0,
+                })}
               </option>
             ))}
           </Select>
@@ -274,14 +286,14 @@ export function SearchFilters({
       )}
 
       {activeCount > 0 && (
-        <div className="mt-4 flex items-center justify-between border-t border-ink-100 pt-3">
-          <p className="text-sm text-ink-500">
+        <div className="border-ink-100 mt-4 flex items-center justify-between border-t pt-3">
+          <p className="text-ink-500 text-sm">
             {activeCount} {activeCount === 1 ? 'filtro ativo' : 'filtros ativos'}
           </p>
           <button
             type="button"
             onClick={clearAll}
-            className="flex items-center gap-1 text-sm font-medium text-brand-600 transition-colors hover:text-brand-700"
+            className="text-brand-600 hover:text-brand-700 flex items-center gap-1 text-sm font-medium transition-colors"
           >
             <X className="size-3.5" />
             Limpar filtros

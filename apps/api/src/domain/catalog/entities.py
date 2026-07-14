@@ -81,6 +81,13 @@ class VehicleDetail:
 
     id: UUID
     slug: str
+
+    # Os IDs vêm junto dos nomes porque o formulário de EDIÇÃO precisa deles: o
+    # site exibe "Toyota", mas o banco grava `brand_id`. Sem estes campos, abrir
+    # um anúncio para editar viria com marca e modelo em branco — e salvar
+    # apagaria os dois.
+    brand_id: UUID
+    model_id: UUID
     brand_name: str
     model_name: str
     version: str | None
@@ -185,3 +192,40 @@ class FilterOptions:
     price_max: Decimal | None = None
     year_min: int | None = None
     year_max: int | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class AdminModelOption:
+    """Modelo no formulário do painel.
+
+    Carrega o `id`, não o slug: o cadastro grava `model_id` (chave estrangeira).
+    O site público usa slug porque ele vai na URL; o painel usa id porque ele vai
+    no banco. São públicos diferentes, com necessidades diferentes.
+    """
+
+    id: UUID
+    name: str
+
+
+@dataclass(frozen=True, slots=True)
+class AdminBrandOption:
+    id: UUID
+    name: str
+    models: list[AdminModelOption] = field(default_factory=list)
+
+
+@dataclass(frozen=True, slots=True)
+class AdminCatalog:
+    """Marcas, modelos e opcionais para o formulário de cadastro.
+
+    Deliberadamente diferente de `FilterOptions`: aquele mostra só o que TEM
+    veículo publicado (oferecer um filtro que devolve zero resultados frustra o
+    visitante). Aqui é o oposto — o admin precisa ver TODAS as marcas para poder
+    cadastrar a primeira Ferrari do estoque.
+
+    Confundir os dois faria o painel esconder justamente as opções ainda não
+    usadas — tornando impossível usá-las pela primeira vez.
+    """
+
+    brands: list[AdminBrandOption] = field(default_factory=list)
+    features: list[FeatureItem] = field(default_factory=list)

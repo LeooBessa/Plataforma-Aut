@@ -6,11 +6,7 @@ import { ChevronLeft, ChevronRight, SearchX } from 'lucide-react';
 import { ButtonLink } from '@/components/ui/button';
 import { SearchFilters } from '@/features/vehicles/search-filters';
 import { VehicleCard, VehicleCardSkeleton } from '@/features/vehicles/vehicle-card';
-import {
-  getFilterOptions,
-  listVehicles,
-  type VehicleSearchParams,
-} from '@/lib/api';
+import { getFilterOptions, listVehicles, type VehicleSearchParams } from '@/lib/api';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
@@ -37,16 +33,16 @@ export default async function VeiculosPage({ searchParams }: Props) {
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <header>
-        <h1 className="text-3xl font-bold tracking-tight text-ink-950 sm:text-4xl">
+        <h1 className="text-ink-950 text-3xl font-bold tracking-tight sm:text-4xl">
           Veículos à venda
         </h1>
-        <p className="mt-2 text-ink-500">
+        <p className="text-ink-500 mt-2">
           Seminovos selecionados, revisados e com procedência verificada.
         </p>
       </header>
 
       <div className="mt-8">
-        <Suspense fallback={<div className="h-40 animate-pulse rounded-card bg-ink-100" />}>
+        <Suspense fallback={<div className="rounded-card bg-ink-100 h-40 animate-pulse" />}>
           <Filters />
         </Suspense>
       </div>
@@ -117,8 +113,8 @@ async function Results({ params }: { params: Record<string, string | string[] | 
 
   return (
     <>
-      <p className="mt-8 text-sm text-ink-500">
-        <strong className="font-semibold text-ink-900">{page.meta.total}</strong>{' '}
+      <p className="text-ink-500 mt-8 text-sm">
+        <strong className="text-ink-900 font-semibold">{page.meta.total}</strong>{' '}
         {page.meta.total === 1 ? 'veículo encontrado' : 'veículos encontrados'}
       </p>
 
@@ -184,7 +180,7 @@ function Pagination({
         <Link
           href={buildHref(meta.page - 1)}
           rel="prev"
-          className="flex size-10 items-center justify-center rounded-btn text-ink-600 transition-colors hover:bg-ink-100"
+          className="rounded-btn text-ink-600 hover:bg-ink-100 flex size-10 items-center justify-center transition-colors"
           aria-label="Página anterior"
         >
           <ChevronLeft className="size-4" />
@@ -197,7 +193,7 @@ function Pagination({
           href={buildHref(pageNumber)}
           aria-current={pageNumber === meta.page ? 'page' : undefined}
           className={cn(
-            'flex size-10 items-center justify-center rounded-btn text-sm font-medium transition-colors',
+            'rounded-btn flex size-10 items-center justify-center text-sm font-medium transition-colors',
             pageNumber === meta.page
               ? 'bg-ink-950 text-white'
               : 'text-ink-600 hover:bg-ink-100',
@@ -211,7 +207,7 @@ function Pagination({
         <Link
           href={buildHref(meta.page + 1)}
           rel="next"
-          className="flex size-10 items-center justify-center rounded-btn text-ink-600 transition-colors hover:bg-ink-100"
+          className="rounded-btn text-ink-600 hover:bg-ink-100 flex size-10 items-center justify-center transition-colors"
           aria-label="Próxima página"
         >
           <ChevronRight className="size-4" />
@@ -223,12 +219,12 @@ function Pagination({
 
 function EmptyState() {
   return (
-    <div className="mt-16 flex flex-col items-center rounded-card border border-dashed border-ink-200 py-20 text-center">
-      <span className="flex size-14 items-center justify-center rounded-full bg-ink-100 text-ink-400">
+    <div className="rounded-card border-ink-200 mt-16 flex flex-col items-center border border-dashed py-20 text-center">
+      <span className="bg-ink-100 text-ink-400 flex size-14 items-center justify-center rounded-full">
         <SearchX className="size-6" />
       </span>
-      <h2 className="mt-5 text-lg font-semibold text-ink-900">Nenhum veículo encontrado</h2>
-      <p className="mt-1.5 max-w-sm text-sm text-ink-500">
+      <h2 className="text-ink-900 mt-5 text-lg font-semibold">Nenhum veículo encontrado</h2>
+      <p className="text-ink-500 mt-1.5 max-w-sm text-sm">
         Tente remover algum filtro ou buscar por outro termo.
       </p>
       {/* Um beco sem saída é onde o usuário abandona o site. Sempre há uma porta. */}
@@ -242,7 +238,7 @@ function EmptyState() {
 function ResultsSkeleton() {
   return (
     <>
-      <div className="mt-8 h-4 w-40 animate-pulse rounded bg-ink-100" />
+      <div className="bg-ink-100 mt-8 h-4 w-40 animate-pulse rounded" />
       <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
           <VehicleCardSkeleton key={i} />

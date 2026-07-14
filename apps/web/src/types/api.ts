@@ -4,2119 +4,2233 @@
  */
 
 export interface paths {
-    "/api/v1/health": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Health */
-        get: operations["health_api_v1_health_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  '/api/v1/health': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/auth/login": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Entrar no painel */
-        post: operations["login_api_v1_auth_login_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Health */
+    get: operations['health_api_v1_health_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auth/login': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/auth/refresh": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Renovar a sessão
-         * @description Rotaciona o refresh token.
-         *
-         *     Se um token já rotacionado reaparecer, o caso de uso revoga TODAS as sessões
-         *     do usuário: é sinal de roubo, não de erro de uso.
-         */
-        post: operations["refresh_api_v1_auth_refresh_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Entrar no painel */
+    post: operations['login_api_v1_auth_login_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auth/refresh': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/auth/logout": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Sair
-         * @description Revoga o refresh token no banco e apaga o cookie.
-         *
-         *     Não exige estar autenticado, e é idempotente: sair duas vezes, ou sair com
-         *     uma sessão já expirada, tem que ser inofensivo. Exigir um access token válido
-         *     para deslogar impediria justamente quem mais precisa sair.
-         */
-        post: operations["logout_api_v1_auth_logout_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Renovar a sessão
+     * @description Rotaciona o refresh token.
+     *
+     *     Se um token já rotacionado reaparecer, o caso de uso revoga TODAS as sessões
+     *     do usuário: é sinal de roubo, não de erro de uso.
+     */
+    post: operations['refresh_api_v1_auth_refresh_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auth/logout': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/auth/me": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Usuário da sessão atual */
-        get: operations["me_api_v1_auth_me_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Sair
+     * @description Revoga o refresh token no banco e apaga o cookie.
+     *
+     *     Não exige estar autenticado, e é idempotente: sair duas vezes, ou sair com
+     *     uma sessão já expirada, tem que ser inofensivo. Exigir um access token válido
+     *     para deslogar impediria justamente quem mais precisa sair.
+     */
+    post: operations['logout_api_v1_auth_logout_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/auth/me': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/vehicles": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Listar e filtrar veículos
-         * @description Listagem paginada com filtros combináveis.
-         *
-         *     Os intervalos são validados aqui (min <= max) porque um `price_min` maior que
-         *     o `price_max` não é erro de tipo — passa pelo Pydantic e devolve uma lista
-         *     vazia, que o usuário lê como "não há carros", e não como "seu filtro está
-         *     invertido".
-         */
-        get: operations["list_vehicles_api_v1_vehicles_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Usuário da sessão atual */
+    get: operations['me_api_v1_auth_me_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/vehicles': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/vehicles/featured": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Veículos em destaque (home) */
-        get: operations["list_featured_api_v1_vehicles_featured_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Listar e filtrar veículos
+     * @description Listagem paginada com filtros combináveis.
+     *
+     *     Os intervalos são validados aqui (min <= max) porque um `price_min` maior que
+     *     o `price_max` não é erro de tipo — passa pelo Pydantic e devolve uma lista
+     *     vazia, que o usuário lê como "não há carros", e não como "seu filtro está
+     *     invertido".
+     */
+    get: operations['list_vehicles_api_v1_vehicles_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/vehicles/featured': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/vehicles/filters": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Opções do formulário de busca
-         * @description Marcas, modelos, cidades e opcionais que REALMENTE existem no catálogo.
-         *
-         *     Precisa vir antes de `/{slug}` na ordem de declaração: o FastAPI casa as
-         *     rotas na ordem em que foram registradas, e `/{slug}` engoliria "/filters"
-         *     como se fosse o slug de um veículo.
-         */
-        get: operations["get_filter_options_api_v1_vehicles_filters_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Veículos em destaque (home) */
+    get: operations['list_featured_api_v1_vehicles_featured_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/vehicles/filters': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/vehicles/{slug}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Ficha completa do veículo */
-        get: operations["get_vehicle_api_v1_vehicles__slug__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Opções do formulário de busca
+     * @description Marcas, modelos, cidades e opcionais que REALMENTE existem no catálogo.
+     *
+     *     Precisa vir antes de `/{slug}` na ordem de declaração: o FastAPI casa as
+     *     rotas na ordem em que foram registradas, e `/{slug}` engoliria "/filters"
+     *     como se fosse o slug de um veículo.
+     */
+    get: operations['get_filter_options_api_v1_vehicles_filters_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/vehicles/{slug}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/appointments": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Agendar uma visita */
-        post: operations["create_appointment_api_v1_appointments_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Ficha completa do veículo */
+    get: operations['get_vehicle_api_v1_vehicles__slug__get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/appointments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/stats": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Números do dashboard */
-        get: operations["get_stats_api_v1_admin_stats_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Agendar uma visita */
+    post: operations['create_appointment_api_v1_appointments_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/stats': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/vehicles": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Listar anúncios (todos)
-         * @description Diferente da listagem pública: aqui aparecem rascunhos e arquivados.
-         */
-        get: operations["list_vehicles_api_v1_admin_vehicles_get"];
-        put?: never;
-        /** Cadastrar anúncio */
-        post: operations["create_vehicle_api_v1_admin_vehicles_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Números do dashboard */
+    get: operations['get_stats_api_v1_admin_stats_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/catalog': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/vehicles/{vehicle_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Ver anúncio */
-        get: operations["get_vehicle_api_v1_admin_vehicles__vehicle_id__get"];
-        /** Editar anúncio */
-        put: operations["update_vehicle_api_v1_admin_vehicles__vehicle_id__put"];
-        post?: never;
-        /**
-         * Excluir definitivamente (apenas SUPER_ADMIN)
-         * @description Irreversível, e por isso restrita.
-         *
-         *     Falha se houver agendamentos: apagar o veículo destruiria o histórico de
-         *     quem demonstrou interesse nele. Nesse caso, arquive.
-         */
-        delete: operations["delete_vehicle_api_v1_admin_vehicles__vehicle_id__delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Marcas, modelos e opcionais (para o formulário)
+     * @description TODAS as marcas e opcionais, inclusive os sem veículo algum.
+     *
+     *     Diferente de `/vehicles/filters` (público), que só mostra o que tem anúncio
+     *     publicado. Se este endpoint filtrasse por status, seria impossível cadastrar
+     *     o primeiro carro de uma marca nova — ela não apareceria na lista.
+     */
+    get: operations['get_catalog_api_v1_admin_catalog_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/vehicles': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/vehicles/{vehicle_id}/status": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Publicar, reservar, marcar como vendido ou arquivar */
-        patch: operations["change_status_api_v1_admin_vehicles__vehicle_id__status_patch"];
-        trace?: never;
+    /**
+     * Listar anúncios (todos)
+     * @description Diferente da listagem pública: aqui aparecem rascunhos e arquivados.
+     */
+    get: operations['list_vehicles_api_v1_admin_vehicles_get'];
+    put?: never;
+    /** Cadastrar anúncio */
+    post: operations['create_vehicle_api_v1_admin_vehicles_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/vehicles/{vehicle_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/vehicles/{vehicle_id}/duplicate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Duplicar anúncio
-         * @description A cópia nasce como RASCUNHO e SEM as fotos.
-         *
-         *     Sem foto porque elas mostram *aquele* carro — quilometragem no painel,
-         *     arranhão no para-choque. Reaproveitá-las noutro veículo é enganar o comprador.
-         */
-        post: operations["duplicate_vehicle_api_v1_admin_vehicles__vehicle_id__duplicate_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Ver anúncio */
+    get: operations['get_vehicle_api_v1_admin_vehicles__vehicle_id__get'];
+    /** Editar anúncio */
+    put: operations['update_vehicle_api_v1_admin_vehicles__vehicle_id__put'];
+    post?: never;
+    /**
+     * Excluir definitivamente (apenas SUPER_ADMIN)
+     * @description Irreversível, e por isso restrita.
+     *
+     *     Falha se houver agendamentos: apagar o veículo destruiria o histórico de
+     *     quem demonstrou interesse nele. Nesse caso, arquive.
+     */
+    delete: operations['delete_vehicle_api_v1_admin_vehicles__vehicle_id__delete'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/vehicles/{vehicle_id}/status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/vehicles/{vehicle_id}/archive": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /** Arquivar anúncio (a 'exclusão' do dia a dia) */
-        post: operations["archive_vehicle_api_v1_admin_vehicles__vehicle_id__archive_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Publicar, reservar, marcar como vendido ou arquivar */
+    patch: operations['change_status_api_v1_admin_vehicles__vehicle_id__status_patch'];
+    trace?: never;
+  };
+  '/api/v1/admin/vehicles/{vehicle_id}/duplicate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/vehicles/{vehicle_id}/images/upload-url": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Autorizar upload de foto (direto ao Storage)
-         * @description Passo 1 de 2 do upload.
-         *
-         *     A foto NÃO passa por aqui: a função serverless tem limite de tamanho de
-         *     corpo e uma imagem o estoura. Este endpoint devolve uma autorização temporária
-         *     para o browser escrever direto no Storage; depois ele chama `POST .../images`
-         *     para registrar o que subiu.
-         */
-        post: operations["create_upload_url_api_v1_admin_vehicles__vehicle_id__images_upload_url_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Duplicar anúncio
+     * @description A cópia nasce como RASCUNHO e SEM as fotos.
+     *
+     *     Sem foto porque elas mostram *aquele* carro — quilometragem no painel,
+     *     arranhão no para-choque. Reaproveitá-las noutro veículo é enganar o comprador.
+     */
+    post: operations['duplicate_vehicle_api_v1_admin_vehicles__vehicle_id__duplicate_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/vehicles/{vehicle_id}/archive': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/vehicles/{vehicle_id}/images": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Registrar foto já enviada ao Storage
-         * @description Passo 2 de 2. A primeira foto do anúncio vira a capa automaticamente.
-         */
-        post: operations["register_image_api_v1_admin_vehicles__vehicle_id__images_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /** Arquivar anúncio (a 'exclusão' do dia a dia) */
+    post: operations['archive_vehicle_api_v1_admin_vehicles__vehicle_id__archive_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/vehicles/{vehicle_id}/images/upload-url': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/vehicles/{vehicle_id}/images/order": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Reordenar a galeria */
-        patch: operations["reorder_images_api_v1_admin_vehicles__vehicle_id__images_order_patch"];
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Autorizar upload de foto (direto ao Storage)
+     * @description Passo 1 de 2 do upload.
+     *
+     *     A foto NÃO passa por aqui: a função serverless tem limite de tamanho de
+     *     corpo e uma imagem o estoura. Este endpoint devolve uma autorização temporária
+     *     para o browser escrever direto no Storage; depois ele chama `POST .../images`
+     *     para registrar o que subiu.
+     */
+    post: operations['create_upload_url_api_v1_admin_vehicles__vehicle_id__images_upload_url_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/vehicles/{vehicle_id}/images': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/vehicles/{vehicle_id}/images/{image_id}/cover": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /** Definir a foto de capa */
-        patch: operations["set_cover_api_v1_admin_vehicles__vehicle_id__images__image_id__cover_patch"];
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Registrar foto já enviada ao Storage
+     * @description Passo 2 de 2. A primeira foto do anúncio vira a capa automaticamente.
+     */
+    post: operations['register_image_api_v1_admin_vehicles__vehicle_id__images_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/vehicles/{vehicle_id}/images/order': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/images/{image_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        /**
-         * Remover foto
-         * @description Remove do banco e depois do Storage, nessa ordem.
-         *
-         *     Se a capa for removida, a próxima foto assume — um anúncio publicado sem capa
-         *     aparece sem imagem na listagem, e ninguém clica num card vazio.
-         */
-        delete: operations["delete_image_api_v1_admin_images__image_id__delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Reordenar a galeria */
+    patch: operations['reorder_images_api_v1_admin_vehicles__vehicle_id__images_order_patch'];
+    trace?: never;
+  };
+  '/api/v1/admin/vehicles/{vehicle_id}/images/{image_id}/cover': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/appointments": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Listar agendamentos */
-        get: operations["list_appointments_api_v1_admin_appointments_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Definir a foto de capa */
+    patch: operations['set_cover_api_v1_admin_vehicles__vehicle_id__images__image_id__cover_patch'];
+    trace?: never;
+  };
+  '/api/v1/admin/images/{image_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/v1/admin/appointments/{appointment_id}/status": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        /**
-         * Confirmar, cancelar ou finalizar
-         * @description Um agendamento já cancelado ou finalizado é histórico e não muda mais.
-         */
-        patch: operations["update_appointment_status_api_v1_admin_appointments__appointment_id__status_patch"];
-        trace?: never;
+    get?: never;
+    put?: never;
+    post?: never;
+    /**
+     * Remover foto
+     * @description Remove do banco e depois do Storage, nessa ordem.
+     *
+     *     Se a capa for removida, a próxima foto assume — um anúncio publicado sem capa
+     *     aparece sem imagem na listagem, e ninguém clica num card vazio.
+     */
+    delete: operations['delete_image_api_v1_admin_images__image_id__delete'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/appointments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    /** Listar agendamentos */
+    get: operations['list_appointments_api_v1_admin_appointments_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/appointments/{appointment_id}/status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /**
+     * Confirmar, cancelar ou finalizar
+     * @description Um agendamento já cancelado ou finalizado é histórico e não muda mais.
+     */
+    patch: operations['update_appointment_status_api_v1_admin_appointments__appointment_id__status_patch'];
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        /** AppointmentCreateIn */
-        AppointmentCreateIn: {
-            /** Vehicle Slug */
-            vehicle_slug: string;
-            /** Customer Name */
-            customer_name: string;
-            /** Phone */
-            phone: string;
-            /** Whatsapp */
-            whatsapp?: string | null;
-            /**
-             * Email
-             * Format: email
-             */
-            email: string;
-            /**
-             * Scheduled Date
-             * Format: date
-             */
-            scheduled_date: string;
-            /**
-             * Scheduled Time
-             * Format: time
-             */
-            scheduled_time: string;
-            /** Notes */
-            notes?: string | null;
-            /** Website */
-            website?: string | null;
-        };
-        /**
-         * AppointmentCreatedOut
-         * @description Resposta ao visitante.
-         *
-         *     Devolve o mínimo. Ecoar de volta o e-mail e o telefone do cliente
-         *     transformaria o endpoint num verificador de dados alheios — e ele é público,
-         *     sem autenticação.
-         */
-        AppointmentCreatedOut: {
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /**
-             * Scheduled Date
-             * Format: date
-             */
-            scheduled_date: string;
-            /**
-             * Scheduled Time
-             * Format: time
-             */
-            scheduled_time: string;
-            /**
-             * Message
-             * @default Visita agendada! Entraremos em contato para confirmar.
-             */
-            message: string;
-        };
-        /** AppointmentOut */
-        AppointmentOut: {
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            vehicle: components["schemas"]["VehicleRefOut"];
-            /** Customer Name */
-            customer_name: string;
-            /** Phone */
-            phone: string;
-            /** Whatsapp */
-            whatsapp: string | null;
-            /** Email */
-            email: string;
-            /**
-             * Scheduled Date
-             * Format: date
-             */
-            scheduled_date: string;
-            /**
-             * Scheduled Time
-             * Format: time
-             */
-            scheduled_time: string;
-            /** Notes */
-            notes: string | null;
-            status: components["schemas"]["AppointmentStatus"];
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-        };
-        /** AppointmentPageOut */
-        AppointmentPageOut: {
-            /** Items */
-            items: components["schemas"]["AppointmentOut"][];
-            meta: components["schemas"]["PageMeta"];
-        };
-        /**
-         * AppointmentStatus
-         * @enum {string}
-         */
-        AppointmentStatus: "pending" | "confirmed" | "cancelled" | "completed";
-        /** AppointmentStatusIn */
-        AppointmentStatusIn: {
-            status: components["schemas"]["AppointmentStatus"];
-        };
-        /**
-         * BodyType
-         * @description Categoria da carroceria.
-         * @enum {string}
-         */
-        BodyType: "hatch" | "sedan" | "suv" | "pickup" | "coupe" | "convertible" | "wagon" | "minivan" | "van";
-        /** BrandOptionOut */
-        BrandOptionOut: {
-            /** Slug */
-            slug: string;
-            /** Name */
-            name: string;
-            /** Models */
-            models: components["schemas"]["ModelOptionOut"][];
-        };
-        /** DashboardStatsOut */
-        DashboardStatsOut: {
-            /** Total Vehicles */
-            total_vehicles: number;
-            /** Active Vehicles */
-            active_vehicles: number;
-            /** Sold Vehicles */
-            sold_vehicles: number;
-            /** Draft Vehicles */
-            draft_vehicles: number;
-            /** Featured Vehicles */
-            featured_vehicles: number;
-            /** Total Appointments */
-            total_appointments: number;
-            /** Pending Appointments */
-            pending_appointments: number;
-            /** Appointments This Week */
-            appointments_this_week: number;
-            /** Total Views */
-            total_views: number;
-            /** Inventory Value */
-            inventory_value: number;
-        };
-        /**
-         * Environment
-         * @enum {string}
-         */
-        Environment: "development" | "staging" | "production";
-        /**
-         * FeatureCategory
-         * @description Agrupamento dos opcionais na ficha do veículo.
-         * @enum {string}
-         */
-        FeatureCategory: "comfort" | "safety" | "technology" | "performance" | "exterior" | "interior";
-        /** FeatureOut */
-        FeatureOut: {
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /** Name */
-            name: string;
-            /** Slug */
-            slug: string;
-            category: components["schemas"]["FeatureCategory"];
-        };
-        /**
-         * FilterOptionsOut
-         * @description Alimenta o formulário de busca. Tudo derivado do que existe no banco.
-         */
-        FilterOptionsOut: {
-            /** Brands */
-            brands: components["schemas"]["BrandOptionOut"][];
-            /** Cities */
-            cities: string[];
-            /** Features */
-            features: components["schemas"]["FeatureOut"][];
-            /** Price Min */
-            price_min: string | null;
-            /** Price Max */
-            price_max: string | null;
-            /** Year Min */
-            year_min: number | null;
-            /** Year Max */
-            year_max: number | null;
-            /** Fuel Types */
-            fuel_types?: components["schemas"]["FuelType"][];
-            /** Transmissions */
-            transmissions?: components["schemas"]["TransmissionType"][];
-            /** Body Types */
-            body_types?: components["schemas"]["BodyType"][];
-        };
-        /**
-         * FuelType
-         * @enum {string}
-         */
-        FuelType: "flex" | "gasoline" | "ethanol" | "diesel" | "electric" | "hybrid" | "gnv";
-        /** HTTPValidationError */
-        HTTPValidationError: {
-            /** Detail */
-            detail?: components["schemas"]["ValidationError"][];
-        };
-        /** HealthResponse */
-        HealthResponse: {
-            /** Status */
-            status: string;
-            environment: components["schemas"]["Environment"];
-            /** Version */
-            version: string;
-        };
-        /** ImageOut */
-        ImageOut: {
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /** Url */
-            url: string;
-            /** Alt Text */
-            alt_text: string | null;
-            /** Width */
-            width: number | null;
-            /** Height */
-            height: number | null;
-            /** Position */
-            position: number;
-            /** Is Cover */
-            is_cover: boolean;
-        };
-        /** ImageRegisterIn */
-        ImageRegisterIn: {
-            /** Storage Path */
-            storage_path: string;
-            /** Url */
-            url: string;
-            /** Alt Text */
-            alt_text?: string | null;
-            /** Width */
-            width?: number | null;
-            /** Height */
-            height?: number | null;
-        };
-        /** ImageReorderIn */
-        ImageReorderIn: {
-            /** Image Ids */
-            image_ids: string[];
-        };
-        /** LoginIn */
-        LoginIn: {
-            /**
-             * Email
-             * Format: email
-             */
-            email: string;
-            /** Password */
-            password: string;
-        };
-        /** ModelOptionOut */
-        ModelOptionOut: {
-            /** Slug */
-            slug: string;
-            /** Name */
-            name: string;
-        };
-        /** PageMeta */
-        PageMeta: {
-            /** Total */
-            total: number;
-            /** Page */
-            page: number;
-            /** Page Size */
-            page_size: number;
-            /** Total Pages */
-            total_pages: number;
-            /** Has Next */
-            has_next: boolean;
-            /** Has Previous */
-            has_previous: boolean;
-        };
-        /**
-         * SessionOut
-         * @description Resposta do login e da renovação.
-         *
-         *     O refresh token NÃO aparece aqui: ele vai num cookie httpOnly, que o
-         *     JavaScript não consegue ler. Devolvê-lo no corpo obrigaria o frontend a
-         *     guardá-lo em algum lugar acessível a scripts — e aí um XSS levaria a sessão
-         *     inteira, com validade de sete dias.
-         */
-        SessionOut: {
-            /** Access Token */
-            access_token: string;
-            /**
-             * Token Type
-             * @default bearer
-             */
-            token_type: string;
-            /** Expires In */
-            expires_in: number;
-            user: components["schemas"]["UserOut"];
-        };
-        /**
-         * TransmissionType
-         * @enum {string}
-         */
-        TransmissionType: "manual" | "automatic" | "cvt" | "automated" | "dual_clutch";
-        /** UploadUrlIn */
-        UploadUrlIn: {
-            /** Content Type */
-            content_type: string;
-        };
-        /**
-         * UploadUrlOut
-         * @description Autorização para o browser escrever UM arquivo no Storage.
-         *
-         *     O `storage_path` volta na confirmação: assim o backend não precisa confiar
-         *     num caminho enviado pelo cliente, que poderia apontar para o arquivo de
-         *     outro anúncio.
-         */
-        UploadUrlOut: {
-            /** Upload Url */
-            upload_url: string;
-            /** Token */
-            token: string;
-            /** Storage Path */
-            storage_path: string;
-            /** Public Url */
-            public_url: string;
-        };
-        /** UserOut */
-        UserOut: {
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /** Name */
-            name: string;
-            /** Email */
-            email: string;
-            role: components["schemas"]["UserRole"];
-            /** Dealership Id */
-            dealership_id: string | null;
-        };
-        /**
-         * UserRole
-         * @description Perfis de acesso.
-         *
-         *     Hierárquico: SUPER_ADMIN ⊃ ADMIN ⊃ SELLER.
-         *
-         *     - SELLER: gerencia os próprios anúncios e agendamentos.
-         *     - ADMIN: gerencia tudo dentro da sua concessionária, inclusive usuários.
-         *     - SUPER_ADMIN: atravessa concessionárias. Existe desde já porque o modelo é
-         *       multi-tenant; hoje, com uma única concessionária, é quem opera a plataforma.
-         * @enum {string}
-         */
-        UserRole: "super_admin" | "admin" | "seller";
-        /** ValidationError */
-        ValidationError: {
-            /** Location */
-            loc: (string | number)[];
-            /** Message */
-            msg: string;
-            /** Error Type */
-            type: string;
-            /** Input */
-            input?: unknown;
-            /** Context */
-            ctx?: Record<string, never>;
-        };
-        /**
-         * VehicleDetailOut
-         * @description A ficha completa da página do veículo.
-         */
-        VehicleDetailOut: {
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /** Slug */
-            slug: string;
-            /** Title */
-            title: string;
-            /** Brand Name */
-            brand_name: string;
-            /** Model Name */
-            model_name: string;
-            /** Version */
-            version: string | null;
-            /** Year Manufacture */
-            year_manufacture: number;
-            /** Year Model */
-            year_model: number;
-            /** Price */
-            price: string;
-            /** Mileage */
-            mileage: number;
-            fuel_type: components["schemas"]["FuelType"];
-            transmission: components["schemas"]["TransmissionType"];
-            body_type: components["schemas"]["BodyType"];
-            /** Color */
-            color: string;
-            /** Doors */
-            doors: number | null;
-            /** Engine */
-            engine: string | null;
-            /** Horsepower */
-            horsepower: number | null;
-            /** Owners Count */
-            owners_count: number | null;
-            /** Has Manual */
-            has_manual: boolean;
-            /** Has Spare Key */
-            has_spare_key: boolean;
-            /** Ipva Paid */
-            ipva_paid: boolean;
-            /** Licensing Paid */
-            licensing_paid: boolean;
-            /** Service History */
-            service_history: string | null;
-            /** City */
-            city: string;
-            /** State */
-            state: string;
-            /** Description */
-            description: string | null;
-            /** Accepts Financing */
-            accepts_financing: boolean;
-            /** Accepts Trade */
-            accepts_trade: boolean;
-            /** Down Payment */
-            down_payment: string | null;
-            /** Installments Count */
-            installments_count: number | null;
-            /** Estimated Installment */
-            estimated_installment: string | null;
-            /** Is Featured */
-            is_featured: boolean;
-            status: components["schemas"]["VehicleStatus"];
-            /** Published At */
-            published_at: string | null;
-            /**
-             * Created At
-             * Format: date-time
-             */
-            created_at: string;
-            /** Images */
-            images: components["schemas"]["ImageOut"][];
-            /** Features */
-            features: components["schemas"]["FeatureOut"][];
-        };
-        /**
-         * VehicleIn
-         * @description Payload de criação e edição de anúncio.
-         */
-        VehicleIn: {
-            /**
-             * Brand Id
-             * Format: uuid
-             */
-            brand_id: string;
-            /**
-             * Model Id
-             * Format: uuid
-             */
-            model_id: string;
-            /** Year Manufacture */
-            year_manufacture: number;
-            /** Year Model */
-            year_model: number;
-            /** Price */
-            price: number | string;
-            /** Mileage */
-            mileage: number;
-            fuel_type: components["schemas"]["FuelType"];
-            transmission: components["schemas"]["TransmissionType"];
-            body_type: components["schemas"]["BodyType"];
-            /** Color */
-            color: string;
-            /** City */
-            city: string;
-            /** State */
-            state: string;
-            /** Version */
-            version?: string | null;
-            /** Doors */
-            doors?: number | null;
-            /** Engine */
-            engine?: string | null;
-            /** Horsepower */
-            horsepower?: number | null;
-            /** Owners Count */
-            owners_count?: number | null;
-            /**
-             * Has Manual
-             * @default false
-             */
-            has_manual: boolean;
-            /**
-             * Has Spare Key
-             * @default false
-             */
-            has_spare_key: boolean;
-            /**
-             * Ipva Paid
-             * @default false
-             */
-            ipva_paid: boolean;
-            /**
-             * Licensing Paid
-             * @default false
-             */
-            licensing_paid: boolean;
-            /** Service History */
-            service_history?: string | null;
-            /** Description */
-            description?: string | null;
-            /**
-             * Accepts Financing
-             * @default true
-             */
-            accepts_financing: boolean;
-            /**
-             * Accepts Trade
-             * @default true
-             */
-            accepts_trade: boolean;
-            /** Down Payment */
-            down_payment?: number | string | null;
-            /** Installments Count */
-            installments_count?: number | null;
-            /**
-             * Is Featured
-             * @default false
-             */
-            is_featured: boolean;
-            /** @default draft */
-            status: components["schemas"]["VehicleStatus"];
-            /** Feature Ids */
-            feature_ids?: string[];
-        };
-        /** VehiclePageOut */
-        VehiclePageOut: {
-            /** Items */
-            items: components["schemas"]["VehicleSummaryOut"][];
-            meta: components["schemas"]["PageMeta"];
-        };
-        /** VehicleRefOut */
-        VehicleRefOut: {
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /** Slug */
-            slug: string;
-            /** Title */
-            title: string;
-            /** Cover Image Url */
-            cover_image_url: string | null;
-        };
-        /**
-         * VehicleSort
-         * @enum {string}
-         */
-        VehicleSort: "relevance" | "price_asc" | "price_desc" | "year_desc" | "mileage_asc" | "newest";
-        /**
-         * VehicleStatus
-         * @description Ciclo de vida do anúncio.
-         *
-         *     Um booleano `vendido` não daria conta: o briefing pede publicar, marcar como
-         *     vendido, arquivar e excluir — e "excluir" aqui é ARCHIVED, não DELETE. Um
-         *     anúncio apagado por engano é receita perdida e histórico destruído.
-         * @enum {string}
-         */
-        VehicleStatus: "draft" | "active" | "reserved" | "sold" | "archived";
-        /** VehicleStatusIn */
-        VehicleStatusIn: {
-            status: components["schemas"]["VehicleStatus"];
-        };
-        /**
-         * VehicleSummaryOut
-         * @description O card da listagem.
-         */
-        VehicleSummaryOut: {
-            /**
-             * Id
-             * Format: uuid
-             */
-            id: string;
-            /** Slug */
-            slug: string;
-            /** Title */
-            title: string;
-            /** Brand Name */
-            brand_name: string;
-            /** Model Name */
-            model_name: string;
-            /** Version */
-            version: string | null;
-            /** Year Manufacture */
-            year_manufacture: number;
-            /** Year Model */
-            year_model: number;
-            /** Price */
-            price: string;
-            /** Mileage */
-            mileage: number;
-            fuel_type: components["schemas"]["FuelType"];
-            transmission: components["schemas"]["TransmissionType"];
-            /** City */
-            city: string;
-            /** State */
-            state: string;
-            /** Is Featured */
-            is_featured: boolean;
-            status: components["schemas"]["VehicleStatus"];
-            cover_image: components["schemas"]["ImageOut"] | null;
-        };
+  schemas: {
+    /** AdminBrandOut */
+    AdminBrandOut: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Name */
+      name: string;
+      /** Models */
+      models: components['schemas']['AdminModelOut'][];
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    /**
+     * AdminCatalogOut
+     * @description Marcas, modelos e opcionais do formulário de cadastro.
+     *
+     *     Todos — inclusive os que ainda não têm veículo. Diferente do endpoint público
+     *     de filtros, que só mostra o que está publicado.
+     */
+    AdminCatalogOut: {
+      /** Brands */
+      brands: components['schemas']['AdminBrandOut'][];
+      /** Features */
+      features: components['schemas']['FeatureOut'][];
+    };
+    /** AdminModelOut */
+    AdminModelOut: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Name */
+      name: string;
+    };
+    /** AppointmentCreateIn */
+    AppointmentCreateIn: {
+      /** Vehicle Slug */
+      vehicle_slug: string;
+      /** Customer Name */
+      customer_name: string;
+      /** Phone */
+      phone: string;
+      /** Whatsapp */
+      whatsapp?: string | null;
+      /**
+       * Email
+       * Format: email
+       */
+      email: string;
+      /**
+       * Scheduled Date
+       * Format: date
+       */
+      scheduled_date: string;
+      /**
+       * Scheduled Time
+       * Format: time
+       */
+      scheduled_time: string;
+      /** Notes */
+      notes?: string | null;
+      /** Website */
+      website?: string | null;
+    };
+    /**
+     * AppointmentCreatedOut
+     * @description Resposta ao visitante.
+     *
+     *     Devolve o mínimo. Ecoar de volta o e-mail e o telefone do cliente
+     *     transformaria o endpoint num verificador de dados alheios — e ele é público,
+     *     sem autenticação.
+     */
+    AppointmentCreatedOut: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /**
+       * Scheduled Date
+       * Format: date
+       */
+      scheduled_date: string;
+      /**
+       * Scheduled Time
+       * Format: time
+       */
+      scheduled_time: string;
+      /**
+       * Message
+       * @default Visita agendada! Entraremos em contato para confirmar.
+       */
+      message: string;
+    };
+    /** AppointmentOut */
+    AppointmentOut: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      vehicle: components['schemas']['VehicleRefOut'];
+      /** Customer Name */
+      customer_name: string;
+      /** Phone */
+      phone: string;
+      /** Whatsapp */
+      whatsapp: string | null;
+      /** Email */
+      email: string;
+      /**
+       * Scheduled Date
+       * Format: date
+       */
+      scheduled_date: string;
+      /**
+       * Scheduled Time
+       * Format: time
+       */
+      scheduled_time: string;
+      /** Notes */
+      notes: string | null;
+      status: components['schemas']['AppointmentStatus'];
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+    };
+    /** AppointmentPageOut */
+    AppointmentPageOut: {
+      /** Items */
+      items: components['schemas']['AppointmentOut'][];
+      meta: components['schemas']['PageMeta'];
+    };
+    /**
+     * AppointmentStatus
+     * @enum {string}
+     */
+    AppointmentStatus: 'pending' | 'confirmed' | 'cancelled' | 'completed';
+    /** AppointmentStatusIn */
+    AppointmentStatusIn: {
+      status: components['schemas']['AppointmentStatus'];
+    };
+    /**
+     * BodyType
+     * @description Categoria da carroceria.
+     * @enum {string}
+     */
+    BodyType:
+      | 'hatch'
+      | 'sedan'
+      | 'suv'
+      | 'pickup'
+      | 'coupe'
+      | 'convertible'
+      | 'wagon'
+      | 'minivan'
+      | 'van';
+    /** BrandOptionOut */
+    BrandOptionOut: {
+      /** Slug */
+      slug: string;
+      /** Name */
+      name: string;
+      /** Models */
+      models: components['schemas']['ModelOptionOut'][];
+    };
+    /** DashboardStatsOut */
+    DashboardStatsOut: {
+      /** Total Vehicles */
+      total_vehicles: number;
+      /** Active Vehicles */
+      active_vehicles: number;
+      /** Sold Vehicles */
+      sold_vehicles: number;
+      /** Draft Vehicles */
+      draft_vehicles: number;
+      /** Featured Vehicles */
+      featured_vehicles: number;
+      /** Total Appointments */
+      total_appointments: number;
+      /** Pending Appointments */
+      pending_appointments: number;
+      /** Appointments This Week */
+      appointments_this_week: number;
+      /** Total Views */
+      total_views: number;
+      /** Inventory Value */
+      inventory_value: number;
+    };
+    /**
+     * Environment
+     * @enum {string}
+     */
+    Environment: 'development' | 'staging' | 'production';
+    /**
+     * FeatureCategory
+     * @description Agrupamento dos opcionais na ficha do veículo.
+     * @enum {string}
+     */
+    FeatureCategory:
+      'comfort' | 'safety' | 'technology' | 'performance' | 'exterior' | 'interior';
+    /** FeatureOut */
+    FeatureOut: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Name */
+      name: string;
+      /** Slug */
+      slug: string;
+      category: components['schemas']['FeatureCategory'];
+    };
+    /**
+     * FilterOptionsOut
+     * @description Alimenta o formulário de busca. Tudo derivado do que existe no banco.
+     */
+    FilterOptionsOut: {
+      /** Brands */
+      brands: components['schemas']['BrandOptionOut'][];
+      /** Cities */
+      cities: string[];
+      /** Features */
+      features: components['schemas']['FeatureOut'][];
+      /** Price Min */
+      price_min: string | null;
+      /** Price Max */
+      price_max: string | null;
+      /** Year Min */
+      year_min: number | null;
+      /** Year Max */
+      year_max: number | null;
+      /** Fuel Types */
+      fuel_types?: components['schemas']['FuelType'][];
+      /** Transmissions */
+      transmissions?: components['schemas']['TransmissionType'][];
+      /** Body Types */
+      body_types?: components['schemas']['BodyType'][];
+    };
+    /**
+     * FuelType
+     * @enum {string}
+     */
+    FuelType: 'flex' | 'gasoline' | 'ethanol' | 'diesel' | 'electric' | 'hybrid' | 'gnv';
+    /** HTTPValidationError */
+    HTTPValidationError: {
+      /** Detail */
+      detail?: components['schemas']['ValidationError'][];
+    };
+    /** HealthResponse */
+    HealthResponse: {
+      /** Status */
+      status: string;
+      environment: components['schemas']['Environment'];
+      /** Version */
+      version: string;
+    };
+    /** ImageOut */
+    ImageOut: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Url */
+      url: string;
+      /** Alt Text */
+      alt_text: string | null;
+      /** Width */
+      width: number | null;
+      /** Height */
+      height: number | null;
+      /** Position */
+      position: number;
+      /** Is Cover */
+      is_cover: boolean;
+    };
+    /** ImageRegisterIn */
+    ImageRegisterIn: {
+      /** Storage Path */
+      storage_path: string;
+      /** Url */
+      url: string;
+      /** Alt Text */
+      alt_text?: string | null;
+      /** Width */
+      width?: number | null;
+      /** Height */
+      height?: number | null;
+    };
+    /** ImageReorderIn */
+    ImageReorderIn: {
+      /** Image Ids */
+      image_ids: string[];
+    };
+    /** LoginIn */
+    LoginIn: {
+      /**
+       * Email
+       * Format: email
+       */
+      email: string;
+      /** Password */
+      password: string;
+    };
+    /** ModelOptionOut */
+    ModelOptionOut: {
+      /** Slug */
+      slug: string;
+      /** Name */
+      name: string;
+    };
+    /** PageMeta */
+    PageMeta: {
+      /** Total */
+      total: number;
+      /** Page */
+      page: number;
+      /** Page Size */
+      page_size: number;
+      /** Total Pages */
+      total_pages: number;
+      /** Has Next */
+      has_next: boolean;
+      /** Has Previous */
+      has_previous: boolean;
+    };
+    /**
+     * SessionOut
+     * @description Resposta do login e da renovação.
+     *
+     *     O refresh token NÃO aparece aqui: ele vai num cookie httpOnly, que o
+     *     JavaScript não consegue ler. Devolvê-lo no corpo obrigaria o frontend a
+     *     guardá-lo em algum lugar acessível a scripts — e aí um XSS levaria a sessão
+     *     inteira, com validade de sete dias.
+     */
+    SessionOut: {
+      /** Access Token */
+      access_token: string;
+      /**
+       * Token Type
+       * @default bearer
+       */
+      token_type: string;
+      /** Expires In */
+      expires_in: number;
+      user: components['schemas']['UserOut'];
+    };
+    /**
+     * TransmissionType
+     * @enum {string}
+     */
+    TransmissionType: 'manual' | 'automatic' | 'cvt' | 'automated' | 'dual_clutch';
+    /** UploadUrlIn */
+    UploadUrlIn: {
+      /** Content Type */
+      content_type: string;
+    };
+    /**
+     * UploadUrlOut
+     * @description Autorização para o browser escrever UM arquivo no Storage.
+     *
+     *     O `storage_path` volta na confirmação: assim o backend não precisa confiar
+     *     num caminho enviado pelo cliente, que poderia apontar para o arquivo de
+     *     outro anúncio.
+     */
+    UploadUrlOut: {
+      /** Upload Url */
+      upload_url: string;
+      /** Token */
+      token: string;
+      /** Storage Path */
+      storage_path: string;
+      /** Public Url */
+      public_url: string;
+    };
+    /** UserOut */
+    UserOut: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Name */
+      name: string;
+      /** Email */
+      email: string;
+      role: components['schemas']['UserRole'];
+      /** Dealership Id */
+      dealership_id: string | null;
+    };
+    /**
+     * UserRole
+     * @description Perfis de acesso.
+     *
+     *     Hierárquico: SUPER_ADMIN ⊃ ADMIN ⊃ SELLER.
+     *
+     *     - SELLER: gerencia os próprios anúncios e agendamentos.
+     *     - ADMIN: gerencia tudo dentro da sua concessionária, inclusive usuários.
+     *     - SUPER_ADMIN: atravessa concessionárias. Existe desde já porque o modelo é
+     *       multi-tenant; hoje, com uma única concessionária, é quem opera a plataforma.
+     * @enum {string}
+     */
+    UserRole: 'super_admin' | 'admin' | 'seller';
+    /** ValidationError */
+    ValidationError: {
+      /** Location */
+      loc: (string | number)[];
+      /** Message */
+      msg: string;
+      /** Error Type */
+      type: string;
+      /** Input */
+      input?: unknown;
+      /** Context */
+      ctx?: Record<string, never>;
+    };
+    /**
+     * VehicleDetailOut
+     * @description A ficha completa da página do veículo.
+     */
+    VehicleDetailOut: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Slug */
+      slug: string;
+      /** Title */
+      title: string;
+      /**
+       * Brand Id
+       * Format: uuid
+       */
+      brand_id: string;
+      /**
+       * Model Id
+       * Format: uuid
+       */
+      model_id: string;
+      /** Brand Name */
+      brand_name: string;
+      /** Model Name */
+      model_name: string;
+      /** Version */
+      version: string | null;
+      /** Year Manufacture */
+      year_manufacture: number;
+      /** Year Model */
+      year_model: number;
+      /** Price */
+      price: string;
+      /** Mileage */
+      mileage: number;
+      fuel_type: components['schemas']['FuelType'];
+      transmission: components['schemas']['TransmissionType'];
+      body_type: components['schemas']['BodyType'];
+      /** Color */
+      color: string;
+      /** Doors */
+      doors: number | null;
+      /** Engine */
+      engine: string | null;
+      /** Horsepower */
+      horsepower: number | null;
+      /** Owners Count */
+      owners_count: number | null;
+      /** Has Manual */
+      has_manual: boolean;
+      /** Has Spare Key */
+      has_spare_key: boolean;
+      /** Ipva Paid */
+      ipva_paid: boolean;
+      /** Licensing Paid */
+      licensing_paid: boolean;
+      /** Service History */
+      service_history: string | null;
+      /** City */
+      city: string;
+      /** State */
+      state: string;
+      /** Description */
+      description: string | null;
+      /** Accepts Financing */
+      accepts_financing: boolean;
+      /** Accepts Trade */
+      accepts_trade: boolean;
+      /** Down Payment */
+      down_payment: string | null;
+      /** Installments Count */
+      installments_count: number | null;
+      /** Estimated Installment */
+      estimated_installment: string | null;
+      /** Is Featured */
+      is_featured: boolean;
+      status: components['schemas']['VehicleStatus'];
+      /** Published At */
+      published_at: string | null;
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Images */
+      images: components['schemas']['ImageOut'][];
+      /** Features */
+      features: components['schemas']['FeatureOut'][];
+    };
+    /**
+     * VehicleIn
+     * @description Payload de criação e edição de anúncio.
+     */
+    VehicleIn: {
+      /**
+       * Brand Id
+       * Format: uuid
+       */
+      brand_id: string;
+      /**
+       * Model Id
+       * Format: uuid
+       */
+      model_id: string;
+      /** Year Manufacture */
+      year_manufacture: number;
+      /** Year Model */
+      year_model: number;
+      /** Price */
+      price: number | string;
+      /** Mileage */
+      mileage: number;
+      fuel_type: components['schemas']['FuelType'];
+      transmission: components['schemas']['TransmissionType'];
+      body_type: components['schemas']['BodyType'];
+      /** Color */
+      color: string;
+      /** City */
+      city: string;
+      /** State */
+      state: string;
+      /** Version */
+      version?: string | null;
+      /** Doors */
+      doors?: number | null;
+      /** Engine */
+      engine?: string | null;
+      /** Horsepower */
+      horsepower?: number | null;
+      /** Owners Count */
+      owners_count?: number | null;
+      /**
+       * Has Manual
+       * @default false
+       */
+      has_manual: boolean;
+      /**
+       * Has Spare Key
+       * @default false
+       */
+      has_spare_key: boolean;
+      /**
+       * Ipva Paid
+       * @default false
+       */
+      ipva_paid: boolean;
+      /**
+       * Licensing Paid
+       * @default false
+       */
+      licensing_paid: boolean;
+      /** Service History */
+      service_history?: string | null;
+      /** Description */
+      description?: string | null;
+      /**
+       * Accepts Financing
+       * @default true
+       */
+      accepts_financing: boolean;
+      /**
+       * Accepts Trade
+       * @default true
+       */
+      accepts_trade: boolean;
+      /** Down Payment */
+      down_payment?: number | string | null;
+      /** Installments Count */
+      installments_count?: number | null;
+      /**
+       * Is Featured
+       * @default false
+       */
+      is_featured: boolean;
+      /** @default draft */
+      status: components['schemas']['VehicleStatus'];
+      /** Feature Ids */
+      feature_ids?: string[];
+    };
+    /** VehiclePageOut */
+    VehiclePageOut: {
+      /** Items */
+      items: components['schemas']['VehicleSummaryOut'][];
+      meta: components['schemas']['PageMeta'];
+    };
+    /** VehicleRefOut */
+    VehicleRefOut: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Slug */
+      slug: string;
+      /** Title */
+      title: string;
+      /** Cover Image Url */
+      cover_image_url: string | null;
+    };
+    /**
+     * VehicleSort
+     * @enum {string}
+     */
+    VehicleSort:
+      'relevance' | 'price_asc' | 'price_desc' | 'year_desc' | 'mileage_asc' | 'newest';
+    /**
+     * VehicleStatus
+     * @description Ciclo de vida do anúncio.
+     *
+     *     Um booleano `vendido` não daria conta: o briefing pede publicar, marcar como
+     *     vendido, arquivar e excluir — e "excluir" aqui é ARCHIVED, não DELETE. Um
+     *     anúncio apagado por engano é receita perdida e histórico destruído.
+     * @enum {string}
+     */
+    VehicleStatus: 'draft' | 'active' | 'reserved' | 'sold' | 'archived';
+    /** VehicleStatusIn */
+    VehicleStatusIn: {
+      status: components['schemas']['VehicleStatus'];
+    };
+    /**
+     * VehicleSummaryOut
+     * @description O card da listagem.
+     */
+    VehicleSummaryOut: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Slug */
+      slug: string;
+      /** Title */
+      title: string;
+      /** Brand Name */
+      brand_name: string;
+      /** Model Name */
+      model_name: string;
+      /** Version */
+      version: string | null;
+      /** Year Manufacture */
+      year_manufacture: number;
+      /** Year Model */
+      year_model: number;
+      /** Price */
+      price: string;
+      /** Mileage */
+      mileage: number;
+      fuel_type: components['schemas']['FuelType'];
+      transmission: components['schemas']['TransmissionType'];
+      /** City */
+      city: string;
+      /** State */
+      state: string;
+      /** Is Featured */
+      is_featured: boolean;
+      status: components['schemas']['VehicleStatus'];
+      cover_image: components['schemas']['ImageOut'] | null;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    health_api_v1_health_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HealthResponse"];
-                };
-            };
-        };
+  health_api_v1_health_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    login_api_v1_auth_login_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["LoginIn"];
-            };
+        content: {
+          'application/json': components['schemas']['HealthResponse'];
         };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SessionOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+      };
     };
-    refresh_api_v1_auth_refresh_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SessionOut"];
-                };
-            };
-        };
+  };
+  login_api_v1_auth_login_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    logout_api_v1_auth_logout_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['LoginIn'];
+      };
     };
-    me_api_v1_auth_me_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UserOut"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['SessionOut'];
         };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
     };
-    list_vehicles_api_v1_vehicles_get: {
-        parameters: {
-            query?: {
-                /** @description Busca livre */
-                q?: string | null;
-                brand?: string | null;
-                model?: string | null;
-                year_min?: number | null;
-                year_max?: number | null;
-                price_min?: number | string | null;
-                price_max?: number | string | null;
-                city?: string | null;
-                fuel?: components["schemas"]["FuelType"][] | null;
-                transmission?: components["schemas"]["TransmissionType"][] | null;
-                body?: components["schemas"]["BodyType"][] | null;
-                /** @description Slugs; casa com TODOS */
-                features?: string[] | null;
-                featured?: boolean;
-                sort?: components["schemas"]["VehicleSort"];
-                page?: number;
-                page_size?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["VehiclePageOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  refresh_api_v1_auth_refresh_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    list_featured_api_v1_vehicles_featured_get: {
-        parameters: {
-            query?: {
-                limit?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["VehicleSummaryOut"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['SessionOut'];
         };
+      };
     };
-    get_filter_options_api_v1_vehicles_filters_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FilterOptionsOut"];
-                };
-            };
-        };
+  };
+  logout_api_v1_auth_logout_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    get_vehicle_api_v1_vehicles__slug__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                slug: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["VehicleDetailOut"];
-                };
-            };
-            /** @description Veículo não encontrado */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+        content?: never;
+      };
     };
-    create_appointment_api_v1_appointments_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AppointmentCreateIn"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AppointmentCreatedOut"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  me_api_v1_auth_me_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    get_stats_api_v1_admin_stats_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DashboardStatsOut"];
-                };
-            };
-            /** @description Não autenticado */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Sem permissão */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
+        content: {
+          'application/json': components['schemas']['UserOut'];
         };
+      };
     };
-    list_vehicles_api_v1_admin_vehicles_get: {
-        parameters: {
-            query?: {
-                q?: string | null;
-                status?: components["schemas"]["VehicleStatus"][] | null;
-                sort?: components["schemas"]["VehicleSort"];
-                page?: number;
-                page_size?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["VehiclePageOut"];
-                };
-            };
-            /** @description Não autenticado */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Sem permissão */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  list_vehicles_api_v1_vehicles_get: {
+    parameters: {
+      query?: {
+        /** @description Busca livre */
+        q?: string | null;
+        brand?: string | null;
+        model?: string | null;
+        year_min?: number | null;
+        year_max?: number | null;
+        price_min?: number | string | null;
+        price_max?: number | string | null;
+        city?: string | null;
+        fuel?: components['schemas']['FuelType'][] | null;
+        transmission?: components['schemas']['TransmissionType'][] | null;
+        body?: components['schemas']['BodyType'][] | null;
+        /** @description Slugs; casa com TODOS */
+        features?: string[] | null;
+        featured?: boolean;
+        sort?: components['schemas']['VehicleSort'];
+        page?: number;
+        page_size?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    create_vehicle_api_v1_admin_vehicles_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["VehicleIn"];
-            };
+        content: {
+          'application/json': components['schemas']['VehiclePageOut'];
         };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["VehicleDetailOut"];
-                };
-            };
-            /** @description Não autenticado */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Sem permissão */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
     };
-    get_vehicle_api_v1_admin_vehicles__vehicle_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                vehicle_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["VehicleDetailOut"];
-                };
-            };
-            /** @description Não autenticado */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Sem permissão */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  list_featured_api_v1_vehicles_featured_get: {
+    parameters: {
+      query?: {
+        limit?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    update_vehicle_api_v1_admin_vehicles__vehicle_id__put: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                vehicle_id: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["VehicleIn"];
-            };
+        content: {
+          'application/json': components['schemas']['VehicleSummaryOut'][];
         };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["VehicleDetailOut"];
-                };
-            };
-            /** @description Não autenticado */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Sem permissão */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
     };
-    delete_vehicle_api_v1_admin_vehicles__vehicle_id__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                vehicle_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Não autenticado */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Sem permissão */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  get_filter_options_api_v1_vehicles_filters_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    change_status_api_v1_admin_vehicles__vehicle_id__status_patch: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                vehicle_id: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["VehicleStatusIn"];
-            };
+        content: {
+          'application/json': components['schemas']['FilterOptionsOut'];
         };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["VehicleDetailOut"];
-                };
-            };
-            /** @description Não autenticado */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Sem permissão */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+      };
     };
-    duplicate_vehicle_api_v1_admin_vehicles__vehicle_id__duplicate_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                vehicle_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["VehicleDetailOut"];
-                };
-            };
-            /** @description Não autenticado */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Sem permissão */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  get_vehicle_api_v1_vehicles__slug__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
     };
-    archive_vehicle_api_v1_admin_vehicles__vehicle_id__archive_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                vehicle_id: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["VehicleDetailOut"];
-                };
-            };
-            /** @description Não autenticado */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Sem permissão */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['VehicleDetailOut'];
         };
+      };
+      /** @description Veículo não encontrado */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
     };
-    create_upload_url_api_v1_admin_vehicles__vehicle_id__images_upload_url_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                vehicle_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["UploadUrlIn"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["UploadUrlOut"];
-                };
-            };
-            /** @description Não autenticado */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Sem permissão */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  create_appointment_api_v1_appointments_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    register_image_api_v1_admin_vehicles__vehicle_id__images_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                vehicle_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ImageRegisterIn"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ImageOut"];
-                };
-            };
-            /** @description Não autenticado */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Sem permissão */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AppointmentCreateIn'];
+      };
     };
-    reorder_images_api_v1_admin_vehicles__vehicle_id__images_order_patch: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                vehicle_id: string;
-            };
-            cookie?: never;
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["ImageReorderIn"];
-            };
+        content: {
+          'application/json': components['schemas']['AppointmentCreatedOut'];
         };
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Não autenticado */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Sem permissão */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
     };
-    set_cover_api_v1_admin_vehicles__vehicle_id__images__image_id__cover_patch: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                vehicle_id: string;
-                image_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Não autenticado */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Sem permissão */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  get_stats_api_v1_admin_stats_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    delete_image_api_v1_admin_images__image_id__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                image_id: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Não autenticado */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Sem permissão */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['DashboardStatsOut'];
         };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
-    list_appointments_api_v1_admin_appointments_get: {
-        parameters: {
-            query?: {
-                customer?: string | null;
-                vehicle_id?: string | null;
-                date_from?: string | null;
-                date_to?: string | null;
-                status?: components["schemas"]["AppointmentStatus"][] | null;
-                page?: number;
-                page_size?: number;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AppointmentPageOut"];
-                };
-            };
-            /** @description Não autenticado */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Sem permissão */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  get_catalog_api_v1_admin_catalog_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    update_appointment_status_api_v1_admin_appointments__appointment_id__status_patch: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                appointment_id: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["AppointmentStatusIn"];
-            };
+        content: {
+          'application/json': components['schemas']['AdminCatalogOut'];
         };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["AppointmentOut"];
-                };
-            };
-            /** @description Não autenticado */
-            401: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Sem permissão */
-            403: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
         };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
     };
+  };
+  list_vehicles_api_v1_admin_vehicles_get: {
+    parameters: {
+      query?: {
+        q?: string | null;
+        status?: components['schemas']['VehicleStatus'][] | null;
+        sort?: components['schemas']['VehicleSort'];
+        page?: number;
+        page_size?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VehiclePageOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  create_vehicle_api_v1_admin_vehicles_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VehicleIn'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VehicleDetailOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  get_vehicle_api_v1_admin_vehicles__vehicle_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        vehicle_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VehicleDetailOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  update_vehicle_api_v1_admin_vehicles__vehicle_id__put: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        vehicle_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VehicleIn'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VehicleDetailOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  delete_vehicle_api_v1_admin_vehicles__vehicle_id__delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        vehicle_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  change_status_api_v1_admin_vehicles__vehicle_id__status_patch: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        vehicle_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['VehicleStatusIn'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VehicleDetailOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  duplicate_vehicle_api_v1_admin_vehicles__vehicle_id__duplicate_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        vehicle_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VehicleDetailOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  archive_vehicle_api_v1_admin_vehicles__vehicle_id__archive_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        vehicle_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['VehicleDetailOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  create_upload_url_api_v1_admin_vehicles__vehicle_id__images_upload_url_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        vehicle_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UploadUrlIn'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['UploadUrlOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  register_image_api_v1_admin_vehicles__vehicle_id__images_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        vehicle_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ImageRegisterIn'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ImageOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  reorder_images_api_v1_admin_vehicles__vehicle_id__images_order_patch: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        vehicle_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ImageReorderIn'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  set_cover_api_v1_admin_vehicles__vehicle_id__images__image_id__cover_patch: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        vehicle_id: string;
+        image_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  delete_image_api_v1_admin_images__image_id__delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        image_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  list_appointments_api_v1_admin_appointments_get: {
+    parameters: {
+      query?: {
+        customer?: string | null;
+        vehicle_id?: string | null;
+        date_from?: string | null;
+        date_to?: string | null;
+        status?: components['schemas']['AppointmentStatus'][] | null;
+        page?: number;
+        page_size?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AppointmentPageOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  update_appointment_status_api_v1_admin_appointments__appointment_id__status_patch: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        appointment_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['AppointmentStatusIn'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AppointmentOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
 }

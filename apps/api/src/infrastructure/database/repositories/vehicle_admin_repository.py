@@ -12,7 +12,15 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from src.core.exceptions import NotFoundError, ValidationError
-from src.domain.catalog.entities import Image, VehicleDetail, VehicleSummary
+from src.domain.catalog.entities import (
+    AdminBrandOption,
+    AdminCatalog,
+    AdminModelOption,
+    FeatureItem,
+    Image,
+    VehicleDetail,
+    VehicleSummary,
+)
 from src.domain.catalog.enums import VehicleStatus
 from src.domain.catalog.value_objects import Page, Pagination, VehicleFilters
 from src.domain.catalog.write_models import ImageWrite, VehicleWrite
@@ -48,6 +56,41 @@ class SqlAlchemyVehicleAdminRepository:
             select(Vehicle).where(Vehicle.id == vehicle_id).options(*_FULL_LOAD)
         )
         return _to_detail(vehicle) if vehicle else None
+
+    async def get_catalog(self) -> AdminCatalog:
+        """Todas as marcas, modelos e opcionais — inclusive os nunca usados."""
+        rows = await self._session.execute(
+            select(Brand.id, Brand.name, VehicleModel.id, VehicleModel.name)
+            # LEFT JOIN de propósito: uma marca recém-cadastrada, ainda sem
+            # modelos, precisa aparecer na lista. Com INNER JOIN ela sumiria — e
+            # o admin nunca conseguiria cadastrar o primeiro modelo dela.
+            .outerjoin(VehicleModel, VehicleModel.brand_id == Brand.id)
+            .order_by(Brand.name, VehicleModel.name)
+        )
+
+        grouped: dict[tuple[uuid.UUID, str], list[AdminModelOption]] = {}
+        for brand_id, brand_name, model_id, model_name in rows:
+            key = (brand_id, brand_name)
+            grouped.setdefault(key, [])
+            if model_id is not None:
+                grouped[key].append(AdminModelOption(id=model_id, name=model_name))
+
+        brands = [
+            AdminBrandOption(id=brand_id, name=name, models=models)
+            for (brand_id, name), models in grouped.items()
+        ]
+
+        features = await self._session.scalars(
+            select(Feature).order_by(Feature.category, Feature.name)
+        )
+
+        return AdminCatalog(
+            brands=brands,
+            features=[
+                FeatureItem(id=f.id, name=f.name, slug=f.slug, category=f.category)
+                for f in features
+            ],
+        )
 
     async def search_admin(
         self,

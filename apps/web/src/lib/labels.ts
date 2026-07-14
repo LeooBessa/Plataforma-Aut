@@ -1,9 +1,4 @@
-import type {
-  BodyType,
-  FuelType,
-  TransmissionType,
-  VehicleStatus,
-} from '@/lib/api';
+import type { BodyType, FuelType, TransmissionType, VehicleStatus } from '@/lib/api';
 
 /**
  * Dicionário PT-BR dos enums da API.

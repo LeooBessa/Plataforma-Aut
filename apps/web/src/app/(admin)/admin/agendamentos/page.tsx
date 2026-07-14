@@ -44,7 +44,9 @@ export default function AdminAgendamentosPage() {
       if (customer) params.set('customer', customer);
       if (status) params.set('status', status);
 
-      const { data } = await http.get<AppointmentPage>(`/admin/appointments?${params.toString()}`);
+      const { data } = await http.get<AppointmentPage>(
+        `/admin/appointments?${params.toString()}`,
+      );
       setPage(data);
       setError(null);
     } catch (err) {
@@ -72,15 +74,15 @@ export default function AdminAgendamentosPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-2xl font-bold tracking-tight text-ink-950">Agendamentos</h1>
-        <p className="mt-1 text-sm text-ink-500">
+        <h1 className="text-ink-950 text-2xl font-bold tracking-tight">Agendamentos</h1>
+        <p className="text-ink-500 mt-1 text-sm">
           Cada linha é um cliente que quer ver um carro.
         </p>
       </header>
 
       <div className="flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
-          <Search className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-ink-400" />
+          <Search className="text-ink-400 pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
           <Input
             type="search"
             value={customer}
@@ -108,27 +110,29 @@ export default function AdminAgendamentosPage() {
       {error && (
         <div
           role="alert"
-          className="flex items-start gap-3 rounded-card bg-danger-50 p-4 text-sm text-danger-700 ring-1 ring-inset ring-danger-500/20"
+          className="rounded-card bg-danger-50 text-danger-700 ring-danger-500/20 flex items-start gap-3 p-4 text-sm ring-1 ring-inset"
         >
           <AlertCircle className="mt-0.5 size-4 shrink-0" />
           {error}
         </div>
       )}
 
-      <div className="overflow-hidden rounded-card bg-white shadow-card ring-1 ring-ink-100">
+      <div className="rounded-card shadow-card ring-ink-100 overflow-hidden bg-white ring-1">
         {page === null ? (
-          <div className="divide-y divide-ink-100">
+          <div className="divide-ink-100 divide-y">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="space-y-2 p-5">
-                <div className="h-4 w-1/3 animate-pulse rounded bg-ink-100" />
-                <div className="h-3 w-1/2 animate-pulse rounded bg-ink-100" />
+                <div className="bg-ink-100 h-4 w-1/3 animate-pulse rounded" />
+                <div className="bg-ink-100 h-3 w-1/2 animate-pulse rounded" />
               </div>
             ))}
           </div>
         ) : page.items.length === 0 ? (
-          <p className="p-12 text-center text-sm text-ink-500">Nenhum agendamento encontrado.</p>
+          <p className="text-ink-500 p-12 text-center text-sm">
+            Nenhum agendamento encontrado.
+          </p>
         ) : (
-          <ul className="divide-y divide-ink-100">
+          <ul className="divide-ink-100 divide-y">
             {page.items.map((appointment) => {
               // Concluído ou cancelado é histórico: não muda mais. A API recusa,
               // e a interface não oferece o botão — evitar o erro é melhor do
@@ -141,21 +145,23 @@ export default function AdminAgendamentosPage() {
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="font-semibold text-ink-900">{appointment.customer_name}</p>
+                        <p className="text-ink-900 font-semibold">
+                          {appointment.customer_name}
+                        </p>
                         <Badge tone={STATUS_TONE[appointment.status]}>
                           {STATUS_LABELS[appointment.status]}
                         </Badge>
                       </div>
 
-                      <p className="mt-1 text-sm text-ink-600">{appointment.vehicle.title}</p>
+                      <p className="text-ink-600 mt-1 text-sm">{appointment.vehicle.title}</p>
 
-                      <p className="mt-1 text-sm font-medium text-ink-900">
+                      <p className="text-ink-900 mt-1 text-sm font-medium">
                         {formatDate(appointment.scheduled_date)} às{' '}
                         {formatTime(appointment.scheduled_time)}
                       </p>
 
                       {appointment.notes && (
-                        <p className="mt-2 rounded-btn bg-ink-50 p-2.5 text-sm text-ink-600">
+                        <p className="rounded-btn bg-ink-50 text-ink-600 mt-2 p-2.5 text-sm">
                           {appointment.notes}
                         </p>
                       )}
@@ -166,7 +172,7 @@ export default function AdminAgendamentosPage() {
                       <div className="mt-3 flex flex-wrap gap-2">
                         <a
                           href={`tel:+55${appointment.phone}`}
-                          className="inline-flex items-center gap-1.5 rounded-btn bg-ink-100 px-2.5 py-1.5 text-xs font-medium text-ink-700 transition-colors hover:bg-ink-200"
+                          className="rounded-btn bg-ink-100 text-ink-700 hover:bg-ink-200 inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium transition-colors"
                         >
                           <Phone className="size-3.5" />
                           {formatPhone(appointment.phone)}
@@ -180,7 +186,7 @@ export default function AdminAgendamentosPage() {
                             )}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1.5 rounded-btn bg-success-50 px-2.5 py-1.5 text-xs font-medium text-success-700 transition-colors hover:bg-success-100"
+                            className="rounded-btn bg-success-50 text-success-700 hover:bg-success-100 inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium transition-colors"
                           >
                             <MessageCircle className="size-3.5" />
                             WhatsApp

@@ -31,14 +31,14 @@ export function VehicleCard({
     <Link
       href={`/veiculos/${vehicle.slug}`}
       className={cn(
-        'group relative flex flex-col overflow-hidden rounded-card bg-white',
-        'shadow-card ring-1 ring-ink-100',
+        'group rounded-card relative flex flex-col overflow-hidden bg-white',
+        'shadow-card ring-ink-100 ring-1',
         'transition-[box-shadow,transform] duration-300 ease-out',
-        'hover:-translate-y-1 hover:shadow-card-hover',
+        'hover:shadow-card-hover hover:-translate-y-1',
         'motion-reduce:hover:translate-y-0',
       )}
     >
-      <div className="relative aspect-[4/3] overflow-hidden bg-ink-100">
+      <div className="bg-ink-100 relative aspect-[4/3] overflow-hidden">
         {cover ? (
           <Image
             src={cover.url}
@@ -61,12 +61,12 @@ export function VehicleCard({
             )}
           />
         ) : (
-          <div className="flex h-full items-center justify-center text-sm text-ink-400">
+          <div className="text-ink-400 flex h-full items-center justify-center text-sm">
             Sem foto
           </div>
         )}
 
-        <div className="absolute left-3 top-3 flex gap-2">
+        <div className="absolute top-3 left-3 flex gap-2">
           {vehicle.is_featured && !isSold && <Badge tone="dark">Destaque</Badge>}
           {isReserved && <Badge tone="warning">Reservado</Badge>}
           {isSold && <Badge tone="neutral">Vendido</Badge>}
@@ -74,13 +74,15 @@ export function VehicleCard({
       </div>
 
       <div className="flex flex-1 flex-col p-4">
-        <h3 className="line-clamp-2 font-semibold leading-snug text-ink-900">{vehicle.title}</h3>
+        <h3 className="text-ink-900 line-clamp-2 leading-snug font-semibold">
+          {vehicle.title}
+        </h3>
 
-        <p className="mt-1 text-sm text-ink-500">
+        <p className="text-ink-500 mt-1 text-sm">
           {formatYears(vehicle.year_manufacture, vehicle.year_model)}
         </p>
 
-        <dl className="mt-3 grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs text-ink-600">
+        <dl className="text-ink-600 mt-3 grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs">
           <Spec icon={<Gauge className="size-3.5" />} label={formatMileage(vehicle.mileage)} />
           <Spec icon={<Fuel className="size-3.5" />} label={FUEL_LABELS[vehicle.fuel_type]} />
           <Spec
@@ -95,10 +97,10 @@ export function VehicleCard({
             linhas e outro só uma. Cards com preços em alturas diferentes ficam
             visualmente bagunçados. */}
         <div className="mt-auto flex items-end justify-between pt-4">
-          <p className="text-xl font-bold tracking-tight text-ink-950">
+          <p className="text-ink-950 text-xl font-bold tracking-tight">
             {formatPrice(vehicle.price)}
           </p>
-          <span className="text-sm font-semibold text-brand-600 transition-colors group-hover:text-brand-700">
+          <span className="text-brand-600 group-hover:text-brand-700 text-sm font-semibold transition-colors">
             Ver detalhes
           </span>
         </div>
@@ -119,17 +121,17 @@ function Spec({ icon, label }: { icon: React.ReactNode; label: string }) {
 /** Esqueleto exibido enquanto a listagem carrega. */
 export function VehicleCardSkeleton() {
   return (
-    <div className="overflow-hidden rounded-card bg-white shadow-card ring-1 ring-ink-100">
-      <div className="aspect-[4/3] animate-pulse bg-ink-100" />
+    <div className="rounded-card shadow-card ring-ink-100 overflow-hidden bg-white ring-1">
+      <div className="bg-ink-100 aspect-[4/3] animate-pulse" />
       <div className="space-y-3 p-4">
-        <div className="h-4 w-3/4 animate-pulse rounded bg-ink-100" />
-        <div className="h-3 w-1/3 animate-pulse rounded bg-ink-100" />
+        <div className="bg-ink-100 h-4 w-3/4 animate-pulse rounded" />
+        <div className="bg-ink-100 h-3 w-1/3 animate-pulse rounded" />
         <div className="grid grid-cols-2 gap-2 pt-1">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="h-3 animate-pulse rounded bg-ink-100" />
+            <div key={i} className="bg-ink-100 h-3 animate-pulse rounded" />
           ))}
         </div>
-        <div className="h-6 w-1/2 animate-pulse rounded bg-ink-100" />
+        <div className="bg-ink-100 h-6 w-1/2 animate-pulse rounded" />
       </div>
     </div>
   );

@@ -23,6 +23,7 @@ from src.application.catalog.admin_use_cases import (
     DeleteImageUseCase,
     DeleteVehicleUseCase,
     DuplicateVehicleUseCase,
+    GetAdminCatalogUseCase,
     GetAdminVehicleUseCase,
     ListAdminVehiclesUseCase,
     PrepareImageUploadUseCase,
@@ -249,6 +250,10 @@ def get_admin_vehicle_use_case(repo: VehicleAdminRepositoryDep) -> GetAdminVehic
     return GetAdminVehicleUseCase(repo)
 
 
+def get_admin_catalog_use_case(repo: VehicleAdminRepositoryDep) -> GetAdminCatalogUseCase:
+    return GetAdminCatalogUseCase(repo)
+
+
 def get_create_vehicle_use_case(repo: VehicleAdminRepositoryDep) -> CreateVehicleUseCase:
     return CreateVehicleUseCase(repo)
 
@@ -301,6 +306,7 @@ ListAdminVehiclesDep = Annotated[
     ListAdminVehiclesUseCase, Depends(get_list_admin_vehicles_use_case)
 ]
 GetAdminVehicleDep = Annotated[GetAdminVehicleUseCase, Depends(get_admin_vehicle_use_case)]
+AdminCatalogDep = Annotated[GetAdminCatalogUseCase, Depends(get_admin_catalog_use_case)]
 CreateVehicleDep = Annotated[CreateVehicleUseCase, Depends(get_create_vehicle_use_case)]
 UpdateVehicleDep = Annotated[UpdateVehicleUseCase, Depends(get_update_vehicle_use_case)]
 ChangeVehicleStatusDep = Annotated[ChangeVehicleStatusUseCase, Depends(get_change_status_use_case)]

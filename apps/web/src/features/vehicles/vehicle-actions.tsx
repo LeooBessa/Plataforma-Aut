@@ -65,7 +65,7 @@ export function VehicleActions({ slug, title }: { slug: string; title: string })
         >
           {shared ? (
             <>
-              <Check className="size-4 text-success-600" />
+              <Check className="text-success-600 size-4" />
               <span className="hidden sm:inline">Copiado!</span>
             </>
           ) : (

@@ -57,10 +57,10 @@ export function Field({
 }) {
   return (
     <div className={cn('space-y-1.5', className)}>
-      <label htmlFor={htmlFor} className="block text-sm font-medium text-ink-800">
+      <label htmlFor={htmlFor} className="text-ink-800 block text-sm font-medium">
         {label}
         {required && (
-          <span className="ml-0.5 text-danger-600" aria-hidden>
+          <span className="text-danger-600 ml-0.5" aria-hidden>
             *
           </span>
         )}
@@ -68,12 +68,12 @@ export function Field({
 
       {children}
 
-      {hint && !error && <p className="text-xs text-ink-500">{hint}</p>}
+      {hint && !error && <p className="text-ink-500 text-xs">{hint}</p>}
 
       {error && (
         // `role="alert"` faz o leitor de tela anunciar o erro assim que ele
         // aparece, sem o usuário precisar navegar até lá.
-        <p id={`${htmlFor}-error`} role="alert" className="text-xs font-medium text-danger-600">
+        <p id={`${htmlFor}-error`} role="alert" className="text-danger-600 text-xs font-medium">
           {error}
         </p>
       )}

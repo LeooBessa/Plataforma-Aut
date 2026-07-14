@@ -80,6 +80,9 @@ class VehicleDetailOut(BaseModel):
     slug: str
     title: str
 
+    # Os IDs alimentam o formulário de edição do painel; os nomes, a exibição.
+    brand_id: UUID
+    model_id: UUID
     brand_name: str
     model_name: str
     version: str | None

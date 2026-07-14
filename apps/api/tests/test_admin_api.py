@@ -673,3 +673,91 @@ async def test_dashboard(
     # Valor do estoque conta só o que está À VENDA. Somar o vendido (999.999)
     # inflaria o número e ele deixaria de significar qualquer coisa.
     assert stats["inventory_value"] == 150000.0
+
+
+# ------------------------------------------------------------------- catálogo
+
+
+async def test_catalogo_do_admin_mostra_marcas_SEM_veiculo(  # noqa: N802
+    client: AsyncClient, super_admin: User, catalogo: dict[str, object], dealership: Dealership
+) -> None:
+    """O oposto do endpoint público de filtros — e é de propósito.
+
+    O filtro público só mostra o que TEM anúncio publicado (oferecer um filtro
+    que devolve zero resultados frustra o visitante). Já o painel precisa ver
+    TODAS as marcas: senão seria impossível cadastrar o primeiro carro de uma
+    marca nova — ela não apareceria na lista.
+
+    Aqui nenhum veículo existe, e ainda assim Toyota e Honda têm que aparecer.
+    """
+    headers = await _auth(client, super_admin)
+
+    admin_response = await client.get(f"{ADMIN}/catalog", headers=headers)
+    publico = await client.get("/api/v1/vehicles/filters")
+
+    marcas_admin = {b["name"] for b in admin_response.json()["brands"]}
+    marcas_publicas = {b["name"] for b in publico.json()["brands"]}
+
+    assert marcas_admin == {"Toyota", "Honda"}, "o painel não vê marcas sem veículo"
+    assert marcas_publicas == set(), "o site público está mostrando marca sem anúncio"
+
+
+async def test_catalogo_devolve_ids_e_nao_slugs(
+    client: AsyncClient, super_admin: User, catalogo: dict[str, object], dealership: Dealership
+) -> None:
+    """O cadastro grava `model_id` (chave estrangeira). O site público usa slug
+    porque ele vai na URL. Trocar um pelo outro faria o formulário enviar lixo."""
+    headers = await _auth(client, super_admin)
+
+    body = (await client.get(f"{ADMIN}/catalog", headers=headers)).json()
+    toyota = next(b for b in body["brands"] if b["name"] == "Toyota")
+
+    assert toyota["id"] == str(catalogo["brand"].id)  # type: ignore[attr-defined]
+    assert toyota["models"][0]["id"] == str(catalogo["model"].id)  # type: ignore[attr-defined]
+
+
+async def test_ficha_devolve_os_IDS_de_marca_e_modelo(  # noqa: N802
+    client: AsyncClient, super_admin: User, catalogo: dict[str, object], dealership: Dealership
+) -> None:
+    """Sem os IDs, o formulário de edição abriria com marca e modelo em branco —
+    e SALVAR apagaria os dois. O site exibe "Toyota"; o banco grava `brand_id`."""
+    headers = await _auth(client, super_admin)
+
+    criado = (
+        await client.post(f"{ADMIN}/vehicles", json=_payload(catalogo), headers=headers)
+    ).json()
+
+    ficha = (await client.get(f"{ADMIN}/vehicles/{criado['id']}", headers=headers)).json()
+
+    assert ficha["brand_id"] == str(catalogo["brand"].id)  # type: ignore[attr-defined]
+    assert ficha["model_id"] == str(catalogo["model"].id)  # type: ignore[attr-defined]
+    # Os nomes continuam lá, para exibição.
+    assert ficha["brand_name"] == "Toyota"
+
+
+async def test_editar_preserva_marca_e_modelo(
+    client: AsyncClient, super_admin: User, catalogo: dict[str, object], dealership: Dealership
+) -> None:
+    """O ciclo completo: criar → ler a ficha → reenviar → nada se perde."""
+    headers = await _auth(client, super_admin)
+
+    criado = (
+        await client.post(f"{ADMIN}/vehicles", json=_payload(catalogo), headers=headers)
+    ).json()
+
+    # Simula o que o formulário faz: relê a ficha e reenvia com um campo alterado.
+    editado = await client.put(
+        f"{ADMIN}/vehicles/{criado['id']}",
+        json=_payload(
+            catalogo,
+            brand_id=criado["brand_id"],
+            model_id=criado["model_id"],
+            price="99000.00",
+        ),
+        headers=headers,
+    )
+
+    assert editado.status_code == 200
+    assert editado.json()["brand_name"] == "Toyota"
+    assert editado.json()["model_name"] == "Corolla"
+    assert editado.json()["price"] == "99000.00"

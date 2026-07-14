@@ -22,13 +22,13 @@ export function Navbar() {
     // `sticky top-0` em vez de `fixed`: a navbar acompanha a rolagem sem tirar o
     // conteúdo do fluxo. Com `fixed`, seria preciso um padding compensatório no
     // topo de todas as páginas — e alguém sempre esquece numa delas.
-    <header className="sticky top-0 z-50 border-b border-ink-100 bg-white/85 shadow-nav backdrop-blur-md">
+    <header className="border-ink-100 shadow-nav sticky top-0 z-50 border-b bg-white/85 backdrop-blur-md">
       <nav className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="Página inicial">
-          <span className="flex size-9 items-center justify-center rounded-btn bg-ink-950 text-white">
+          <span className="rounded-btn bg-ink-950 flex size-9 items-center justify-center text-white">
             <Car className="size-5" />
           </span>
-          <span className="text-lg font-bold tracking-tight text-ink-950">
+          <span className="text-ink-950 text-lg font-bold tracking-tight">
             Auto<span className="text-brand-600">Premium</span>
           </span>
         </Link>
@@ -60,7 +60,7 @@ export function Navbar() {
         <div className="ml-auto flex items-center gap-2">
           <Link
             href="/veiculos"
-            className="flex size-10 items-center justify-center rounded-btn text-ink-600 transition-colors hover:bg-ink-100 hover:text-ink-950"
+            className="rounded-btn text-ink-600 hover:bg-ink-100 hover:text-ink-950 flex size-10 items-center justify-center transition-colors"
             aria-label="Pesquisar veículos"
           >
             <Search className="size-5" />
@@ -68,7 +68,7 @@ export function Navbar() {
 
           <Link
             href="/admin/login"
-            className="hidden items-center gap-2 rounded-btn border border-ink-200 px-4 py-2 text-sm font-medium text-ink-700 transition-colors hover:bg-ink-50 sm:flex"
+            className="rounded-btn border-ink-200 text-ink-700 hover:bg-ink-50 hidden items-center gap-2 border px-4 py-2 text-sm font-medium transition-colors sm:flex"
           >
             <LogIn className="size-4" />
             Admin
@@ -77,7 +77,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
-            className="flex size-10 items-center justify-center rounded-btn text-ink-700 transition-colors hover:bg-ink-100 md:hidden"
+            className="rounded-btn text-ink-700 hover:bg-ink-100 flex size-10 items-center justify-center transition-colors md:hidden"
             aria-label={open ? 'Fechar menu' : 'Abrir menu'}
             aria-expanded={open}
           >
@@ -87,7 +87,7 @@ export function Navbar() {
       </nav>
 
       {open && (
-        <div className="border-t border-ink-100 bg-white md:hidden">
+        <div className="border-ink-100 border-t bg-white md:hidden">
           <ul className="space-y-1 px-4 py-3">
             {LINKS.map((link) => (
               <li key={link.href}>
@@ -95,7 +95,7 @@ export function Navbar() {
                   href={link.href}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    'block rounded-btn px-3 py-2.5 text-sm font-medium',
+                    'rounded-btn block px-3 py-2.5 text-sm font-medium',
                     pathname === link.href
                       ? 'bg-ink-100 text-ink-950'
                       : 'text-ink-700 hover:bg-ink-50',
@@ -109,7 +109,7 @@ export function Navbar() {
               <Link
                 href="/admin/login"
                 onClick={() => setOpen(false)}
-                className="flex items-center gap-2 rounded-btn px-3 py-2.5 text-sm font-medium text-ink-700 hover:bg-ink-50"
+                className="rounded-btn text-ink-700 hover:bg-ink-50 flex items-center gap-2 px-3 py-2.5 text-sm font-medium"
               >
                 <LogIn className="size-4" />
                 Área do administrador

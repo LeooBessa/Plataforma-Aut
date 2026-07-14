@@ -3,7 +3,7 @@ from __future__ import annotations
 from decimal import Decimal
 from uuid import UUID
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from src.domain.catalog.enums import (
     BodyType,
@@ -12,6 +12,7 @@ from src.domain.catalog.enums import (
     VehicleStatus,
 )
 from src.domain.catalog.write_models import ImageWrite, VehicleWrite
+from src.presentation.v1.schemas.vehicle import FeatureOut
 
 # Teto de ano. Concessionária anuncia modelo do ano seguinte (é normal em
 # outubro já ter o modelo do ano que vem), mas não do ano depois desse.
@@ -108,6 +109,34 @@ class VehicleIn(BaseModel):
 
 class VehicleStatusIn(BaseModel):
     status: VehicleStatus
+
+
+class AdminModelOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    name: str
+
+
+class AdminBrandOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    name: str
+    models: list[AdminModelOut]
+
+
+class AdminCatalogOut(BaseModel):
+    """Marcas, modelos e opcionais do formulário de cadastro.
+
+    Todos — inclusive os que ainda não têm veículo. Diferente do endpoint público
+    de filtros, que só mostra o que está publicado.
+    """
+
+    model_config = ConfigDict(from_attributes=True)
+
+    brands: list[AdminBrandOut]
+    features: list[FeatureOut]
 
 
 class UploadUrlIn(BaseModel):

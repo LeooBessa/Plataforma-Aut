@@ -151,3 +151,33 @@ export function getVehicle(slug: string): Promise<VehicleDetail> {
     tags: ['vehicles', `vehicle:${slug}`],
   });
 }
+
+/**
+ * Executa uma chamada à API sem derrubar a página se ela falhar.
+ *
+ * ============================================================================
+ * POR QUE ISTO EXISTE
+ * ============================================================================
+ * A home e a listagem são geradas ESTATICAMENTE no build. Se a API estiver fora
+ * naquele instante — um deploy em andamento, um cold start, um blip de rede — o
+ * build inteiro do site falha. Descobri isso na prática: o `next build` abortou
+ * com `ECONNREFUSED` porque a API não estava rodando.
+ *
+ * Em produção, isso significa que uma instabilidade momentânea da API impediria
+ * o deploy do SITE. Pior: numa Vercel onde web e API são projetos separados, o
+ * site poderia nunca conseguir buildar antes da API existir — um impasse.
+ *
+ * Com este wrapper, a página é publicada mesmo assim, mostrando um aviso honesto
+ * em vez de conteúdo. O ISR a regenera assim que a API voltar.
+ *
+ * O que NÃO fazemos: fingir que "não há veículos". Isso esconderia uma queda da
+ * API atrás de uma tela plausível — e ninguém iria investigar.
+ */
+export async function safely<T>(promise: Promise<T>): Promise<T | null> {
+  try {
+    return await promise;
+  } catch (error) {
+    console.error('[api] falha ao carregar dados:', error);
+    return null;
+  }
+}

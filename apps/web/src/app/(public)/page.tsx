@@ -4,7 +4,7 @@ import { ArrowRight, BadgeCheck, ShieldCheck, Wrench } from 'lucide-react';
 import { ButtonLink } from '@/components/ui/button';
 import { SearchFilters } from '@/features/vehicles/search-filters';
 import { VehicleCard, VehicleCardSkeleton } from '@/features/vehicles/vehicle-card';
-import { getFilterOptions, listFeaturedVehicles, listVehicles } from '@/lib/api';
+import { getFilterOptions, listFeaturedVehicles, listVehicles, safely } from '@/lib/api';
 
 /**
  * Home.
@@ -46,20 +46,20 @@ export default function HomePage() {
 
 function Hero() {
   return (
-    <section className="relative overflow-hidden bg-ink-950">
+    <section className="bg-ink-950 relative overflow-hidden">
       {/* Brilho azul difuso ao fundo — dá profundidade sem competir com o texto. */}
       <div
         aria-hidden
-        className="absolute -right-40 -top-40 size-[36rem] rounded-full bg-brand-600/25 blur-3xl"
+        className="bg-brand-600/25 absolute -top-40 -right-40 size-[36rem] rounded-full blur-3xl"
       />
       <div
         aria-hidden
-        className="absolute -bottom-32 -left-32 size-[28rem] rounded-full bg-brand-500/10 blur-3xl"
+        className="bg-brand-500/10 absolute -bottom-32 -left-32 size-[28rem] rounded-full blur-3xl"
       />
 
       <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
         <div className="max-w-2xl">
-          <p className="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-brand-200 ring-1 ring-inset ring-white/15">
+          <p className="text-brand-200 inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold ring-1 ring-white/15 ring-inset">
             <BadgeCheck className="size-3.5" />
             Procedência verificada
           </p>
@@ -71,7 +71,7 @@ function Hero() {
             O carro certo, sem <span className="text-brand-400">surpresa nenhuma</span>.
           </h1>
 
-          <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-300 text-pretty">
+          <p className="text-ink-300 mt-6 max-w-xl text-lg leading-relaxed text-pretty">
             Seminovos selecionados, revisados e com histórico transparente. Escolha o seu,
             agende uma visita e faça o test drive.
           </p>
@@ -97,7 +97,11 @@ function Hero() {
 }
 
 async function SearchSection() {
-  const options = await getFilterOptions();
+  const options = await safely(getFilterOptions());
+
+  // Sem as opções, o formulário de busca não tem o que oferecer. Some, em vez de
+  // aparecer vazio e quebrado.
+  if (!options) return null;
 
   return (
     // `relative z-10` é OBRIGATÓRIO, não estético.
@@ -120,9 +124,9 @@ async function SearchSection() {
 }
 
 async function FeaturedSection() {
-  const vehicles = await listFeaturedVehicles(3);
+  const vehicles = await safely(listFeaturedVehicles(3));
 
-  if (vehicles.length === 0) return null;
+  if (!vehicles || vehicles.length === 0) return null;
 
   return (
     <section className="mx-auto mt-16 max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -145,7 +149,23 @@ async function FeaturedSection() {
 }
 
 async function LatestSection() {
-  const page = await listVehicles({ sort: 'newest', page_size: 6 });
+  const page = await safely(listVehicles({ sort: 'newest', page_size: 6 }));
+
+  // Falha da API e catálogo vazio são coisas DIFERENTES, e a mensagem precisa
+  // ser diferente. Dizer "nenhum veículo disponível" quando a API caiu esconde
+  // a falha atrás de uma tela plausível — e ninguém vai investigar.
+  if (!page) {
+    return (
+      <section className="mx-auto mt-16 max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="rounded-card border border-dashed border-ink-200 py-16 text-center">
+          <p className="font-medium text-ink-900">Não foi possível carregar os veículos.</p>
+          <p className="mt-1 text-sm text-ink-500">
+            Estamos com uma instabilidade momentânea. Tente novamente em instantes.
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   if (page.items.length === 0) {
     return (
@@ -200,14 +220,14 @@ function TrustSection() {
 
   return (
     <section className="mx-auto mt-20 max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div className="grid gap-6 rounded-card bg-ink-50 p-8 ring-1 ring-ink-100 sm:grid-cols-3 sm:p-10">
+      <div className="rounded-card bg-ink-50 ring-ink-100 grid gap-6 p-8 ring-1 sm:grid-cols-3 sm:p-10">
         {items.map(({ icon: Icon, title, text }) => (
           <div key={title}>
-            <span className="flex size-11 items-center justify-center rounded-btn bg-white text-brand-600 shadow-sm ring-1 ring-ink-100">
+            <span className="rounded-btn text-brand-600 ring-ink-100 flex size-11 items-center justify-center bg-white shadow-sm ring-1">
               <Icon className="size-5" />
             </span>
-            <h3 className="mt-4 font-semibold text-ink-900">{title}</h3>
-            <p className="mt-1.5 text-sm leading-relaxed text-ink-600">{text}</p>
+            <h3 className="text-ink-900 mt-4 font-semibold">{title}</h3>
+            <p className="text-ink-600 mt-1.5 text-sm leading-relaxed">{text}</p>
           </div>
         ))}
       </div>
@@ -227,12 +247,12 @@ function SectionHeader({
   return (
     <div className="flex items-end justify-between gap-4">
       <div>
-        <h2 className="text-2xl font-bold tracking-tight text-ink-950 sm:text-3xl">{title}</h2>
-        <p className="mt-1 text-sm text-ink-500">{subtitle}</p>
+        <h2 className="text-ink-950 text-2xl font-bold tracking-tight sm:text-3xl">{title}</h2>
+        <p className="text-ink-500 mt-1 text-sm">{subtitle}</p>
       </div>
       <a
         href={href}
-        className="hidden shrink-0 items-center gap-1 text-sm font-semibold text-brand-600 hover:text-brand-700 sm:flex"
+        className="text-brand-600 hover:text-brand-700 hidden shrink-0 items-center gap-1 text-sm font-semibold sm:flex"
       >
         Ver todos
         <ArrowRight className="size-4" />
@@ -246,7 +266,7 @@ function SearchSkeleton() {
     // Mesmo `z-10` do componente real: senão o esqueleto também sumiria atrás
     // do banner, e a tela "piscaria" ao trocar um pelo outro.
     <section className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div className="-mt-10 h-24 animate-pulse rounded-card bg-white shadow-card lg:-mt-12" />
+      <div className="rounded-card shadow-card -mt-10 h-24 animate-pulse bg-white lg:-mt-12" />
     </section>
   );
 }
@@ -254,7 +274,7 @@ function SearchSkeleton() {
 function GridSkeleton({ title, count }: { title: string; count: number }) {
   return (
     <section className="mx-auto mt-16 max-w-7xl px-4 sm:px-6 lg:px-8">
-      <h2 className="text-2xl font-bold tracking-tight text-ink-950 sm:text-3xl">{title}</h2>
+      <h2 className="text-ink-950 text-2xl font-bold tracking-tight sm:text-3xl">{title}</h2>
       <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: count }).map((_, i) => (
           <VehicleCardSkeleton key={i} />

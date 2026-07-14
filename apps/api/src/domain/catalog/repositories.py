@@ -16,6 +16,7 @@ from typing import Protocol
 from uuid import UUID
 
 from src.domain.catalog.entities import (
+    AdminCatalog,
     FilterOptions,
     Image,
     VehicleDetail,
@@ -69,6 +70,14 @@ class VehicleAdminRepository(Protocol):
 
     async def get_by_id(self, vehicle_id: UUID) -> VehicleDetail | None:
         """Qualquer status — é a visão do admin."""
+        ...
+
+    async def get_catalog(self) -> AdminCatalog:
+        """TODAS as marcas, modelos e opcionais — mesmo os sem veículo algum.
+
+        Diferente de `get_filter_options`, que só mostra o que tem anúncio
+        publicado. Ver o comentário em `AdminCatalog`.
+        """
         ...
 
     async def search_admin(
