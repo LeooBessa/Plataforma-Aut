@@ -67,6 +67,9 @@ ignore = [
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["S105", "S106"]  # senhas hardcoded são esperadas em fixtures
+# Migrations são código gerado: a expressão SQL da coluna `search_vector` não
+# cabe em 100 colunas e quebrá-la à mão só tornaria o diff do autogenerate ruidoso.
+"migrations/versions/*" = ["E501"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["src"]

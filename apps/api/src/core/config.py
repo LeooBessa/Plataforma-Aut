@@ -12,7 +12,7 @@ from functools import lru_cache
 from typing import Annotated, Literal
 
 from pydantic import Field, SecretStr, field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
 class Environment(StrEnum):
@@ -38,6 +38,10 @@ class Settings(BaseSettings):
     # direto com o Postgres (5432). Ver .env.example.
     database_url: str = ""
     database_direct_url: str = ""
+    # Banco à parte para os testes de integração. Eles truncam tabelas entre um
+    # teste e outro — apontar isso para o banco de desenvolvimento apagaria o
+    # trabalho de quem estivesse usando a aplicação.
+    test_database_url: str = ""
 
     # --- Auth ---
     jwt_secret_key: SecretStr = SecretStr("dev-only-insecure-secret-change-me")
@@ -47,7 +51,10 @@ class Settings(BaseSettings):
     cookie_domain: str | None = None
 
     # --- CORS ---
-    cors_origins: list[str] = ["http://localhost:3000"]
+    # `NoDecode` desliga o parse automático (o pydantic-settings tentaria
+    # json.loads em campos de lista, e `CORS_ORIGINS=http://a,http://b` não é
+    # JSON). O validator abaixo faz o split manualmente.
+    cors_origins: Annotated[list[str], NoDecode] = ["http://localhost:3000"]
 
     # --- Supabase Storage ---
     supabase_url: str = ""
