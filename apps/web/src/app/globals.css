@@ -1,26 +1,102 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ============================================================================
+   TOKENS DE DESIGN
+   ============================================================================
+   No Tailwind v4 não existe mais `tailwind.config.js`: os tokens são variáveis
+   CSS dentro de `@theme`, e cada uma vira uma utility automaticamente
+   (`--color-brand-600` → `bg-brand-600`, `text-brand-600`, `border-brand-600`).
+
+   A paleta é a do briefing — preto, branco, cinza, azul como cor principal e
+   verde para ações positivas. Ela mora aqui, num lugar só, para que ninguém
+   escreva `#2563eb` solto num componente: no dia em que a marca mudar de azul,
+   muda-se uma linha, não trinta arquivos.
+   ============================================================================ */
+
+@theme {
+  /* --- Azul: a cor da marca. Ações primárias, links, foco. --------------- */
+  --color-brand-50: oklch(0.97 0.014 254.6);
+  --color-brand-100: oklch(0.932 0.032 255.6);
+  --color-brand-200: oklch(0.882 0.059 254.1);
+  --color-brand-300: oklch(0.809 0.105 251.8);
+  --color-brand-400: oklch(0.707 0.165 254.6);
+  --color-brand-500: oklch(0.623 0.214 259.8);
+  --color-brand-600: oklch(0.546 0.245 262.9);
+  --color-brand-700: oklch(0.488 0.243 264.4);
+  --color-brand-800: oklch(0.424 0.199 265.6);
+  --color-brand-900: oklch(0.379 0.146 265.5);
+
+  /* --- Verde: SÓ para o que é positivo — "Agendar visita", "Publicado",
+         "Confirmado". Usar verde em algo neutro dilui o sinal, e aí ele
+         deixa de significar coisa alguma. -------------------------------- */
+  --color-success-50: oklch(0.982 0.018 155.8);
+  --color-success-100: oklch(0.962 0.044 156.7);
+  --color-success-500: oklch(0.723 0.192 149.6);
+  --color-success-600: oklch(0.627 0.194 149.2);
+  --color-success-700: oklch(0.527 0.154 150.1);
+
+  /* --- Cinzas: a estrutura. Quase todo o site é feito destes. ------------ */
+  --color-ink-50: oklch(0.985 0 0);
+  --color-ink-100: oklch(0.967 0.001 286.4);
+  --color-ink-200: oklch(0.92 0.004 286.3);
+  --color-ink-300: oklch(0.871 0.006 286.3);
+  --color-ink-400: oklch(0.705 0.015 286.1);
+  --color-ink-500: oklch(0.552 0.016 285.9);
+  --color-ink-600: oklch(0.442 0.017 285.8);
+  --color-ink-700: oklch(0.37 0.013 285.8);
+  --color-ink-800: oklch(0.274 0.006 286);
+  --color-ink-900: oklch(0.21 0.006 285.9);
+  --color-ink-950: oklch(0.141 0.005 285.8);
+
+  /* --- Alertas ---------------------------------------------------------- */
+  --color-danger-50: oklch(0.971 0.013 17.4);
+  --color-danger-100: oklch(0.936 0.032 17.7);
+  --color-danger-500: oklch(0.637 0.237 25.3);
+  --color-danger-600: oklch(0.577 0.245 27.3);
+  --color-danger-700: oklch(0.505 0.213 27.5);
+
+  --color-warning-50: oklch(0.987 0.022 95.3);
+  --color-warning-100: oklch(0.962 0.059 95.6);
+  --color-warning-600: oklch(0.666 0.179 58.3);
+  --color-warning-700: oklch(0.555 0.163 48.998);
+
+  /* --- Bordas arredondadas (briefing) ----------------------------------- */
+  --radius-card: 1rem;
+  --radius-btn: 0.625rem;
+
+  /* --- Sombras suaves (briefing).
+         Discretas de propósito: sombra pesada envelhece a interface e faz
+         tudo parecer um botão de 2010. ---------------------------------- */
+  --shadow-card: 0 1px 2px 0 oklch(0 0 0 / 0.04), 0 4px 16px -4px oklch(0 0 0 / 0.08);
+  --shadow-card-hover: 0 2px 4px 0 oklch(0 0 0 / 0.05), 0 12px 32px -8px oklch(0 0 0 / 0.14);
+  --shadow-nav: 0 1px 3px 0 oklch(0 0 0 / 0.06);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* ============================================================================
+   BASE
+   ============================================================================ */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    @apply bg-white text-ink-900 antialiased;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* Foco visível e consistente. Remover o outline sem repor nada — o que muita
+     gente faz por estética — deixa o site inutilizável no teclado. */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-brand-600;
+  }
+
+  /* Respeita quem pediu menos movimento. Não é firula: para quem tem distúrbio
+     vestibular, animação em excesso causa enjoo de verdade. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
