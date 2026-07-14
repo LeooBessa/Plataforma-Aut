@@ -18,6 +18,33 @@ jobs:
     defaults:
       run:
         working-directory: apps/api
+
+    # Postgres de verdade no CI, não SQLite nem mock.
+    #
+    # Os testes exercitam busca textual em português, coluna gerada (tsvector),
+    # índice GIN, enums nativos e CHECK constraints — nada disso existe fora do
+    # Postgres. Sem este serviço, os testes de integração seriam PULADOS e o CI
+    # ficaria verde sem provar coisa alguma. Um teste que não roda é pior que
+    # nenhum teste: dá falsa confiança.
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: plataforma_aut_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      TEST_DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/plataforma_aut_test
+      DATABASE_DIRECT_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/plataforma_aut_test
+
     steps:
       - uses: actions/checkout@v4
 
