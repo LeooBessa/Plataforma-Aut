@@ -1,0 +1,96 @@
+[project]
+name = "plataforma-aut-api"
+version = "0.1.0"
+description = "API do marketplace de automóveis — FastAPI + Clean Architecture"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+    "fastapi>=0.115.0",
+    "pydantic>=2.9.0",
+    "pydantic-settings>=2.5.0",
+    "email-validator>=2.2.0",
+    "sqlalchemy[asyncio]>=2.0.36",
+    "asyncpg>=0.30.0",
+    "alembic>=1.14.0",
+    "pyjwt>=2.10.0",
+    "bcrypt>=4.2.0",
+    "httpx>=0.27.0",
+    "python-slugify>=8.0.4",
+]
+
+[dependency-groups]
+dev = [
+    "uvicorn[standard]>=0.32.0",
+    "ruff>=0.8.0",
+    "mypy>=1.13.0",
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "pytest-cov>=6.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]
+
+# -----------------------------------------------------------------------------
+# Ruff — lint + format. Substitui black, isort, flake8 e autoflake.
+# -----------------------------------------------------------------------------
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = [
+    "E", "W",   # pycodestyle
+    "F",        # pyflakes
+    "I",        # isort
+    "N",        # pep8-naming
+    "UP",       # pyupgrade
+    "B",        # bugbear
+    "C4",       # comprehensions
+    "SIM",      # simplify
+    "RUF",      # ruff-specific
+    "ASYNC",    # armadilhas de async
+    "S",        # bandit — segurança
+]
+# NOTA: o ruleset "TCH" (flake8-type-checking) está deliberadamente FORA.
+# Ele move imports usados só em anotações para um bloco `if TYPE_CHECKING`.
+# Isso quebra esta stack: FastAPI, Pydantic e SQLAlchemy resolvem as anotações
+# em RUNTIME (para montar injeção de dependência, validação e mapeamento de
+# colunas). Um tipo que só existe para o type-checker vira NameError no boot.
+ignore = [
+    "S101",  # assert: legítimo em testes
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S105", "S106"]  # senhas hardcoded são esperadas em fixtures
+
+[tool.ruff.lint.isort]
+known-first-party = ["src"]
+
+# -----------------------------------------------------------------------------
+# Mypy — tipagem forte checada, não só escrita.
+# -----------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unreachable = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["slugify.*"]
+ignore_missing_imports = true
+
+# -----------------------------------------------------------------------------
+# Pytest
+# -----------------------------------------------------------------------------
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+addopts = "-q --strict-markers"
+markers = [
+    "integration: testes que exigem banco de dados real",
+]
