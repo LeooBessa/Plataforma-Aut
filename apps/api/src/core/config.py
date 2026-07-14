@@ -70,6 +70,13 @@ class Settings(BaseSettings):
     email_from: str = ""
     admin_notification_email: str = ""
 
+    # --- Seed ---
+    # Sem valor padrão de propósito: o seed FALHA em vez de criar um admin com
+    # senha conhecida. Credencial default é como a maioria dos vazamentos por
+    # "senha padrão" começa.
+    seed_admin_email: str = "admin@autopremium.com.br"
+    seed_admin_password: SecretStr = SecretStr("")
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def _split_cors_origins(cls, value: object) -> object:

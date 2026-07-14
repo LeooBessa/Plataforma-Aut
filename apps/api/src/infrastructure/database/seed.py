@@ -16,7 +16,6 @@ from __future__ import annotations
 
 import asyncio
 import logging
-import os
 from dataclasses import dataclass, field
 from decimal import Decimal
 
@@ -351,20 +350,19 @@ async def _seed_dealership(session: AsyncSession) -> Dealership:
 
 
 async def _seed_admin(session: AsyncSession, dealership: Dealership, result: SeedResult) -> None:
-    email = os.getenv("SEED_ADMIN_EMAIL", "admin@autopremium.com.br").lower()
+    settings = get_settings()
+    email = settings.seed_admin_email.lower()
 
     if await session.scalar(select(User).where(User.email == email)):
         return
 
-    # Sem senha no ambiente, o seed FALHA em vez de inventar uma senha padrão.
+    # Sem senha configurada, o seed FALHA em vez de inventar uma padrão.
     # Credencial default é como a maioria dos vazamentos por "senha conhecida"
     # começa: alguém sobe para produção e nunca troca.
-    password = os.getenv("SEED_ADMIN_PASSWORD")
+    password = settings.seed_admin_password.get_secret_value()
     if not password:
         raise RuntimeError(
-            "SEED_ADMIN_PASSWORD não definida.\n"
-            "  SEED_ADMIN_PASSWORD='sua-senha-forte' uv run python -m "
-            "src.infrastructure.database.seed\n"
+            "SEED_ADMIN_PASSWORD não definida (no .env ou no ambiente).\n"
             "Não existe senha padrão, de propósito."
         )
 
