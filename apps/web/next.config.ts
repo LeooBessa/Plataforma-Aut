@@ -3,9 +3,13 @@ import type { NextConfig } from 'next';
 /** No servidor falamos DIRETO com o FastAPI; no browser, tudo passa pelo rewrite abaixo. */
 const API_URL = process.env.API_URL ?? 'http://localhost:8000';
 
+// O hostname do Storage vem de SUPABASE_URL. Sem fallback hardcoded: baixar o
+// project ref no código-fonte revela qual projeto Supabase é o nosso — sem
+// motivo, ainda mais num repositório público. Sem a env var, o `next/image`
+// simplesmente não libera domínio externo nenhum (mais seguro que um default).
 const SUPABASE_HOSTNAME = process.env.SUPABASE_URL
   ? new URL(process.env.SUPABASE_URL).hostname
-  : 'lwsbrnrlawqiiahlhvqj.supabase.co';
+  : undefined;
 
 const nextConfig: NextConfig = {
   // Rotas tipadas: um <Link href="/veiculo/x"> com typo vira erro de compilação,
@@ -76,12 +80,20 @@ const nextConfig: NextConfig = {
     // Apenas o bucket público do Supabase. Um `remotePatterns` sem restrição de
     // caminho permitiria que terceiros usassem o nosso otimizador de imagens
     // como proxy — e a conta da banda seria nossa.
+    //
+    // O padrão do Supabase só entra se SUPABASE_URL existir. Em produção ela
+    // sempre existe; sem ela (ex: build de CI sem env), o site ainda builda,
+    // apenas não libera imagens externas.
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: SUPABASE_HOSTNAME,
-        pathname: '/storage/v1/object/public/**',
-      },
+      ...(SUPABASE_HOSTNAME
+        ? [
+            {
+              protocol: 'https' as const,
+              hostname: SUPABASE_HOSTNAME,
+              pathname: '/storage/v1/object/public/**',
+            },
+          ]
+        : []),
       {
         // Placeholders do seed. Sai quando houver fotos reais.
         protocol: 'https',
