@@ -77,6 +77,13 @@ class Settings(BaseSettings):
     seed_admin_email: str = "admin@autopremium.com.br"
     seed_admin_password: SecretStr = SecretStr("")
 
+    # --- Revalidação do frontend (ISR sob demanda) ---
+    # Quando o admin muda um anúncio, a API avisa o Next para regenerar as
+    # páginas. `frontend_url` é onde o Next está; `revalidate_secret` é o segredo
+    # compartilhado que autentica o aviso.
+    frontend_url: str = ""
+    revalidate_secret: SecretStr = SecretStr("")
+
     @field_validator("cors_origins", mode="before")
     @classmethod
     def _split_cors_origins(cls, value: object) -> object:

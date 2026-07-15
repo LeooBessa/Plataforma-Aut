@@ -82,7 +82,11 @@ export function VehicleCard({
           {formatYears(vehicle.year_manufacture, vehicle.year_model)}
         </p>
 
-        <dl className="text-ink-600 mt-3 grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs">
+        {/* `<ul>`, não `<dl>`: estes são chips de ícone+texto, não pares
+            termo/definição. Um `<dl>` com `<div>` dentro (em vez de `<dt>`/`<dd>`)
+            é HTML inválido e o leitor de tela o anuncia errado — o Lighthouse
+            acusava. */}
+        <ul className="text-ink-600 mt-3 grid grid-cols-2 gap-x-3 gap-y-1.5 text-xs">
           <Spec icon={<Gauge className="size-3.5" />} label={formatMileage(vehicle.mileage)} />
           <Spec icon={<Fuel className="size-3.5" />} label={FUEL_LABELS[vehicle.fuel_type]} />
           <Spec
@@ -90,7 +94,7 @@ export function VehicleCard({
             label={TRANSMISSION_LABELS[vehicle.transmission]}
           />
           <Spec icon={<MapPin className="size-3.5" />} label={vehicle.city} />
-        </dl>
+        </ul>
 
         {/* `mt-auto` empurra o preço para baixo: assim os preços de todos os
             cards ficam alinhados na mesma linha, mesmo que um título ocupe duas
@@ -111,10 +115,12 @@ export function VehicleCard({
 
 function Spec({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
-    <div className="flex items-center gap-1.5">
-      <span className="text-ink-400">{icon}</span>
+    <li className="flex items-center gap-1.5">
+      <span className="text-ink-400" aria-hidden>
+        {icon}
+      </span>
       <span className="truncate">{label}</span>
-    </div>
+    </li>
   );
 }
 

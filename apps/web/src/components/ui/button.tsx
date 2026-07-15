@@ -11,8 +11,9 @@ const VARIANTS: Record<Variant, string> = {
   // nada é.
   primary: 'bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 shadow-sm',
   // Verde: reservado para o que é positivo e converte — "Agendar visita".
-  // Usá-lo em qualquer botão diluiria o sinal.
-  success: 'bg-success-600 text-white hover:bg-success-700 active:bg-success-700 shadow-sm',
+  // Usá-lo em qualquer botão diluiria o sinal. Base em 700 (não 600) por
+  // contraste: branco sobre 600 reprovava na WCAG AA.
+  success: 'bg-success-700 text-white hover:bg-success-800 active:bg-success-800 shadow-sm',
   secondary: 'bg-white text-ink-900 border border-ink-200 hover:bg-ink-50 active:bg-ink-100',
   ghost: 'text-ink-700 hover:bg-ink-100 active:bg-ink-200',
   danger: 'bg-danger-600 text-white hover:bg-danger-700',

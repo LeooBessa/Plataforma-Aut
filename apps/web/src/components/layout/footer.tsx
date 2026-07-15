@@ -68,7 +68,9 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="border-ink-800 text-ink-500 border-t px-4 py-6 text-center text-xs">
+      {/* text-ink-400, não ink-500: sobre fundo escuro, texto mais CLARO tem
+          mais contraste. Com ink-500 o Lighthouse acusava 4.12 (o mínimo é 4.5). */}
+      <div className="border-ink-800 text-ink-400 border-t px-4 py-6 text-center text-xs">
         © {new Date().getFullYear()} AutoPremium. Todos os direitos reservados.
       </div>
     </footer>

@@ -157,9 +157,9 @@ async function LatestSection() {
   if (!page) {
     return (
       <section className="mx-auto mt-16 max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-card border border-dashed border-ink-200 py-16 text-center">
-          <p className="font-medium text-ink-900">Não foi possível carregar os veículos.</p>
-          <p className="mt-1 text-sm text-ink-500">
+        <div className="rounded-card border-ink-200 border border-dashed py-16 text-center">
+          <p className="text-ink-900 font-medium">Não foi possível carregar os veículos.</p>
+          <p className="text-ink-500 mt-1 text-sm">
             Estamos com uma instabilidade momentânea. Tente novamente em instantes.
           </p>
         </div>

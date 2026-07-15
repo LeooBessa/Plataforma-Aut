@@ -20,14 +20,12 @@ export default function ErrorPage({
 }) {
   return (
     <div className="mx-auto flex min-h-[60dvh] max-w-md flex-col items-center justify-center px-4 text-center">
-      <span className="flex size-14 items-center justify-center rounded-full bg-danger-50 text-danger-600">
+      <span className="bg-danger-50 text-danger-600 flex size-14 items-center justify-center rounded-full">
         <AlertTriangle className="size-7" />
       </span>
 
-      <h1 className="mt-6 text-2xl font-bold tracking-tight text-ink-950">
-        Algo deu errado
-      </h1>
-      <p className="mt-2 text-sm leading-relaxed text-ink-600">
+      <h1 className="text-ink-950 mt-6 text-2xl font-bold tracking-tight">Algo deu errado</h1>
+      <p className="text-ink-600 mt-2 text-sm leading-relaxed">
         Tivemos um problema ao carregar esta página. Tente novamente — se persistir, fale com a
         gente.
       </p>
@@ -36,7 +34,7 @@ export default function ErrorPage({
           permite ao usuário nos dizer QUAL erro aconteceu, em vez de "deu erro".
           A mensagem em si NÃO é exibida: ela pode conter detalhes internos. */}
       {error.digest && (
-        <p className="mt-3 font-mono text-xs text-ink-400">código: {error.digest}</p>
+        <p className="text-ink-400 mt-3 font-mono text-xs">código: {error.digest}</p>
       )}
 
       <div className="mt-8 flex gap-3">

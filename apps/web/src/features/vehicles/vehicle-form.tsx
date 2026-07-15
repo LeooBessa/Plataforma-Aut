@@ -406,7 +406,7 @@ export function VehicleForm({ vehicle }: { vehicle?: VehicleDetail }) {
       <Section title="Opcionais" columns={1}>
         {featureGroups.map(([category, features]) => (
           <div key={category}>
-            <h3 className="text-ink-400 text-xs font-semibold tracking-wide uppercase">
+            <h3 className="text-ink-600 text-xs font-semibold tracking-wide uppercase">
               {category}
             </h3>
             <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">

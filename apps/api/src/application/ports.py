@@ -46,3 +46,17 @@ class StorageService(Protocol):
         ...
 
     async def delete(self, *, path: str) -> bool: ...
+
+
+class RevalidationService(Protocol):
+    async def revalidate(self, tags: list[str]) -> bool:
+        """Pede ao frontend que regenere as páginas com estas tags.
+
+        Fecha o ciclo do ISR: quando o admin muda um anúncio, o site atualiza em
+        segundos em vez de esperar o intervalo de revalidação.
+
+        Como o `EmailSender`, **nunca levanta exceção** — a operação de negócio
+        (salvar o anúncio) não pode falhar porque o frontend não respondeu ao
+        aviso de cache. No pior caso, a página se corrige sozinha no próximo ciclo.
+        """
+        ...

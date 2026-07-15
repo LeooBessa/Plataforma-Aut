@@ -231,11 +231,7 @@ export default function EditarVeiculoPage({ params }: { params: Promise<{ id: st
         )}
 
         <div className="mt-4">
-          <ImageUploader
-            vehicleId={vehicle.id}
-            images={vehicle.images}
-            onChange={reload}
-          />
+          <ImageUploader vehicleId={vehicle.id} images={vehicle.images} onChange={reload} />
         </div>
       </section>
 

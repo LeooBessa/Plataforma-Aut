@@ -250,7 +250,7 @@ function Specs({ vehicle }: { vehicle: VehicleDetail }) {
       <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
         {items.map(({ label, value }) => (
           <div key={label} className="border-ink-100 border-b pb-3">
-            <dt className="text-ink-400 text-xs font-medium tracking-wide uppercase">
+            <dt className="text-ink-600 text-xs font-medium tracking-wide uppercase">
               {label}
             </dt>
             <dd className="text-ink-900 mt-1 font-medium">{value}</dd>
@@ -296,7 +296,7 @@ function Features({ vehicle }: { vehicle: VehicleDetail }) {
       <div className="mt-4 space-y-5">
         {[...groups.entries()].map(([category, names]) => (
           <div key={category}>
-            <h3 className="text-ink-400 text-xs font-semibold tracking-wide uppercase">
+            <h3 className="text-ink-600 text-xs font-semibold tracking-wide uppercase">
               {category}
             </h3>
             <ul className="mt-2 grid gap-x-6 gap-y-2 sm:grid-cols-2">

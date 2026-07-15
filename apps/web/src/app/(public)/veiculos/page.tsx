@@ -42,7 +42,14 @@ export default async function VeiculosPage({ searchParams }: Props) {
       </header>
 
       <div className="mt-8">
-        <Suspense fallback={<div className="rounded-card bg-ink-100 h-40 animate-pulse" />}>
+        {/* A altura do esqueleto acompanha a do formulário real (busca + 8
+            filtros). Com um placeholder mais baixo, a página "saltava" quando os
+            filtros chegavam — o Lighthouse media CLS de 0.24 (o limite é 0.1). */}
+        <Suspense
+          fallback={
+            <div className="rounded-card bg-ink-100 h-[13rem] animate-pulse sm:h-[15.5rem] lg:h-[13rem]" />
+          }
+        >
           <Filters />
         </Suspense>
       </div>
@@ -113,10 +120,14 @@ async function Results({ params }: { params: Record<string, string | string[] | 
 
   return (
     <>
-      <p className="text-ink-500 mt-8 text-sm">
+      {/* `<h2>`, não `<p>`: a contagem é o cabeçalho da seção de resultados.
+          Sem ela, a página ia do h1 ("Veículos à venda") direto aos h3 dos
+          cards, pulando um nível — o que confunde a navegação por títulos no
+          leitor de tela e o Lighthouse acusa. */}
+      <h2 className="text-ink-500 mt-8 text-sm font-normal">
         <strong className="text-ink-900 font-semibold">{page.meta.total}</strong>{' '}
         {page.meta.total === 1 ? 'veículo encontrado' : 'veículos encontrados'}
-      </p>
+      </h2>
 
       <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {page.items.map((vehicle, index) => (

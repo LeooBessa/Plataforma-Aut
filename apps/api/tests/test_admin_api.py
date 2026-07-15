@@ -761,3 +761,102 @@ async def test_editar_preserva_marca_e_modelo(
     assert editado.json()["brand_name"] == "Toyota"
     assert editado.json()["model_name"] == "Corolla"
     assert editado.json()["price"] == "99000.00"
+
+
+# ------------------------------------------------------ revalidação (ISR)
+
+
+class SpyRevalidation:
+    """Registra as tags revalidadas, sem tocar na rede.
+
+    Como o `FakeStorage`, só é possível porque o caso de uso depende da PORTA
+    `RevalidationService`. É a inversão de dependência pagando de novo.
+    """
+
+    def __init__(self) -> None:
+        self.calls: list[list[str]] = []
+
+    async def revalidate(self, tags: list[str]) -> bool:
+        self.calls.append(tags)
+        return True
+
+
+@pytest.fixture
+def revalidation() -> SpyRevalidation:
+    return SpyRevalidation()
+
+
+@pytest.fixture
+async def client_with_spy(  # type: ignore[no-untyped-def]
+    session: AsyncSession, storage: FakeStorage, revalidation: SpyRevalidation
+):
+    from src.presentation.v1.deps import get_revalidation_service
+
+    app = create_app()
+
+    async def _session():  # type: ignore[no-untyped-def]
+        yield session
+
+    app.dependency_overrides[get_session] = _session
+    app.dependency_overrides[get_storage_service] = lambda: storage
+    app.dependency_overrides[get_revalidation_service] = lambda: revalidation
+
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as c:
+        yield c
+
+    app.dependency_overrides.clear()
+
+
+async def test_publicar_dispara_revalidacao_da_pagina(
+    client_with_spy: AsyncClient,
+    super_admin: User,
+    catalogo: dict[str, object],
+    dealership: Dealership,
+    revalidation: SpyRevalidation,
+) -> None:
+    """Publicar precisa avisar o site na hora. Sem isso, o carro só apareceria
+    após o ISR — até 5 min de anúncio invisível recém-publicado."""
+    headers = await _auth(client_with_spy, super_admin)
+    vid = (
+        await client_with_spy.post(f"{ADMIN}/vehicles", json=_payload(catalogo), headers=headers)
+    ).json()["id"]
+    await client_with_spy.post(
+        f"{ADMIN}/vehicles/{vid}/images",
+        json={"storage_path": "v/1.jpg", "url": "https://cdn.fake/1.jpg"},
+        headers=headers,
+    )
+
+    revalidation.calls.clear()
+    await client_with_spy.patch(
+        f"{ADMIN}/vehicles/{vid}/status", json={"status": "active"}, headers=headers
+    )
+
+    assert len(revalidation.calls) == 1, "publicar não revalidou o site"
+    tags = revalidation.calls[0]
+    assert "vehicles" in tags, "a listagem não foi revalidada"
+    assert any(t.startswith("vehicle:") for t in tags), "a página do veículo não foi revalidada"
+
+
+async def test_editar_dispara_revalidacao(
+    client_with_spy: AsyncClient,
+    super_admin: User,
+    catalogo: dict[str, object],
+    dealership: Dealership,
+    revalidation: SpyRevalidation,
+) -> None:
+    headers = await _auth(client_with_spy, super_admin)
+    criado = (
+        await client_with_spy.post(f"{ADMIN}/vehicles", json=_payload(catalogo), headers=headers)
+    ).json()
+
+    revalidation.calls.clear()
+    await client_with_spy.put(
+        f"{ADMIN}/vehicles/{criado['id']}",
+        json=_payload(
+            catalogo, brand_id=criado["brand_id"], model_id=criado["model_id"], price="90000.00"
+        ),
+        headers=headers,
+    )
+
+    assert len(revalidation.calls) == 1
+    assert f"vehicle:{criado['slug']}" in revalidation.calls[0]

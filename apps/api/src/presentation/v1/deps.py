@@ -43,7 +43,7 @@ from src.application.identity.use_cases import (
     LogoutUseCase,
     RefreshSessionUseCase,
 )
-from src.application.ports import EmailSender, StorageService
+from src.application.ports import EmailSender, RevalidationService, StorageService
 from src.application.scheduling.use_cases import (
     CreateAppointmentUseCase,
     GetDashboardStatsUseCase,
@@ -74,6 +74,10 @@ from src.infrastructure.database.repositories.vehicle_repository import (
     SqlAlchemyVehicleRepository,
 )
 from src.infrastructure.email.senders import LoggingEmailSender, ResendEmailSender
+from src.infrastructure.revalidation.next_revalidation import (
+    NextRevalidationService,
+    NoopRevalidationService,
+)
 from src.infrastructure.storage.supabase_storage import SupabaseStorageService
 
 SessionDep = Annotated[AsyncSession, Depends(get_session)]
@@ -215,8 +219,20 @@ def get_storage_service() -> StorageService:
     return SupabaseStorageService()
 
 
+def get_revalidation_service() -> RevalidationService:
+    """Serviço real se o frontend estiver configurado; um no-op caso contrário.
+
+    Assim a API roda sozinha (em teste, ou API-only) sem tentar avisar um
+    frontend que não existe — e nenhum caso de uso percebe a diferença.
+    """
+    if get_settings().frontend_url and get_settings().revalidate_secret.get_secret_value():
+        return NextRevalidationService()
+    return NoopRevalidationService()
+
+
 EmailSenderDep = Annotated[EmailSender, Depends(get_email_sender)]
 StorageDep = Annotated[StorageService, Depends(get_storage_service)]
+RevalidationDep = Annotated[RevalidationService, Depends(get_revalidation_service)]
 
 
 # ----------------------------------------------------- repositórios administrativos
@@ -258,24 +274,32 @@ def get_create_vehicle_use_case(repo: VehicleAdminRepositoryDep) -> CreateVehicl
     return CreateVehicleUseCase(repo)
 
 
-def get_update_vehicle_use_case(repo: VehicleAdminRepositoryDep) -> UpdateVehicleUseCase:
-    return UpdateVehicleUseCase(repo)
+def get_update_vehicle_use_case(
+    repo: VehicleAdminRepositoryDep, revalidation: RevalidationDep
+) -> UpdateVehicleUseCase:
+    return UpdateVehicleUseCase(repo, revalidation)
 
 
-def get_change_status_use_case(repo: VehicleAdminRepositoryDep) -> ChangeVehicleStatusUseCase:
-    return ChangeVehicleStatusUseCase(repo)
+def get_change_status_use_case(
+    repo: VehicleAdminRepositoryDep, revalidation: RevalidationDep
+) -> ChangeVehicleStatusUseCase:
+    return ChangeVehicleStatusUseCase(repo, revalidation)
 
 
 def get_duplicate_vehicle_use_case(repo: VehicleAdminRepositoryDep) -> DuplicateVehicleUseCase:
     return DuplicateVehicleUseCase(repo)
 
 
-def get_archive_vehicle_use_case(repo: VehicleAdminRepositoryDep) -> ArchiveVehicleUseCase:
-    return ArchiveVehicleUseCase(repo)
+def get_archive_vehicle_use_case(
+    repo: VehicleAdminRepositoryDep, revalidation: RevalidationDep
+) -> ArchiveVehicleUseCase:
+    return ArchiveVehicleUseCase(repo, revalidation)
 
 
-def get_delete_vehicle_use_case(repo: VehicleAdminRepositoryDep) -> DeleteVehicleUseCase:
-    return DeleteVehicleUseCase(repo)
+def get_delete_vehicle_use_case(
+    repo: VehicleAdminRepositoryDep, revalidation: RevalidationDep
+) -> DeleteVehicleUseCase:
+    return DeleteVehicleUseCase(repo, revalidation)
 
 
 def get_prepare_upload_use_case(

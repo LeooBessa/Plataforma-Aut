@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from uuid import UUID
 
-from src.application.ports import SignedUpload, StorageService
+from src.application.ports import RevalidationService, SignedUpload, StorageService
 from src.core.exceptions import AuthorizationError, ConflictError, NotFoundError, ValidationError
 from src.domain.catalog.entities import AdminCatalog, Image, VehicleDetail, VehicleSummary
 from src.domain.catalog.enums import VehicleStatus
@@ -17,6 +17,16 @@ from src.domain.identity.entities import AuthenticatedUser
 # Um anúncio pode ter muitas fotos, mas não infinitas: a galeria fica
 # impraticável, a página pesa e o Storage vira depósito.
 MAX_IMAGES_PER_VEHICLE = 20
+
+# Tags que o site inteiro compartilha: a listagem, a home e as opções de filtro.
+# Qualquer mudança de anúncio pode afetar as três (um carro entra ou sai da
+# listagem, uma marca nova aparece no filtro).
+_SITE_WIDE_TAGS = ["vehicles", "featured", "filters"]
+
+
+def _tags_for(slug: str) -> list[str]:
+    """As tags a revalidar quando um veículo muda: as gerais + a página dele."""
+    return [*_SITE_WIDE_TAGS, f"vehicle:{slug}"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -72,6 +82,7 @@ class CreateVehicleUseCase:
 @dataclass(frozen=True, slots=True)
 class UpdateVehicleUseCase:
     repository: VehicleAdminRepository
+    revalidation: RevalidationService
 
     async def execute(self, vehicle_id: UUID, data: VehicleWrite) -> VehicleDetail:
         _validate(data)
@@ -79,6 +90,12 @@ class UpdateVehicleUseCase:
         vehicle = await self.repository.update(vehicle_id, data)
         if vehicle is None:
             raise NotFoundError("Veículo não encontrado.")
+
+        # Avisa o site para regenerar as páginas deste anúncio AGORA, em vez de
+        # esperar o ISR. Falha isolada (ver RevalidationService): se o frontend
+        # não responder, a edição já foi salva e a página se corrige sozinha no
+        # próximo ciclo.
+        await self.revalidation.revalidate(_tags_for(vehicle.slug))
         return vehicle
 
 
@@ -87,6 +104,7 @@ class ChangeVehicleStatusUseCase:
     """Publicar, reservar, marcar como vendido, arquivar."""
 
     repository: VehicleAdminRepository
+    revalidation: RevalidationService
 
     async def execute(self, vehicle_id: UUID, status: VehicleStatus) -> VehicleDetail:
         current = await self.repository.get_by_id(vehicle_id)
@@ -102,6 +120,10 @@ class ChangeVehicleStatusUseCase:
         vehicle = await self.repository.change_status(vehicle_id, status)
         if vehicle is None:
             raise NotFoundError("Veículo não encontrado.")
+
+        # Mudança de status é o momento MAIS importante para revalidar: publicar
+        # faz o carro aparecer no site, vender/arquivar o faz sumir da listagem.
+        await self.revalidation.revalidate(_tags_for(vehicle.slug))
         return vehicle
 
 
@@ -133,11 +155,15 @@ class ArchiveVehicleUseCase:
     """
 
     repository: VehicleAdminRepository
+    revalidation: RevalidationService
 
     async def execute(self, vehicle_id: UUID) -> VehicleDetail:
         vehicle = await self.repository.change_status(vehicle_id, VehicleStatus.ARCHIVED)
         if vehicle is None:
             raise NotFoundError("Veículo não encontrado.")
+
+        # Arquivado sai da listagem: o site precisa saber para tirá-lo do ar.
+        await self.revalidation.revalidate(_tags_for(vehicle.slug))
         return vehicle
 
 
@@ -146,6 +172,7 @@ class DeleteVehicleUseCase:
     """Remoção definitiva. Restrita ao SUPER_ADMIN."""
 
     repository: VehicleAdminRepository
+    revalidation: RevalidationService
 
     async def execute(self, vehicle_id: UUID, user: AuthenticatedUser) -> None:
         if not user.is_super_admin:
@@ -158,11 +185,17 @@ class DeleteVehicleUseCase:
         if vehicle is None:
             raise NotFoundError("Veículo não encontrado.")
 
+        # O slug é capturado ANTES da exclusão: depois de apagado, o veículo não
+        # existe mais para consultar.
+        slug = vehicle.slug
+
         removed = await self.repository.delete(vehicle_id)
         if not removed:
             # O banco recusou (ondelete=RESTRICT): existem agendamentos ligados
             # a este veículo. Apagá-lo destruiria o histórico dos leads.
             raise ConflictError("Este veículo tem agendamentos e não pode ser excluído. Arquive-o.")
+
+        await self.revalidation.revalidate(_tags_for(slug))
 
 
 # --------------------------------------------------------------------- imagens

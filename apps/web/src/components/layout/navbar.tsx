@@ -24,9 +24,12 @@ export function Navbar() {
     // topo de todas as páginas — e alguém sempre esquece numa delas.
     <header className="border-ink-100 shadow-nav sticky top-0 z-50 border-b bg-white/85 backdrop-blur-md">
       <nav className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex shrink-0 items-center gap-2" aria-label="Página inicial">
+        {/* Sem aria-label: o texto visível "AutoPremium" já nomeia o link. Um
+            aria-label diferente do texto ("Página inicial") quebraria o controle
+            por voz — o usuário diz "clicar em AutoPremium" e nada acontece. */}
+        <Link href="/" className="flex shrink-0 items-center gap-2">
           <span className="rounded-btn bg-ink-950 flex size-9 items-center justify-center text-white">
-            <Car className="size-5" />
+            <Car className="size-5" aria-hidden />
           </span>
           <span className="text-ink-950 text-lg font-bold tracking-tight">
             Auto<span className="text-brand-600">Premium</span>
