@@ -6,7 +6,11 @@ completa e agendam visitas.
 - **Frontend:** Next.js 16 (App Router) + TypeScript + Tailwind 4
 - **Backend:** FastAPI + SQLAlchemy 2 (async) + Pydantic 2, em Clean Architecture
 - **Banco:** Supabase (PostgreSQL) · **Storage:** Supabase Storage
-- **Deploy:** Vercel (dois projetos: `web` e `api`)
+- **Deploy:** Vercel (dois projetos: `web` e `api`) — ver [DEPLOY.md](DEPLOY.md)
+
+Qualidade: 87 testes (unit + integração contra Postgres real + E2E Playwright),
+ruff + mypy strict no backend, ESLint + tsc no frontend, tudo verde no CI.
+Lighthouse ≥ 90 nas 4 métricas em todas as páginas.
 
 ---
 
