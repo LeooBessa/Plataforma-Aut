@@ -39,6 +39,39 @@ const nextConfig: NextConfig = {
     ];
   },
 
+  /**
+   * Headers de segurança em todas as páginas.
+   *
+   * Estes fecham classes inteiras de ataque no navegador. Um verificador de
+   * segurança cobra cada um deles, e adicioná-los depois de um incidente custa
+   * muito mais do que adicioná-los agora.
+   */
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          // Força HTTPS por 2 anos, inclusive subdomínios. Depois da primeira
+          // visita, o navegador nunca mais tenta HTTP — fechando o ataque de
+          // downgrade em que alguém intercepta a conexão insegura inicial.
+          {
+            key: 'Strict-Transport-Security',
+            value: 'max-age=63072000; includeSubDomains; preload',
+          },
+          // O navegador não "adivinha" o tipo do conteúdo (vetor de XSS).
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          // Ninguém embute o site num iframe: fecha clickjacking.
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          {
+            key: 'Permissions-Policy',
+            value: 'geolocation=(), microphone=(), camera=()',
+          },
+        ],
+      },
+    ];
+  },
+
   images: {
     // Apenas o bucket público do Supabase. Um `remotePatterns` sem restrição de
     // caminho permitiria que terceiros usassem o nosso otimizador de imagens

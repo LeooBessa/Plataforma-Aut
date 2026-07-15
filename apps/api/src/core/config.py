@@ -65,6 +65,12 @@ class Settings(BaseSettings):
     upstash_redis_rest_url: str = ""
     upstash_redis_rest_token: SecretStr = SecretStr("")
 
+    @property
+    def rate_limit_enabled(self) -> bool:
+        return bool(
+            self.upstash_redis_rest_url and self.upstash_redis_rest_token.get_secret_value()
+        )
+
     # --- E-mail ---
     resend_api_key: SecretStr = SecretStr("")
     email_from: str = ""

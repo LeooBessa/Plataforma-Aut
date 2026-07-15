@@ -13,6 +13,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from src.core.config import get_settings
 from src.presentation.errors import register_exception_handlers
+from src.presentation.security_headers import SecurityHeadersMiddleware
 from src.presentation.v1.router import api_router
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
@@ -33,6 +34,11 @@ def create_app() -> FastAPI:
         redoc_url=None,
         openapi_url=None if settings.is_production else "/openapi.json",
     )
+
+    # Headers de segurança em toda resposta. Adicionado antes do CORS de
+    # propósito: middlewares rodam na ordem INVERSA da adição, então este é o
+    # último a tocar a resposta e garante que os headers sobrevivam.
+    app.add_middleware(SecurityHeadersMiddleware)
 
     # Origens explícitas. Nunca "*" junto de allow_credentials: o navegador
     # rejeita a combinação, e mesmo que não rejeitasse, seria um convite a CSRF.

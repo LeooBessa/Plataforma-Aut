@@ -48,6 +48,32 @@ class StorageService(Protocol):
     async def delete(self, *, path: str) -> bool: ...
 
 
+@dataclass(frozen=True, slots=True)
+class RateLimitResult:
+    allowed: bool
+    #: Quantas requisições ainda restam na janela.
+    remaining: int
+    #: Segundos até a janela reabrir (para o header Retry-After).
+    retry_after: int
+
+
+class RateLimiter(Protocol):
+    async def check(self, key: str, *, limit: int, window_seconds: int) -> RateLimitResult:
+        """Conta uma requisição para `key` e diz se ela passa.
+
+        Em serverless, isto NÃO pode viver em memória: cada invocação é um
+        processo novo, e um contador local seria zerado a cada requisição — o
+        rate limit não limitaria nada. O estado tem que ser externo e
+        compartilhado (Redis).
+
+        A implementação real FALHA ABERTO: se o Redis cair, a requisição passa.
+        Um limitador que derruba o site inteiro quando sua própria dependência de
+        proteção fica fora do ar é pior do que não ter limitador — trocaria um
+        risco de abuso por uma queda garantida.
+        """
+        ...
+
+
 class RevalidationService(Protocol):
     async def revalidate(self, tags: list[str]) -> bool:
         """Pede ao frontend que regenere as páginas com estas tags.

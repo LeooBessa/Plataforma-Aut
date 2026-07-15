@@ -10,10 +10,11 @@ from __future__ import annotations
 import logging
 import uuid
 
-from fastapi import APIRouter, Request, status
+from fastapi import APIRouter, Depends, Request, status
 
 from src.domain.scheduling.entities import AppointmentDraft
 from src.presentation.v1.deps import CreateAppointmentDep
+from src.presentation.v1.rate_limit import rate_limit
 from src.presentation.v1.schemas.appointment import (
     AppointmentCreatedOut,
     AppointmentCreateIn,
@@ -38,11 +39,18 @@ def _client_ip(request: Request) -> str | None:
     return request.client.host if request.client else None
 
 
+# Agendamento: 3 por hora por IP. Um cliente legítimo agenda um ou dois carros;
+# esse teto derruba o spam automatizado sem incomodar quem é de verdade. O
+# honeypot já filtra a maioria dos robôs; isto é a segunda camada.
+_appointment_rate_limit = rate_limit(limit=3, window_seconds=3600, scope="appointment")
+
+
 @router.post(
     "",
     response_model=AppointmentCreatedOut,
     status_code=status.HTTP_201_CREATED,
     summary="Agendar uma visita",
+    dependencies=[Depends(_appointment_rate_limit)],
 )
 async def create_appointment(
     payload: AppointmentCreateIn,

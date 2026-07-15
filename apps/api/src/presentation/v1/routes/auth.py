@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Request, Response, status
+from fastapi import APIRouter, Depends, Request, Response, status
 
 from src.core.config import get_settings
 from src.domain.identity.entities import Session
@@ -12,6 +12,7 @@ from src.presentation.v1.deps import (
     LogoutDep,
     RefreshSessionDep,
 )
+from src.presentation.v1.rate_limit import rate_limit
 from src.presentation.v1.schemas.auth import LoginIn, SessionOut, UserOut
 
 router = APIRouter(prefix="/auth", tags=["autenticação"])
@@ -80,7 +81,17 @@ def _client_ip(request: Request) -> str | None:
     return request.client.host if request.client else None
 
 
-@router.post("/login", response_model=SessionOut, summary="Entrar no painel")
+# Login: 5 tentativas por minuto por IP. Suficiente para quem errou a senha
+# algumas vezes; longe do que um ataque de força bruta precisa.
+_login_rate_limit = rate_limit(limit=5, window_seconds=60, scope="login")
+
+
+@router.post(
+    "/login",
+    response_model=SessionOut,
+    summary="Entrar no painel",
+    dependencies=[Depends(_login_rate_limit)],
+)
 async def login(
     payload: LoginIn,
     request: Request,

@@ -15,6 +15,7 @@ from src.core.security import BcryptPasswordHasher
 from src.core.tokens import create_access_token
 from src.domain.identity.enums import UserRole
 from src.infrastructure.database.models import Dealership, User
+from src.main import create_app
 
 AUTH = "/api/v1/auth"
 SENHA = "senha-de-teste-forte"
@@ -282,3 +283,68 @@ async def test_logout_e_idempotente(client: AsyncClient) -> None:
     válido para deslogar impediria justamente quem mais precisa sair."""
     assert (await client.post(f"{AUTH}/logout")).status_code == 204
     assert (await client.post(f"{AUTH}/logout")).status_code == 204
+
+
+# ------------------------------------------------------------- rate limiting
+
+
+class CountingRateLimiter:
+    """Bloqueia depois de N chamadas. Prova o 429 sem depender do Redis."""
+
+    def __init__(self, limit: int) -> None:
+        self.limit = limit
+        self.count = 0
+
+    async def check(self, key: str, *, limit: int, window_seconds: int):  # type: ignore[no-untyped-def]
+        from src.application.ports import RateLimitResult
+
+        self.count += 1
+        allowed = self.count <= self.limit
+        return RateLimitResult(
+            allowed=allowed,
+            remaining=max(0, self.limit - self.count),
+            retry_after=0 if allowed else 42,
+        )
+
+
+async def test_login_bloqueia_apos_o_limite(session: AsyncSession, admin: User) -> None:
+    """Força bruta é o ataque óbvio contra login. Depois de N tentativas do
+    mesmo IP, o endpoint responde 429 — não importa se a senha está certa."""
+    from httpx import ASGITransport, AsyncClient
+
+    from src.core.database import get_session
+    from src.presentation.v1.rate_limit import get_rate_limiter
+
+    limiter = CountingRateLimiter(limit=3)
+    app = create_app()
+
+    async def _session():  # type: ignore[no-untyped-def]
+        yield session
+
+    app.dependency_overrides[get_session] = _session
+    app.dependency_overrides[get_rate_limiter] = lambda: limiter
+
+    async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as client:
+        # As 3 primeiras passam pelo limitador (a senha está errada → 401).
+        for _ in range(3):
+            r = await client.post(
+                f"{AUTH}/login", json={"email": admin.email, "password": "errada12345"}
+            )
+            assert r.status_code == 401
+
+        # A 4ª bate no limite → 429, ANTES mesmo de checar a senha.
+        blocked = await client.post(f"{AUTH}/login", json={"email": admin.email, "password": SENHA})
+        assert blocked.status_code == 429
+        assert blocked.headers.get("Retry-After") == "42", "429 sem Retry-After"
+
+    app.dependency_overrides.clear()
+
+
+async def test_headers_de_seguranca_presentes(client: AsyncClient) -> None:
+    """Um verificador de segurança cobra cada um destes."""
+    response = await client.get(f"{AUTH}/me")
+
+    assert response.headers["X-Content-Type-Options"] == "nosniff"
+    assert response.headers["X-Frame-Options"] == "DENY"
+    assert "Referrer-Policy" in response.headers
+    assert "Permissions-Policy" in response.headers

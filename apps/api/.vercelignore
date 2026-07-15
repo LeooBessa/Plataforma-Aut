@@ -1,0 +1,12 @@
+# O que NÃO subir no deploy da função serverless.
+# Quanto menor o bundle, mais rápido o cold start.
+
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+tests/
+.env
+.env.*
+uv.lock

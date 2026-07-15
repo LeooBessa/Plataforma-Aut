@@ -47,9 +47,20 @@ def register_exception_handlers(app: FastAPI) -> None:
     @app.exception_handler(DomainError)
     async def _handle_domain_error(_: Request, exc: DomainError) -> JSONResponse:
         http_status = _STATUS_BY_ERROR.get(type(exc), status.HTTP_400_BAD_REQUEST)
+
+        headers: dict[str, str] = {}
+        # No 429, o header Retry-After diz ao cliente (e a um cliente HTTP bem
+        # comportado) quantos segundos esperar. Sem ele, quem tomou o limite fica
+        # tentando às cegas — e às vezes reforçando o próprio bloqueio.
+        if isinstance(exc, RateLimitError):
+            retry_after = exc.details.get("retry_after")
+            if isinstance(retry_after, int):
+                headers["Retry-After"] = str(retry_after)
+
         return JSONResponse(
             status_code=http_status,
             content=_error_body(exc.code, exc.message, exc.details),
+            headers=headers or None,
         )
 
     @app.exception_handler(Exception)
