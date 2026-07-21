@@ -39,10 +39,13 @@ const DEBOUNCE_MS = 400;
 export function SearchFilters({
   options,
   compact = false,
+  className,
 }: {
   options: FilterOptions;
   /** Versão reduzida, para o banner da home. */
   compact?: boolean;
+  /** Permite ao hero da home trocar a moldura do card pela dele. */
+  className?: string;
 }) {
   const router = useRouter();
   const pathname = usePathname();
@@ -119,6 +122,7 @@ export function SearchFilters({
         // O esmaecimento durante a transição é a única indicação de "carregando".
         // Trocar a lista por um spinner faria a tela piscar a cada tecla.
         isPending && 'opacity-60 transition-opacity',
+        className,
       )}
     >
       <div className="flex flex-col gap-3 sm:flex-row">

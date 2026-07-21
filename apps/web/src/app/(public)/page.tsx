@@ -22,14 +22,10 @@ export const revalidate = 300;
 export default function HomePage() {
   return (
     <>
-      {/* O hero busca o destaque no servidor; o Suspense evita que a página
-          inteira espere por essa consulta. */}
+      {/* O hero busca o destaque e os filtros no servidor; o Suspense evita que
+          a página inteira espere por essas consultas. */}
       <Suspense fallback={<HeroSkeleton />}>
         <HeroSection />
-      </Suspense>
-
-      <Suspense fallback={<SearchSkeleton />}>
-        <SearchSection />
       </Suspense>
 
       <Suspense fallback={<GridSkeleton title="Destaques" count={3} />}>
@@ -46,20 +42,29 @@ export default function HomePage() {
 }
 
 async function HeroSection() {
-  // O primeiro destaque vira a vitrine do topo. `safely` porque uma queda da
-  // API não pode derrubar a home inteira — o hero aparece sem o carro.
-  const featured = await safely(listFeaturedVehicles(1));
-  return <Hero featured={featured?.[0] ?? null} />;
-}
-
-async function SearchSection() {
-  const options = await safely(getFilterOptions());
-  if (!options) return null;
+  // Em PARALELO: são duas consultas independentes, e encadeá-las somaria as
+  // latências no elemento mais importante da página.
+  //
+  // `safely` nas duas porque uma queda da API não pode derrubar a home — sem
+  // destaque o hero perde a foto, sem filtros ele perde a busca, e o resto
+  // continua de pé.
+  const [featured, options] = await Promise.all([
+    safely(listFeaturedVehicles(1)),
+    safely(getFilterOptions()),
+  ]);
 
   return (
-    <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <SearchFilters options={options} compact />
-    </section>
+    <Hero
+      featured={featured?.[0] ?? null}
+      search={
+        options ? (
+          // Dentro do hero a busca não precisa da própria moldura — ela já está
+          // numa. Um card dentro de outro card é ruído. Só o fundo semiopaco,
+          // para o brilho dourado do hero atravessar de leve.
+          <SearchFilters options={options} compact className="bg-ink-900/60" />
+        ) : null
+      }
+    />
   );
 }
 
@@ -68,7 +73,7 @@ async function FeaturedSection() {
   if (!vehicles || vehicles.length === 0) return null;
 
   return (
-    <section className="mx-auto mt-6 max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section className="mx-auto mt-20 max-w-7xl px-4 sm:px-6 lg:px-8">
       <SectionHeader
         title="Seleção da casa"
         subtitle="Escolhidos a dedo pela nossa equipe"
@@ -219,15 +224,16 @@ function HeroSkeleton() {
           </div>
           <div className="rounded-card bg-ink-800 order-3 aspect-[4/3] animate-pulse" />
         </div>
-      </div>
-    </section>
-  );
-}
 
-function SearchSkeleton() {
-  return (
-    <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-      <div className="rounded-card bg-ink-900 h-24 animate-pulse" />
+        {/* A busca também entra no esqueleto, na mesma altura que ela terá.
+            Um placeholder mais baixo faria a página inteira saltar quando os
+            filtros chegassem — foi exatamente esse o CLS de 0,24 que a
+            listagem acusou no Lighthouse. */}
+        <div className="border-ink-800/70 mt-12 border-t pt-8 lg:mt-16">
+          <div className="bg-ink-800 h-3 w-40 animate-pulse rounded-full" />
+          <div className="rounded-card bg-ink-900 mt-4 h-[5.5rem] animate-pulse sm:h-[4.75rem]" />
+        </div>
+      </div>
     </section>
   );
 }

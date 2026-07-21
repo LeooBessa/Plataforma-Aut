@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { ArrowRight, BadgeCheck, ShieldCheck } from 'lucide-react';
+import { ArrowRight, BadgeCheck, Search, ShieldCheck } from 'lucide-react';
 
 import { ButtonLink } from '@/components/ui/button';
 import type { VehicleSummary } from '@/lib/api';
@@ -17,8 +17,22 @@ import { formatMileage, formatPrice, formatYears } from '@/lib/format';
  * como destaque no painel. Isso significa que o topo do site sempre mostra um
  * carro real, disponível e clicável — e o dono da loja troca a vitrine sem
  * pedir nada a ninguém, só marcando outro destaque.
+ *
+ * A BUSCA VIVE AQUI DENTRO, e não numa seção própria logo abaixo.
+ *
+ * Solta, ela virava um card órfão: sem título, sem seção, e com a mesma moldura
+ * dos cards de veículo — o olho a lia como "um card que perdeu o grupo dele".
+ * Dentro do hero, ela é a AÇÃO da promessa que acabou de ser feita: leia o que
+ * a loja oferece, agora procure. Compartilha o fundo, o brilho e a moldura.
  */
-export function Hero({ featured }: { featured: VehicleSummary | null }) {
+export function Hero({
+  featured,
+  search,
+}: {
+  featured: VehicleSummary | null;
+  /** A busca, injetada pela home (que é quem sabe buscar os filtros). */
+  search?: React.ReactNode;
+}) {
   return (
     <section className="border-ink-800 bg-ink-950 relative overflow-hidden border-b">
       {/* Brilho dourado difuso ao fundo — dá profundidade ao preto sem competir
@@ -87,6 +101,24 @@ export function Hero({ featured }: { featured: VehicleSummary | null }) {
             {featured ? <FeaturedCar vehicle={featured} /> : <CarPlaceholder />}
           </div>
         </div>
+
+        {/* ------------------------------------------------------- BUSCA */}
+        {search && (
+          <div className="border-ink-800/70 mt-12 border-t pt-8 lg:mt-16">
+            <p className="text-silver-500 mb-4 flex items-center gap-2.5 text-[11px] font-semibold tracking-[0.18em] uppercase">
+              <Search className="text-brand-500 size-3.5" />
+              Busque no estoque
+              {/* O filete dourado é o mesmo elemento que fecha os títulos das
+                  seções abaixo. Repeti-lo aqui é o que costura a busca ao
+                  resto da página em vez de deixá-la boiando. */}
+              <span
+                aria-hidden
+                className="from-brand-500/50 h-px flex-1 bg-gradient-to-r to-transparent"
+              />
+            </p>
+            {search}
+          </div>
+        )}
       </div>
     </section>
   );
