@@ -1,58 +1,70 @@
 @import 'tailwindcss';
 
 /* ============================================================================
-   TOKENS DE DESIGN
+   ÂUREON — SISTEMA DE CORES
    ============================================================================
-   No Tailwind v4 não existe mais `tailwind.config.js`: os tokens são variáveis
-   CSS dentro de `@theme`, e cada uma vira uma utility automaticamente
-   (`--color-brand-600` → `bg-brand-600`, `text-brand-600`, `border-brand-600`).
+   Preto predominante, prata e dourado nos detalhes. Extraído do logo.
 
-   A paleta é a do briefing — preto, branco, cinza, azul como cor principal e
-   verde para ações positivas. Ela mora aqui, num lugar só, para que ninguém
-   escreva `#2563eb` solto num componente: no dia em que a marca mudar de azul,
-   muda-se uma linha, não trinta arquivos.
+   Uma decisão que economiza trabalho: `brand-*` (que era azul) agora aponta
+   para o DOURADO. Como todos os componentes já usavam `brand-600` para ações,
+   links e foco, eles viraram dourados sem eu tocar num único arquivo deles.
+   O nome `brand` continua honesto — é a cor da marca, que mudou de azul para
+   ouro.
    ============================================================================ */
 
 @theme {
-  /* --- Azul: a cor da marca. Ações primárias, links, foco. --------------- */
-  --color-brand-50: oklch(0.97 0.014 254.6);
-  --color-brand-100: oklch(0.932 0.032 255.6);
-  --color-brand-200: oklch(0.882 0.059 254.1);
-  --color-brand-300: oklch(0.809 0.105 251.8);
-  --color-brand-400: oklch(0.707 0.165 254.6);
-  --color-brand-500: oklch(0.623 0.214 259.8);
-  --color-brand-600: oklch(0.546 0.245 262.9);
-  --color-brand-700: oklch(0.488 0.243 264.4);
-  --color-brand-800: oklch(0.424 0.199 265.6);
-  --color-brand-900: oklch(0.379 0.146 265.5);
+  /* --- DOURADO: a cor da marca. Ações, links, destaques, foco. ----------- */
+  --color-brand-50: oklch(0.97 0.025 92);
+  --color-brand-100: oklch(0.94 0.05 91);
+  --color-brand-200: oklch(0.9 0.08 90);
+  --color-brand-300: oklch(0.86 0.1 89);
+  --color-brand-400: oklch(0.83 0.115 88); /* dourado claro — brilho do logo */
+  --color-brand-500: oklch(0.77 0.125 86); /* DOURADO PRINCIPAL */
+  --color-brand-600: oklch(0.71 0.13 84); /* dourado da marca */
+  --color-brand-700: oklch(0.62 0.12 82);
+  --color-brand-800: oklch(0.5 0.1 80);
+  --color-brand-900: oklch(0.4 0.08 78);
 
-  /* --- Verde: SÓ para o que é positivo — "Agendar visita", "Publicado",
-         "Confirmado". Usar verde em algo neutro dilui o sinal, e aí ele
-         deixa de significar coisa alguma. -------------------------------- */
+  /* Alias legível: `gold-*` e `brand-*` são a mesma cor. Use o que fizer mais
+     sentido na leitura do componente. */
+  --color-gold-300: oklch(0.86 0.1 89);
+  --color-gold-400: oklch(0.83 0.115 88);
+  --color-gold-500: oklch(0.77 0.125 86);
+  --color-gold-600: oklch(0.71 0.13 84);
+  --color-gold-700: oklch(0.62 0.12 82);
+
+  /* --- PRATA: o texto e os detalhes neutros claros. --------------------- */
+  --color-silver-50: oklch(0.985 0.001 250);
+  --color-silver-100: oklch(0.96 0.002 250); /* texto principal sobre preto */
+  --color-silver-200: oklch(0.91 0.003 250);
+  --color-silver-300: oklch(0.83 0.004 250); /* texto secundário */
+  --color-silver-400: oklch(0.72 0.005 250); /* texto suave */
+  --color-silver-500: oklch(0.6 0.005 250); /* texto discreto */
+  --color-silver-600: oklch(0.48 0.005 250);
+
+  /* --- PRETO: as superfícies. O fundo do site inteiro. ------------------
+     Neutro puro (sem viés azulado) para o dourado brilhar em cima. */
+  --color-ink-50: oklch(0.97 0 0);
+  --color-ink-100: oklch(0.92 0 0);
+  --color-ink-200: oklch(0.85 0 0);
+  --color-ink-300: oklch(0.74 0 0);
+  --color-ink-400: oklch(0.62 0 0);
+  --color-ink-500: oklch(0.5 0 0);
+  --color-ink-600: oklch(0.4 0 0);
+  --color-ink-700: oklch(0.3 0 0); /* borda forte */
+  --color-ink-800: oklch(0.22 0 0); /* superfície elevada */
+  --color-ink-850: oklch(0.17 0 0);
+  --color-ink-900: oklch(0.13 0 0); /* superfície: cards */
+  --color-ink-950: oklch(0.08 0 0); /* fundo da página — quase preto */
+
+  /* --- Estados ---------------------------------------------------------- */
   --color-success-50: oklch(0.982 0.018 155.8);
   --color-success-100: oklch(0.962 0.044 156.7);
   --color-success-500: oklch(0.723 0.192 149.6);
   --color-success-600: oklch(0.627 0.194 149.2);
-  /* 700/800 escurecidos para o botão: texto branco sobre verde-600 dava
-     contraste 3.21 (abaixo do mínimo 4.5 da WCAG AA). O botão usa 700 como base
-     e 800 no hover — ambos passam com folga. */
   --color-success-700: oklch(0.505 0.15 150.5);
   --color-success-800: oklch(0.42 0.12 151);
 
-  /* --- Cinzas: a estrutura. Quase todo o site é feito destes. ------------ */
-  --color-ink-50: oklch(0.985 0 0);
-  --color-ink-100: oklch(0.967 0.001 286.4);
-  --color-ink-200: oklch(0.92 0.004 286.3);
-  --color-ink-300: oklch(0.871 0.006 286.3);
-  --color-ink-400: oklch(0.705 0.015 286.1);
-  --color-ink-500: oklch(0.552 0.016 285.9);
-  --color-ink-600: oklch(0.442 0.017 285.8);
-  --color-ink-700: oklch(0.37 0.013 285.8);
-  --color-ink-800: oklch(0.274 0.006 286);
-  --color-ink-900: oklch(0.21 0.006 285.9);
-  --color-ink-950: oklch(0.141 0.005 285.8);
-
-  /* --- Alertas ---------------------------------------------------------- */
   --color-danger-50: oklch(0.971 0.013 17.4);
   --color-danger-100: oklch(0.936 0.032 17.7);
   --color-danger-500: oklch(0.637 0.237 25.3);
@@ -64,16 +76,18 @@
   --color-warning-600: oklch(0.666 0.179 58.3);
   --color-warning-700: oklch(0.555 0.163 48.998);
 
-  /* --- Bordas arredondadas (briefing) ----------------------------------- */
+  /* --- Formas ----------------------------------------------------------- */
   --radius-card: 1rem;
   --radius-btn: 0.625rem;
 
-  /* --- Sombras suaves (briefing).
-         Discretas de propósito: sombra pesada envelhece a interface e faz
-         tudo parecer um botão de 2010. ---------------------------------- */
-  --shadow-card: 0 1px 2px 0 oklch(0 0 0 / 0.04), 0 4px 16px -4px oklch(0 0 0 / 0.08);
-  --shadow-card-hover: 0 2px 4px 0 oklch(0 0 0 / 0.05), 0 12px 32px -8px oklch(0 0 0 / 0.14);
-  --shadow-nav: 0 1px 3px 0 oklch(0 0 0 / 0.06);
+  /* Sombras num site escuro não funcionam como num claro: sombra preta sobre
+     preto é invisível. A separação vem de BORDAS sutis e de brilho dourado. */
+  --shadow-card: 0 1px 2px 0 oklch(0 0 0 / 0.5), 0 8px 24px -8px oklch(0 0 0 / 0.7);
+  --shadow-card-hover:
+    0 2px 4px 0 oklch(0 0 0 / 0.5), 0 16px 40px -12px oklch(0 0 0 / 0.85),
+    0 0 0 1px oklch(0.71 0.13 84 / 0.25);
+  --shadow-nav: 0 1px 0 0 oklch(1 0 0 / 0.06);
+  --shadow-gold: 0 0 40px -8px oklch(0.71 0.13 84 / 0.35);
 }
 
 /* ============================================================================
@@ -81,18 +95,38 @@
    ============================================================================ */
 
 @layer base {
+  /* Avisa o NAVEGADOR que a interface é escura. Sem isto, os controles nativos
+     — checkbox, radio, barra de rolagem, o calendário do campo de data —
+     continuam sendo desenhados em branco, e aparecem como manchas claras sobre
+     o preto. Não há CSS que estilize o miolo do calendário do sistema; esta
+     única linha resolve todos eles de uma vez. */
+  :root {
+    color-scheme: dark;
+  }
+
   body {
-    @apply bg-white text-ink-900 antialiased;
+    @apply bg-ink-950 text-silver-200 antialiased;
   }
 
-  /* Foco visível e consistente. Remover o outline sem repor nada — o que muita
-     gente faz por estética — deixa o site inutilizável no teclado. */
+  /* Marcar uma caixa acende o dourado da marca, não o azul do sistema. */
+  input[type='checkbox'],
+  input[type='radio'] {
+    @apply accent-brand-500;
+  }
+
+  /* Foco dourado, visível sobre o preto. Remover o outline sem repor nada
+     deixaria o site inutilizável no teclado. */
   :focus-visible {
-    @apply outline-2 outline-offset-2 outline-brand-600;
+    @apply outline-2 outline-offset-2 outline-brand-500;
   }
 
-  /* Respeita quem pediu menos movimento. Não é firula: para quem tem distúrbio
-     vestibular, animação em excesso causa enjoo de verdade. */
+  /* A seleção de texto também segue a marca. */
+  ::selection {
+    @apply bg-brand-600/30 text-silver-50;
+  }
+
+  /* Respeita quem pediu menos movimento — para quem tem distúrbio vestibular,
+     animação em excesso causa enjoo de verdade. */
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -102,5 +136,33 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
+  }
+}
+
+@layer utilities {
+  /* Texto com acabamento metálico dourado — para o nome da marca e números
+     de destaque. Um degradê recortado no texto. */
+  .text-gold-gradient {
+    background: linear-gradient(
+      135deg,
+      oklch(0.62 0.12 82) 0%,
+      oklch(0.86 0.1 89) 35%,
+      oklch(0.95 0.06 90) 50%,
+      oklch(0.83 0.115 88) 65%,
+      oklch(0.62 0.12 82) 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+
+  /* Linha divisória que nasce e morre transparente, com ouro no meio. */
+  .rule-gold {
+    background: linear-gradient(
+      90deg,
+      transparent,
+      oklch(0.71 0.13 84 / 0.6) 50%,
+      transparent
+    );
   }
 }

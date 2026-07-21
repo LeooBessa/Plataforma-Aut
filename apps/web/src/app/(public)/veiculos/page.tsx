@@ -33,10 +33,10 @@ export default async function VeiculosPage({ searchParams }: Props) {
   return (
     <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
       <header>
-        <h1 className="text-ink-950 text-3xl font-bold tracking-tight sm:text-4xl">
+        <h1 className="text-silver-100 text-3xl font-bold tracking-tight sm:text-4xl">
           Veículos à venda
         </h1>
-        <p className="text-ink-500 mt-2">
+        <p className="text-silver-500 mt-2">
           Seminovos selecionados, revisados e com procedência verificada.
         </p>
       </header>
@@ -47,7 +47,7 @@ export default async function VeiculosPage({ searchParams }: Props) {
             filtros chegavam — o Lighthouse media CLS de 0.24 (o limite é 0.1). */}
         <Suspense
           fallback={
-            <div className="rounded-card bg-ink-100 h-[13rem] animate-pulse sm:h-[15.5rem] lg:h-[13rem]" />
+            <div className="rounded-card bg-ink-850 h-[13rem] animate-pulse sm:h-[15.5rem] lg:h-[13rem]" />
           }
         >
           <Filters />
@@ -124,8 +124,8 @@ async function Results({ params }: { params: Record<string, string | string[] | 
           Sem ela, a página ia do h1 ("Veículos à venda") direto aos h3 dos
           cards, pulando um nível — o que confunde a navegação por títulos no
           leitor de tela e o Lighthouse acusa. */}
-      <h2 className="text-ink-500 mt-8 text-sm font-normal">
-        <strong className="text-ink-900 font-semibold">{page.meta.total}</strong>{' '}
+      <h2 className="text-silver-500 mt-8 text-sm font-normal">
+        <strong className="text-silver-100 font-semibold">{page.meta.total}</strong>{' '}
         {page.meta.total === 1 ? 'veículo encontrado' : 'veículos encontrados'}
       </h2>
 
@@ -191,7 +191,7 @@ function Pagination({
         <Link
           href={buildHref(meta.page - 1)}
           rel="prev"
-          className="rounded-btn text-ink-600 hover:bg-ink-100 flex size-10 items-center justify-center transition-colors"
+          className="rounded-btn text-silver-400 hover:bg-ink-800 flex size-10 items-center justify-center transition-colors"
           aria-label="Página anterior"
         >
           <ChevronLeft className="size-4" />
@@ -207,7 +207,7 @@ function Pagination({
             'rounded-btn flex size-10 items-center justify-center text-sm font-medium transition-colors',
             pageNumber === meta.page
               ? 'bg-ink-950 text-white'
-              : 'text-ink-600 hover:bg-ink-100',
+              : 'text-silver-400 hover:bg-ink-800',
           )}
         >
           {pageNumber}
@@ -218,7 +218,7 @@ function Pagination({
         <Link
           href={buildHref(meta.page + 1)}
           rel="next"
-          className="rounded-btn text-ink-600 hover:bg-ink-100 flex size-10 items-center justify-center transition-colors"
+          className="rounded-btn text-silver-400 hover:bg-ink-800 flex size-10 items-center justify-center transition-colors"
           aria-label="Próxima página"
         >
           <ChevronRight className="size-4" />
@@ -230,12 +230,12 @@ function Pagination({
 
 function EmptyState() {
   return (
-    <div className="rounded-card border-ink-200 mt-16 flex flex-col items-center border border-dashed py-20 text-center">
-      <span className="bg-ink-100 text-ink-400 flex size-14 items-center justify-center rounded-full">
+    <div className="rounded-card border-ink-700 mt-16 flex flex-col items-center border border-dashed py-20 text-center">
+      <span className="bg-ink-850 text-silver-600 flex size-14 items-center justify-center rounded-full">
         <SearchX className="size-6" />
       </span>
-      <h2 className="text-ink-900 mt-5 text-lg font-semibold">Nenhum veículo encontrado</h2>
-      <p className="text-ink-500 mt-1.5 max-w-sm text-sm">
+      <h2 className="text-silver-100 mt-5 text-lg font-semibold">Nenhum veículo encontrado</h2>
+      <p className="text-silver-500 mt-1.5 max-w-sm text-sm">
         Tente remover algum filtro ou buscar por outro termo.
       </p>
       {/* Um beco sem saída é onde o usuário abandona o site. Sempre há uma porta. */}
@@ -249,7 +249,7 @@ function EmptyState() {
 function ResultsSkeleton() {
   return (
     <>
-      <div className="bg-ink-100 mt-8 h-4 w-40 animate-pulse rounded" />
+      <div className="bg-ink-850 mt-8 h-4 w-40 animate-pulse rounded" />
       <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from({ length: 6 }).map((_, i) => (
           <VehicleCardSkeleton key={i} />

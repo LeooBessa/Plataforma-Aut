@@ -20,17 +20,17 @@ export const metadata: Metadata = {
   // absolutas. Sem ele, o preview do link no WhatsApp e no Facebook sai sem imagem.
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'AutoPremium — Seminovos selecionados',
+    default: 'ÂUREON — Seminovos selecionados',
     // Cada página preenche o %s. Assim o título nunca fica só "Corolla", sem
     // contexto, na aba do navegador e no resultado do Google.
-    template: '%s | AutoPremium',
+    template: '%s | ÂUREON',
   },
   description:
     'Seminovos selecionados com procedência verificada e revisão completa. Encontre seu próximo carro e agende uma visita.',
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
-    siteName: 'AutoPremium',
+    siteName: 'ÂUREON',
   },
   robots: { index: true, follow: true },
 };

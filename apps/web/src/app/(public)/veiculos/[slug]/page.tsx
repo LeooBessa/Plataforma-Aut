@@ -95,12 +95,12 @@ export default async function VeiculoPage({ params }: Props) {
 
           {vehicle.description && (
             <section className="mt-10">
-              <h2 className="text-ink-950 text-lg font-bold">Descrição</h2>
+              <h2 className="text-silver-100 text-lg font-bold">Descrição</h2>
               {/* Texto puro, renderizado pelo JSX — que escapa tudo por padrão.
                   Nada de dangerouslySetInnerHTML: aceitar HTML aqui abriria XSS
                   armazenado, e o admin é justamente quem tem mais poder de
                   causar dano se a conta dele for comprometida. */}
-              <p className="text-ink-600 mt-3 leading-relaxed whitespace-pre-line">
+              <p className="text-silver-400 mt-3 leading-relaxed whitespace-pre-line">
                 {vehicle.description}
               </p>
             </section>
@@ -114,43 +114,46 @@ export default async function VeiculoPage({ params }: Props) {
         {/* `sticky` mantém o preço e o botão de agendar sempre à vista enquanto
             o usuário lê a ficha. O botão que converte não pode sumir da tela. */}
         <aside className="lg:sticky lg:top-24 lg:self-start">
-          <div className="rounded-card shadow-card ring-ink-100 bg-white p-6 ring-1">
+          <div className="rounded-card shadow-card ring-ink-800 bg-ink-900 p-6 ring-1">
             <div className="flex flex-wrap items-center gap-2">
               {vehicle.is_featured && !isSold && <Badge tone="dark">Destaque</Badge>}
               {vehicle.status === 'reserved' && <Badge tone="warning">Reservado</Badge>}
               {isSold && <Badge tone="neutral">Vendido</Badge>}
             </div>
 
-            <h1 className="text-ink-950 mt-3 text-2xl font-bold tracking-tight">
+            <h1 className="text-silver-100 mt-3 text-2xl font-bold tracking-tight">
               {vehicle.title}
             </h1>
 
-            <p className="text-ink-500 mt-1 text-sm">
+            <p className="text-silver-500 mt-1 text-sm">
               {formatYears(vehicle.year_manufacture, vehicle.year_model)} ·{' '}
               {formatMileage(vehicle.mileage)}
             </p>
 
-            <p className="text-ink-950 mt-5 text-3xl font-bold tracking-tight">
+            {/* O preço em dourado é o mesmo tratamento que ele recebe no card e
+                no destaque da home: o olho aprende, num site inteiro, que o
+                dourado é o valor. */}
+            <p className="text-gold-gradient mt-5 text-3xl font-bold tracking-tight">
               {formatPrice(vehicle.price)}
             </p>
 
             {vehicle.accepts_financing && vehicle.estimated_installment && (
-              <div className="rounded-btn bg-brand-50 mt-4 p-4">
-                <p className="text-brand-900 text-sm">
+              <div className="rounded-btn bg-brand-600/10 mt-4 p-4">
+                <p className="text-brand-200 text-sm">
                   <strong className="font-semibold">
                     {vehicle.installments_count}x de{' '}
                     {formatPrice(vehicle.estimated_installment)}
                   </strong>
                 </p>
                 {vehicle.down_payment && (
-                  <p className="text-brand-700 mt-0.5 text-xs">
+                  <p className="text-brand-300 mt-0.5 text-xs">
                     com entrada de {formatPrice(vehicle.down_payment)}
                   </p>
                 )}
                 {/* A parcela NÃO inclui juros — e dizemos isso. Apresentar uma
                     parcela "com juros" inventada pela plataforma seria informação
                     financeira enganosa. */}
-                <p className="text-brand-700/80 mt-2 text-xs">
+                <p className="text-brand-300/70 mt-2 text-xs">
                   Simulação sem juros. Condições reais na aprovação do banco.
                 </p>
               </div>
@@ -158,13 +161,13 @@ export default async function VeiculoPage({ params }: Props) {
 
             <div className="mt-6">
               {isSold ? (
-                <div className="rounded-btn bg-ink-100 p-4 text-center">
-                  <p className="text-ink-700 text-sm font-medium">
+                <div className="rounded-btn bg-ink-850 p-4 text-center">
+                  <p className="text-silver-300 text-sm font-medium">
                     Este veículo já foi vendido.
                   </p>
                   <Link
                     href="/veiculos"
-                    className="text-brand-600 hover:text-brand-700 mt-1 inline-block text-sm font-semibold"
+                    className="text-brand-400 hover:text-brand-300 mt-1 inline-block text-sm font-semibold"
                   >
                     Ver veículos parecidos
                   </Link>
@@ -174,7 +177,7 @@ export default async function VeiculoPage({ params }: Props) {
               )}
             </div>
 
-            <ul className="border-ink-100 mt-6 space-y-2 border-t pt-5 text-sm">
+            <ul className="border-ink-800 mt-6 space-y-2 border-t pt-5 text-sm">
               {vehicle.accepts_trade && <Perk>Aceita seu carro na troca</Perk>}
               {vehicle.accepts_financing && <Perk>Financiamento facilitado</Perk>}
               {vehicle.ipva_paid && <Perk>IPVA pago</Perk>}
@@ -189,8 +192,11 @@ export default async function VeiculoPage({ params }: Props) {
 
 function Perk({ children }: { children: React.ReactNode }) {
   return (
-    <li className="text-ink-600 flex items-center gap-2.5">
-      <Check className="text-success-600 size-4 shrink-0" />
+    <li className="text-silver-400 flex items-center gap-2.5">
+      {/* Dourado, não verde: estes itens são ATRIBUTOS do anúncio, não uma
+          confirmação de que algo deu certo. O verde é reservado para feedback
+          de sucesso — usá-lo aqui diluiria o significado dele. */}
+      <Check className="text-brand-500 size-4 shrink-0" />
       {children}
     </li>
   );
@@ -200,16 +206,19 @@ function Breadcrumbs({ title }: { title: string }) {
   return (
     // O breadcrumb serve ao usuário e ao Google: ele aparece no resultado da
     // busca e ajuda o rastreador a entender a hierarquia do site.
-    <nav aria-label="Você está aqui" className="text-ink-500 flex items-center gap-1.5 text-sm">
-      <Link href="/" className="hover:text-ink-900 transition-colors">
+    <nav
+      aria-label="Você está aqui"
+      className="text-silver-500 flex items-center gap-1.5 text-sm"
+    >
+      <Link href="/" className="hover:text-silver-100 transition-colors">
         Home
       </Link>
       <ChevronRight className="size-3.5" />
-      <Link href="/veiculos" className="hover:text-ink-900 transition-colors">
+      <Link href="/veiculos" className="hover:text-silver-100 transition-colors">
         Veículos
       </Link>
       <ChevronRight className="size-3.5" />
-      <span className="text-ink-900 truncate">{title}</span>
+      <span className="text-silver-100 truncate">{title}</span>
     </nav>
   );
 }
@@ -245,23 +254,23 @@ function Specs({ vehicle }: { vehicle: VehicleDetail }) {
 
   return (
     <section className="mt-10">
-      <h2 className="text-ink-950 text-lg font-bold">Ficha técnica</h2>
+      <h2 className="text-silver-100 text-lg font-bold">Ficha técnica</h2>
 
       <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
         {items.map(({ label, value }) => (
-          <div key={label} className="border-ink-100 border-b pb-3">
-            <dt className="text-ink-600 text-xs font-medium tracking-wide uppercase">
+          <div key={label} className="border-ink-800 border-b pb-3">
+            <dt className="text-silver-400 text-xs font-medium tracking-wide uppercase">
               {label}
             </dt>
-            <dd className="text-ink-900 mt-1 font-medium">{value}</dd>
+            <dd className="text-silver-100 mt-1 font-medium">{value}</dd>
           </div>
         ))}
       </dl>
 
       {vehicle.service_history && (
-        <div className="rounded-card bg-ink-50 ring-ink-100 mt-6 p-5 ring-1">
-          <h3 className="text-ink-900 text-sm font-semibold">Histórico de revisões</h3>
-          <p className="text-ink-600 mt-1.5 text-sm leading-relaxed whitespace-pre-line">
+        <div className="rounded-card bg-ink-900 ring-ink-800 mt-6 p-5 ring-1">
+          <h3 className="text-silver-100 text-sm font-semibold">Histórico de revisões</h3>
+          <p className="text-silver-400 mt-1.5 text-sm leading-relaxed whitespace-pre-line">
             {vehicle.service_history}
           </p>
         </div>
@@ -291,18 +300,18 @@ function Features({ vehicle }: { vehicle: VehicleDetail }) {
 
   return (
     <section className="mt-10">
-      <h2 className="text-ink-950 text-lg font-bold">Itens de série e opcionais</h2>
+      <h2 className="text-silver-100 text-lg font-bold">Itens de série e opcionais</h2>
 
       <div className="mt-4 space-y-5">
         {[...groups.entries()].map(([category, names]) => (
           <div key={category}>
-            <h3 className="text-ink-600 text-xs font-semibold tracking-wide uppercase">
+            <h3 className="text-silver-400 text-xs font-semibold tracking-wide uppercase">
               {category}
             </h3>
             <ul className="mt-2 grid gap-x-6 gap-y-2 sm:grid-cols-2">
               {names.map((name) => (
-                <li key={name} className="text-ink-700 flex items-center gap-2.5 text-sm">
-                  <Check className="text-success-600 size-4 shrink-0" />
+                <li key={name} className="text-silver-300 flex items-center gap-2.5 text-sm">
+                  <Check className="text-brand-500 size-4 shrink-0" />
                   {name}
                 </li>
               ))}

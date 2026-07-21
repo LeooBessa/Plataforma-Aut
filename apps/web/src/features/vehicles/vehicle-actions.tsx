@@ -46,12 +46,10 @@ export function VehicleActions({ slug, title }: { slug: string; title: string })
   return (
     <>
       <div className="flex gap-3">
-        <Button
-          variant="success"
-          size="lg"
-          onClick={() => setModalOpen(true)}
-          className="flex-1"
-        >
+        {/* Dourado, e não verde: este é O botão da página. Ele tem de ser a
+            mesma cor da marca em toda parte, senão o site tem dois "botões
+            principais" competindo — o dourado do hero e o verde daqui. */}
+        <Button size="lg" onClick={() => setModalOpen(true)} className="flex-1">
           <CalendarCheck className="size-4" />
           Agendar visita
         </Button>
@@ -65,7 +63,7 @@ export function VehicleActions({ slug, title }: { slug: string; title: string })
         >
           {shared ? (
             <>
-              <Check className="text-success-600 size-4" />
+              <Check className="text-success-500 size-4" />
               <span className="hidden sm:inline">Copiado!</span>
             </>
           ) : (

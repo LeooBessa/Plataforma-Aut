@@ -3,16 +3,16 @@ import type { ComponentProps, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 const CONTROL = cn(
-  'w-full rounded-btn border border-ink-200 bg-white',
-  'px-3.5 py-2.5 text-sm text-ink-900',
-  'placeholder:text-ink-400',
+  'w-full rounded-btn border border-ink-700 bg-ink-900',
+  'px-3.5 py-2.5 text-sm text-silver-100',
+  'placeholder:text-silver-600',
   'transition-colors',
-  'hover:border-ink-300',
-  'focus:border-brand-600 focus:ring-2 focus:ring-brand-600/15 focus:outline-none',
-  'disabled:cursor-not-allowed disabled:bg-ink-50 disabled:text-ink-400',
+  'hover:border-ink-600',
+  'focus:border-brand-600 focus:ring-2 focus:ring-brand-600/20 focus:outline-none',
+  'disabled:cursor-not-allowed disabled:bg-ink-900/50 disabled:text-silver-600',
   // Estado de erro via `aria-invalid`: o atributo serve ao leitor de tela E ao
   // estilo. Uma classe CSS de erro sozinha comunicaria só a quem enxerga.
-  'aria-invalid:border-danger-500 aria-invalid:focus:ring-danger-500/15',
+  'aria-invalid:border-danger-500 aria-invalid:focus:ring-danger-500/20',
 );
 
 export function Input({ className, ...props }: ComponentProps<'input'>) {
@@ -35,8 +35,7 @@ export function Textarea({ className, ...props }: ComponentProps<'textarea'>) {
  * Rótulo + campo + mensagem de erro.
  *
  * O `<label htmlFor>` não é formalidade: sem ele, clicar no texto não foca o
- * campo, e o leitor de tela anuncia "campo de edição" sem dizer de quê. O erro
- * é ligado por `aria-describedby` para ser lido junto.
+ * campo, e o leitor de tela anuncia "campo de edição" sem dizer de quê.
  */
 export function Field({
   label,
@@ -57,10 +56,10 @@ export function Field({
 }) {
   return (
     <div className={cn('space-y-1.5', className)}>
-      <label htmlFor={htmlFor} className="text-ink-800 block text-sm font-medium">
+      <label htmlFor={htmlFor} className="text-silver-300 block text-sm font-medium">
         {label}
         {required && (
-          <span className="text-danger-600 ml-0.5" aria-hidden>
+          <span className="text-danger-500 ml-0.5" aria-hidden>
             *
           </span>
         )}
@@ -68,12 +67,12 @@ export function Field({
 
       {children}
 
-      {hint && !error && <p className="text-ink-500 text-xs">{hint}</p>}
+      {hint && !error && <p className="text-silver-500 text-xs">{hint}</p>}
 
       {error && (
         // `role="alert"` faz o leitor de tela anunciar o erro assim que ele
         // aparece, sem o usuário precisar navegar até lá.
-        <p id={`${htmlFor}-error`} role="alert" className="text-danger-600 text-xs font-medium">
+        <p id={`${htmlFor}-error`} role="alert" className="text-danger-500 text-xs font-medium">
           {error}
         </p>
       )}

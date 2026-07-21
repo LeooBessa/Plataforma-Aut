@@ -125,7 +125,7 @@ export default function EditarVeiculoPage({ params }: { params: Promise<{ id: st
 
   if (!vehicle) {
     return (
-      <div className="text-ink-500 flex items-center gap-3 text-sm">
+      <div className="text-silver-500 flex items-center gap-3 text-sm">
         <Loader2 className="size-4 animate-spin" />
         Carregando anúncio...
       </div>
@@ -139,7 +139,7 @@ export default function EditarVeiculoPage({ params }: { params: Promise<{ id: st
       <div>
         <Link
           href="/admin/veiculos"
-          className="text-ink-500 hover:text-ink-900 inline-flex items-center gap-1.5 text-sm transition-colors"
+          className="text-silver-500 hover:text-silver-100 inline-flex items-center gap-1.5 text-sm transition-colors"
         >
           <ArrowLeft className="size-4" />
           Voltar aos anúncios
@@ -148,7 +148,7 @@ export default function EditarVeiculoPage({ params }: { params: Promise<{ id: st
         <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-ink-950 text-2xl font-bold tracking-tight">
+              <h1 className="text-silver-100 text-2xl font-bold tracking-tight">
                 {vehicle.title}
               </h1>
               <Badge tone={STATUS_TONE[vehicle.status]}>{STATUS_LABELS[vehicle.status]}</Badge>
@@ -159,7 +159,7 @@ export default function EditarVeiculoPage({ params }: { params: Promise<{ id: st
                 href={`/veiculos/${vehicle.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-brand-600 hover:text-brand-700 mt-1.5 inline-flex items-center gap-1.5 text-sm font-medium"
+                className="text-brand-400 hover:text-brand-200 mt-1.5 inline-flex items-center gap-1.5 text-sm font-medium"
               >
                 Ver no site
                 <ExternalLink className="size-3.5" />
@@ -198,7 +198,7 @@ export default function EditarVeiculoPage({ params }: { params: Promise<{ id: st
               </Button>
             )}
             <Button variant="ghost" disabled={busy} onClick={() => void destroy()}>
-              <Trash2 className="text-danger-600 size-4" />
+              <Trash2 className="text-danger-400 size-4" />
             </Button>
           </div>
         </div>
@@ -207,7 +207,7 @@ export default function EditarVeiculoPage({ params }: { params: Promise<{ id: st
       {error && (
         <div
           role="alert"
-          className="rounded-card bg-danger-50 text-danger-700 ring-danger-500/20 flex items-start gap-2.5 p-4 text-sm ring-1 ring-inset"
+          className="rounded-card bg-danger-500/10 text-danger-400 ring-danger-500/20 flex items-start gap-2.5 p-4 text-sm ring-1 ring-inset"
         >
           <AlertCircle className="mt-0.5 size-4 shrink-0" />
           {error}
@@ -218,14 +218,14 @@ export default function EditarVeiculoPage({ params }: { params: Promise<{ id: st
           É a primeira coisa que falta depois de criar o rascunho, e sem elas o
           anúncio não pode ser publicado. Enterrá-las no fim da página faria o
           admin procurar. */}
-      <section className="rounded-card shadow-card ring-ink-100 bg-white p-6 ring-1">
+      <section className="rounded-card shadow-card ring-ink-800 bg-ink-900 p-6 ring-1">
         <div className="flex items-center justify-between">
-          <h2 className="text-ink-900 text-sm font-semibold">Fotos</h2>
-          <span className="text-ink-500 text-xs">{vehicle.images.length} de 20</span>
+          <h2 className="text-silver-100 text-sm font-semibold">Fotos</h2>
+          <span className="text-silver-500 text-xs">{vehicle.images.length} de 20</span>
         </div>
 
         {vehicle.images.length === 0 && (
-          <p className="rounded-btn bg-warning-50 text-warning-700 ring-warning-600/20 mt-2 p-3 text-xs ring-1 ring-inset">
+          <p className="rounded-btn bg-warning-500/10 text-warning-400 ring-warning-600/20 mt-2 p-3 text-xs ring-1 ring-inset">
             Este anúncio ainda não tem fotos e por isso <strong>não pode ser publicado</strong>.
           </p>
         )}

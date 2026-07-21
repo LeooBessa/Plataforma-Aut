@@ -145,15 +145,15 @@ export function AppointmentModal({
         aria-labelledby="agendamento-titulo"
         // No celular o modal sobe da base e ocupa a largura toda — é onde o
         // polegar alcança. Um card centralizado obrigaria a esticar o dedo.
-        className="rounded-t-card sm:rounded-card max-h-[92dvh] w-full overflow-y-auto bg-white p-6 shadow-2xl sm:max-w-lg"
+        className="rounded-t-card sm:rounded-card bg-ink-900 max-h-[92dvh] w-full overflow-y-auto p-6 shadow-2xl sm:max-w-lg"
       >
         {success ? (
           <div className="py-6 text-center">
-            <span className="bg-success-50 text-success-600 mx-auto flex size-14 items-center justify-center rounded-full">
+            <span className="bg-success-500/10 text-success-500 mx-auto flex size-14 items-center justify-center rounded-full">
               <CheckCircle2 className="size-7" />
             </span>
-            <h2 className="text-ink-950 mt-5 text-xl font-bold">Visita agendada!</h2>
-            <p className="text-ink-600 mt-2 text-sm leading-relaxed">
+            <h2 className="text-silver-100 mt-5 text-xl font-bold">Visita agendada!</h2>
+            <p className="text-silver-400 mt-2 text-sm leading-relaxed">
               Recebemos seu pedido. Entraremos em contato em breve para confirmar o horário.
             </p>
             <Button onClick={onClose} size="lg" className="mt-7 w-full">
@@ -164,15 +164,15 @@ export function AppointmentModal({
           <>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 id="agendamento-titulo" className="text-ink-950 text-lg font-bold">
+                <h2 id="agendamento-titulo" className="text-silver-100 text-lg font-bold">
                   Agendar visita
                 </h2>
-                <p className="text-ink-500 mt-0.5 text-sm">{vehicleTitle}</p>
+                <p className="text-silver-500 mt-0.5 text-sm">{vehicleTitle}</p>
               </div>
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-btn text-ink-400 hover:bg-ink-100 hover:text-ink-700 -mt-1 -mr-2 flex size-9 shrink-0 items-center justify-center transition-colors"
+                className="rounded-btn text-silver-600 hover:bg-ink-800 hover:text-silver-300 -mt-1 -mr-2 flex size-9 shrink-0 items-center justify-center transition-colors"
                 aria-label="Fechar"
               >
                 <X className="size-5" />
@@ -183,7 +183,7 @@ export function AppointmentModal({
               {serverError && (
                 <div
                   role="alert"
-                  className="rounded-btn bg-danger-50 text-danger-700 ring-danger-500/20 flex items-start gap-2.5 p-3.5 text-sm ring-1 ring-inset"
+                  className="rounded-btn bg-danger-500/10 text-danger-400 ring-danger-500/20 flex items-start gap-2.5 p-3.5 text-sm ring-1 ring-inset"
                 >
                   <AlertCircle className="mt-0.5 size-4 shrink-0" />
                   <p>{serverError}</p>
@@ -266,7 +266,7 @@ export function AppointmentModal({
                 >
                   <select
                     id="scheduled_time"
-                    className="rounded-btn border-ink-200 text-ink-900 hover:border-ink-300 focus:border-brand-600 focus:ring-brand-600/15 w-full cursor-pointer border bg-white px-3.5 py-2.5 pr-9 text-sm focus:ring-2 focus:outline-none"
+                    className="rounded-btn border-ink-700 text-silver-100 hover:border-ink-300 focus:border-brand-600 focus:ring-brand-600/15 bg-ink-900 w-full cursor-pointer border px-3.5 py-2.5 pr-9 text-sm focus:ring-2 focus:outline-none"
                     aria-invalid={!!errors.scheduled_time}
                     {...register('scheduled_time')}
                   >
@@ -299,13 +299,7 @@ export function AppointmentModal({
                 <input type="text" tabIndex={-1} autoComplete="off" {...register('website')} />
               </div>
 
-              <Button
-                type="submit"
-                variant="success"
-                size="lg"
-                disabled={isSubmitting}
-                className="w-full"
-              >
+              <Button type="submit" size="lg" disabled={isSubmitting} className="w-full">
                 {isSubmitting ? (
                   <>
                     <Loader2 className="size-4 animate-spin" />
@@ -319,7 +313,7 @@ export function AppointmentModal({
                 )}
               </Button>
 
-              <p className="text-ink-400 text-center text-xs">
+              <p className="text-silver-600 text-center text-xs">
                 Sem compromisso. Entraremos em contato para confirmar.
               </p>
             </form>

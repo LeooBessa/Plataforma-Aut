@@ -160,7 +160,7 @@ export function ImageUploader({
       {error && (
         <div
           role="alert"
-          className="rounded-btn bg-danger-50 text-danger-700 ring-danger-500/20 flex items-start gap-2.5 p-3.5 text-sm ring-1 ring-inset"
+          className="rounded-btn bg-danger-500/10 text-danger-400 ring-danger-500/20 flex items-start gap-2.5 p-3.5 text-sm ring-1 ring-inset"
         >
           <AlertCircle className="mt-0.5 size-4 shrink-0" />
           {error}
@@ -180,7 +180,7 @@ export function ImageUploader({
         }}
         className={cn(
           'rounded-card border-2 border-dashed p-8 text-center transition-colors',
-          dragging ? 'border-brand-600 bg-brand-50' : 'border-ink-200 bg-ink-50',
+          dragging ? 'border-brand-600 bg-brand-600/10' : 'border-ink-800 bg-ink-950',
         )}
       >
         <input
@@ -194,18 +194,18 @@ export function ImageUploader({
         />
 
         {uploading > 0 ? (
-          <div className="text-ink-600 flex flex-col items-center gap-2 text-sm">
-            <Loader2 className="text-brand-600 size-6 animate-spin" />
+          <div className="text-silver-400 flex flex-col items-center gap-2 text-sm">
+            <Loader2 className="text-brand-400 size-6 animate-spin" />
             Enviando {uploading} {uploading === 1 ? 'foto' : 'fotos'}...
           </div>
         ) : (
           <label htmlFor="upload-fotos" className="cursor-pointer">
-            <ImagePlus className="text-ink-400 mx-auto size-8" />
-            <p className="text-ink-900 mt-3 text-sm font-medium">
+            <ImagePlus className="text-silver-600 mx-auto size-8" />
+            <p className="text-silver-100 mt-3 text-sm font-medium">
               Arraste as fotos aqui ou{' '}
-              <span className="text-brand-600 underline">escolha os arquivos</span>
+              <span className="text-brand-400 underline">escolha os arquivos</span>
             </p>
-            <p className="text-ink-500 mt-1 text-xs">
+            <p className="text-silver-500 mt-1 text-xs">
               JPG, PNG ou WebP. As imagens são comprimidas automaticamente antes do envio.
             </p>
           </label>
@@ -218,7 +218,7 @@ export function ImageUploader({
             {images.map((image) => (
               <li
                 key={image.id}
-                className="group rounded-btn bg-ink-100 ring-ink-200 relative aspect-[4/3] overflow-hidden ring-1"
+                className="group rounded-btn bg-ink-850 ring-ink-800 relative aspect-[4/3] overflow-hidden ring-1"
               >
                 <Image
                   src={image.url}
@@ -239,7 +239,7 @@ export function ImageUploader({
                     <button
                       type="button"
                       onClick={() => void setCover(image.id)}
-                      className="rounded-btn text-ink-900 flex size-9 items-center justify-center bg-white/90 transition-colors hover:bg-white"
+                      className="rounded-btn text-silver-100 flex size-9 items-center justify-center bg-ink-900/90 transition-colors hover:bg-ink-800"
                       aria-label="Definir como capa"
                       title="Definir como capa"
                     >
@@ -249,7 +249,7 @@ export function ImageUploader({
                   <button
                     type="button"
                     onClick={() => void remove(image.id)}
-                    className="rounded-btn text-danger-600 flex size-9 items-center justify-center bg-white/90 transition-colors hover:bg-white"
+                    className="rounded-btn text-danger-400 flex size-9 items-center justify-center bg-ink-900/90 transition-colors hover:bg-ink-800"
                     aria-label="Remover foto"
                     title="Remover foto"
                   >
@@ -260,7 +260,7 @@ export function ImageUploader({
             ))}
           </ul>
 
-          <p className="text-ink-500 text-xs">
+          <p className="text-silver-500 text-xs">
             {/* A capa é o que aparece no card da listagem. Se ela for a foto do
                 porta-malas, ninguém clica. */}
             A foto de <strong>capa</strong> é a que aparece na busca. Passe o mouse sobre uma

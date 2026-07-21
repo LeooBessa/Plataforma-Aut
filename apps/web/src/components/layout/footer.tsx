@@ -1,31 +1,30 @@
 import Link from 'next/link';
-import { Car, Mail, MapPin, Phone } from 'lucide-react';
+import { Mail, MapPin, Phone } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="border-ink-800 bg-ink-950 text-ink-300 mt-24 border-t">
-      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-3 lg:px-8">
+    <footer className="border-ink-800 bg-ink-950 mt-28 border-t">
+      <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="rounded-btn text-ink-950 flex size-9 items-center justify-center bg-white">
-              <Car className="size-5" />
-            </span>
-            <span className="text-lg font-bold text-white">
-              Auto<span className="text-brand-400">Premium</span>
-            </span>
-          </div>
-          <p className="text-ink-400 mt-4 max-w-xs text-sm leading-relaxed">
-            Seminovos selecionados, com procedência verificada e revisão completa.
+          <span className="text-gold-gradient text-lg font-semibold tracking-[0.2em]">
+            ÂUREON
+          </span>
+          <p className="text-silver-500 mt-1 text-[10px] font-medium tracking-[0.22em] uppercase">
+            Conecta você ao extraordinário
+          </p>
+          <p className="text-silver-500 mt-5 max-w-xs text-sm leading-relaxed">
+            Seminovos premium com procedência verificada, revisão completa e histórico
+            transparente.
           </p>
         </div>
 
         <div>
-          <h2 className="text-sm font-semibold text-white">Navegação</h2>
-          <ul className="mt-4 space-y-2.5 text-sm">
-            {/* `as const` preserva os literais das rotas. Sem ele, o TypeScript
-                infere `string` e o `typedRoutes` recusa — que é justamente a
-                proteção funcionando: ela existe para pegar link quebrado em
-                tempo de compilação, não em produção. */}
+          <h2 className="text-brand-400 text-xs font-semibold tracking-[0.18em] uppercase">
+            Navegação
+          </h2>
+          <ul className="mt-5 space-y-3 text-sm">
+            {/* `as const` preserva os literais das rotas — sem ele o typedRoutes
+                recusa, que é a proteção contra link quebrado funcionando. */}
             {(
               [
                 { href: '/veiculos', label: 'Veículos' },
@@ -34,7 +33,10 @@ export function Footer() {
               ] as const
             ).map((link) => (
               <li key={link.href}>
-                <Link href={link.href} className="transition-colors hover:text-white">
+                <Link
+                  href={link.href}
+                  className="text-silver-400 hover:text-brand-400 transition-colors"
+                >
                   {link.label}
                 </Link>
               </li>
@@ -43,35 +45,41 @@ export function Footer() {
         </div>
 
         <div>
-          <h2 className="text-sm font-semibold text-white">Contato</h2>
-          <ul className="mt-4 space-y-2.5 text-sm">
+          <h2 className="text-brand-400 text-xs font-semibold tracking-[0.18em] uppercase">
+            Contato
+          </h2>
+          <ul className="mt-5 space-y-3 text-sm">
             <li className="flex items-center gap-2.5">
-              <Phone className="text-ink-500 size-4 shrink-0" />
-              <a href="tel:+551133334444" className="transition-colors hover:text-white">
+              <Phone className="text-silver-600 size-4 shrink-0" />
+              <a
+                href="tel:+551133334444"
+                className="text-silver-400 hover:text-brand-400 transition-colors"
+              >
                 (11) 3333-4444
               </a>
             </li>
             <li className="flex items-center gap-2.5">
-              <Mail className="text-ink-500 size-4 shrink-0" />
+              <Mail className="text-silver-600 size-4 shrink-0" />
               <a
-                href="mailto:contato@autopremium.com.br"
-                className="transition-colors hover:text-white"
+                href="mailto:contato@aureon.com.br"
+                className="text-silver-400 hover:text-brand-400 transition-colors"
               >
-                contato@autopremium.com.br
+                contato@aureon.com.br
               </a>
             </li>
             <li className="flex items-start gap-2.5">
-              <MapPin className="text-ink-500 mt-0.5 size-4 shrink-0" />
-              <span>São Paulo, SP</span>
+              <MapPin className="text-silver-600 mt-0.5 size-4 shrink-0" />
+              <span className="text-silver-400">São Paulo, SP</span>
             </li>
           </ul>
         </div>
       </div>
 
-      {/* text-ink-400, não ink-500: sobre fundo escuro, texto mais CLARO tem
-          mais contraste. Com ink-500 o Lighthouse acusava 4.12 (o mínimo é 4.5). */}
-      <div className="border-ink-800 text-ink-400 border-t px-4 py-6 text-center text-xs">
-        © {new Date().getFullYear()} AutoPremium. Todos os direitos reservados.
+      {/* Filete dourado separando o rodapé do crédito. */}
+      <div aria-hidden className="rule-gold mx-auto h-px max-w-7xl" />
+
+      <div className="text-silver-600 px-4 py-6 text-center text-xs">
+        © {new Date().getFullYear()} ÂUREON. Todos os direitos reservados.
       </div>
     </footer>
   );

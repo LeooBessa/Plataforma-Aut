@@ -74,15 +74,15 @@ export default function AdminAgendamentosPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-ink-950 text-2xl font-bold tracking-tight">Agendamentos</h1>
-        <p className="text-ink-500 mt-1 text-sm">
+        <h1 className="text-silver-100 text-2xl font-bold tracking-tight">Agendamentos</h1>
+        <p className="text-silver-500 mt-1 text-sm">
           Cada linha é um cliente que quer ver um carro.
         </p>
       </header>
 
       <div className="flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
-          <Search className="text-ink-400 pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
+          <Search className="text-silver-600 pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
           <Input
             type="search"
             value={customer}
@@ -110,29 +110,29 @@ export default function AdminAgendamentosPage() {
       {error && (
         <div
           role="alert"
-          className="rounded-card bg-danger-50 text-danger-700 ring-danger-500/20 flex items-start gap-3 p-4 text-sm ring-1 ring-inset"
+          className="rounded-card bg-danger-500/10 text-danger-400 ring-danger-500/20 flex items-start gap-3 p-4 text-sm ring-1 ring-inset"
         >
           <AlertCircle className="mt-0.5 size-4 shrink-0" />
           {error}
         </div>
       )}
 
-      <div className="rounded-card shadow-card ring-ink-100 overflow-hidden bg-white ring-1">
+      <div className="rounded-card shadow-card ring-ink-800 overflow-hidden bg-ink-900 ring-1">
         {page === null ? (
-          <div className="divide-ink-100 divide-y">
+          <div className="divide-ink-800 divide-y">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="space-y-2 p-5">
-                <div className="bg-ink-100 h-4 w-1/3 animate-pulse rounded" />
-                <div className="bg-ink-100 h-3 w-1/2 animate-pulse rounded" />
+                <div className="bg-ink-850 h-4 w-1/3 animate-pulse rounded" />
+                <div className="bg-ink-850 h-3 w-1/2 animate-pulse rounded" />
               </div>
             ))}
           </div>
         ) : page.items.length === 0 ? (
-          <p className="text-ink-500 p-12 text-center text-sm">
+          <p className="text-silver-500 p-12 text-center text-sm">
             Nenhum agendamento encontrado.
           </p>
         ) : (
-          <ul className="divide-ink-100 divide-y">
+          <ul className="divide-ink-800 divide-y">
             {page.items.map((appointment) => {
               // Concluído ou cancelado é histórico: não muda mais. A API recusa,
               // e a interface não oferece o botão — evitar o erro é melhor do
@@ -145,7 +145,7 @@ export default function AdminAgendamentosPage() {
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="text-ink-900 font-semibold">
+                        <p className="text-silver-100 font-semibold">
                           {appointment.customer_name}
                         </p>
                         <Badge tone={STATUS_TONE[appointment.status]}>
@@ -153,15 +153,15 @@ export default function AdminAgendamentosPage() {
                         </Badge>
                       </div>
 
-                      <p className="text-ink-600 mt-1 text-sm">{appointment.vehicle.title}</p>
+                      <p className="text-silver-400 mt-1 text-sm">{appointment.vehicle.title}</p>
 
-                      <p className="text-ink-900 mt-1 text-sm font-medium">
+                      <p className="text-silver-100 mt-1 text-sm font-medium">
                         {formatDate(appointment.scheduled_date)} às{' '}
                         {formatTime(appointment.scheduled_time)}
                       </p>
 
                       {appointment.notes && (
-                        <p className="rounded-btn bg-ink-50 text-ink-600 mt-2 p-2.5 text-sm">
+                        <p className="rounded-btn bg-ink-950 text-silver-400 mt-2 p-2.5 text-sm">
                           {appointment.notes}
                         </p>
                       )}
@@ -172,7 +172,7 @@ export default function AdminAgendamentosPage() {
                       <div className="mt-3 flex flex-wrap gap-2">
                         <a
                           href={`tel:+55${appointment.phone}`}
-                          className="rounded-btn bg-ink-100 text-ink-700 hover:bg-ink-200 inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium transition-colors"
+                          className="rounded-btn bg-ink-850 text-silver-200 hover:bg-ink-800 inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium transition-colors"
                         >
                           <Phone className="size-3.5" />
                           {formatPhone(appointment.phone)}
@@ -186,7 +186,7 @@ export default function AdminAgendamentosPage() {
                             )}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="rounded-btn bg-success-50 text-success-700 hover:bg-success-100 inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium transition-colors"
+                            className="rounded-btn bg-success-500/10 text-success-400 hover:bg-success-500/20 inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium transition-colors"
                           >
                             <MessageCircle className="size-3.5" />
                             WhatsApp

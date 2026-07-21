@@ -183,7 +183,7 @@ export function VehicleForm({ vehicle }: { vehicle?: VehicleDetail }) {
 
   if (!catalog) {
     return (
-      <div className="text-ink-500 flex items-center gap-3 text-sm">
+      <div className="text-silver-500 flex items-center gap-3 text-sm">
         <Loader2 className="size-4 animate-spin" />
         Carregando marcas e opcionais...
       </div>
@@ -195,7 +195,7 @@ export function VehicleForm({ vehicle }: { vehicle?: VehicleDetail }) {
       {serverError && (
         <div
           role="alert"
-          className="rounded-card bg-danger-50 text-danger-700 ring-danger-500/20 flex items-start gap-2.5 p-4 text-sm ring-1 ring-inset"
+          className="rounded-card bg-danger-500/10 text-danger-400 ring-danger-500/20 flex items-start gap-2.5 p-4 text-sm ring-1 ring-inset"
         >
           <AlertCircle className="mt-0.5 size-4 shrink-0" />
           {serverError}
@@ -396,7 +396,7 @@ export function VehicleForm({ vehicle }: { vehicle?: VehicleDetail }) {
           </Field>
         </div>
 
-        <p className="rounded-btn bg-ink-50 text-ink-600 p-3 text-xs">
+        <p className="rounded-btn bg-ink-950 text-silver-400 p-3 text-xs">
           A parcela exibida no site é <strong>(preço − entrada) ÷ parcelas</strong>, sem juros,
           e o anúncio deixa isso explícito. Mostrar uma parcela &quot;com juros&quot; inventada
           pela plataforma seria informação financeira enganosa.
@@ -406,14 +406,14 @@ export function VehicleForm({ vehicle }: { vehicle?: VehicleDetail }) {
       <Section title="Opcionais" columns={1}>
         {featureGroups.map(([category, features]) => (
           <div key={category}>
-            <h3 className="text-ink-600 text-xs font-semibold tracking-wide uppercase">
+            <h3 className="text-silver-400 text-xs font-semibold tracking-wide uppercase">
               {category}
             </h3>
             <div className="mt-2 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
               {features?.map((feature) => (
                 <label
                   key={feature.id}
-                  className="rounded-btn text-ink-700 hover:bg-ink-50 flex cursor-pointer items-center gap-2.5 px-2 py-1.5 text-sm transition-colors"
+                  className="rounded-btn text-silver-200 hover:bg-ink-850 flex cursor-pointer items-center gap-2.5 px-2 py-1.5 text-sm transition-colors"
                 >
                   <input
                     type="checkbox"
@@ -425,7 +425,7 @@ export function VehicleForm({ vehicle }: { vehicle?: VehicleDetail }) {
                         : selectedFeatures.filter((id) => id !== feature.id);
                       setValue('feature_ids', next);
                     }}
-                    className="border-ink-300 text-brand-600 focus:ring-brand-600/25 size-4 rounded"
+                    className="border-ink-700 text-brand-400 focus:ring-brand-600/25 size-4 rounded"
                   />
                   {feature.name}
                 </label>
@@ -439,7 +439,7 @@ export function VehicleForm({ vehicle }: { vehicle?: VehicleDetail }) {
         <Checkbox label="Exibir com selo de destaque na home" {...register('is_featured')} />
       </Section>
 
-      <div className="border-ink-200 sticky bottom-0 flex justify-end gap-3 border-t bg-white/90 py-4 backdrop-blur">
+      <div className="border-ink-800 sticky bottom-0 flex justify-end gap-3 border-t bg-ink-900/90 py-4 backdrop-blur">
         <Button
           type="button"
           variant="secondary"
@@ -475,8 +475,8 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-card shadow-card ring-ink-100 bg-white p-6 ring-1">
-      <h2 className="text-ink-900 text-sm font-semibold">{title}</h2>
+    <section className="rounded-card shadow-card ring-ink-800 bg-ink-900 p-6 ring-1">
+      <h2 className="text-silver-100 text-sm font-semibold">{title}</h2>
       <div
         className={
           columns === 1 ? 'mt-4 space-y-4' : 'mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4'
@@ -490,10 +490,10 @@ function Section({
 
 function Checkbox({ label, ...props }: React.ComponentProps<'input'> & { label: string }) {
   return (
-    <label className="rounded-btn text-ink-700 hover:bg-ink-50 flex cursor-pointer items-center gap-2.5 px-2 py-1.5 text-sm transition-colors">
+    <label className="rounded-btn text-silver-200 hover:bg-ink-850 flex cursor-pointer items-center gap-2.5 px-2 py-1.5 text-sm transition-colors">
       <input
         type="checkbox"
-        className="border-ink-300 text-brand-600 focus:ring-brand-600/25 size-4 rounded"
+        className="border-ink-700 text-brand-400 focus:ring-brand-600/25 size-4 rounded"
         {...props}
       />
       {label}

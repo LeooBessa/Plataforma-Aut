@@ -5,14 +5,14 @@ import { ButtonLink } from '@/components/ui/button';
 export default function NotFound() {
   return (
     <div className="mx-auto flex min-h-[60dvh] max-w-md flex-col items-center justify-center px-4 text-center">
-      <span className="bg-ink-100 text-ink-400 flex size-14 items-center justify-center rounded-full">
+      <span className="bg-ink-850 text-silver-600 flex size-14 items-center justify-center rounded-full">
         <SearchX className="size-7" />
       </span>
 
-      <h1 className="text-ink-950 mt-6 text-2xl font-bold tracking-tight">
+      <h1 className="text-silver-100 mt-6 text-2xl font-bold tracking-tight">
         Página não encontrada
       </h1>
-      <p className="text-ink-600 mt-2 text-sm leading-relaxed">
+      <p className="text-silver-400 mt-2 text-sm leading-relaxed">
         O endereço não existe ou o anúncio saiu do ar. Veja os veículos disponíveis.
       </p>
 

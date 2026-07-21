@@ -51,21 +51,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   // desconcertante.
   if (loading || !user) {
     return (
-      <div className="bg-ink-50 flex min-h-dvh items-center justify-center">
-        <div className="border-ink-200 border-t-brand-600 size-8 animate-spin rounded-full border-2" />
+      <div className="bg-ink-950 flex min-h-dvh items-center justify-center">
+        <div className="border-ink-800 border-t-brand-600 size-8 animate-spin rounded-full border-2" />
       </div>
     );
   }
 
   return (
-    <div className="bg-ink-50 flex min-h-dvh">
-      <aside className="border-ink-200 hidden w-64 shrink-0 flex-col border-r bg-white lg:flex">
-        <div className="border-ink-100 flex h-16 items-center gap-2.5 border-b px-5">
-          <span className="rounded-btn bg-ink-950 flex size-9 items-center justify-center text-white">
+    <div className="bg-ink-950 flex min-h-dvh">
+      <aside className="border-ink-800 hidden w-64 shrink-0 flex-col border-r bg-ink-900 lg:flex">
+        <div className="border-ink-800 flex h-16 items-center gap-2.5 border-b px-5">
+          <span className="rounded-btn border-brand-600/30 bg-brand-600/10 text-brand-400 flex size-9 items-center justify-center border">
             <Car className="size-5" />
           </span>
-          <span className="text-ink-950 font-bold tracking-tight">
-            Auto<span className="text-brand-600">Premium</span>
+          <span className="text-gold-gradient text-sm font-semibold tracking-[0.2em]">
+            ÂUREON
           </span>
         </div>
 
@@ -80,8 +80,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 className={cn(
                   'rounded-btn flex items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors',
                   active
-                    ? 'bg-brand-50 text-brand-700'
-                    : 'text-ink-600 hover:bg-ink-50 hover:text-ink-900',
+                    ? 'bg-brand-600/10 text-brand-300'
+                    : 'text-silver-400 hover:bg-ink-850 hover:text-silver-100',
                 )}
               >
                 <Icon className="size-4.5" />
@@ -91,15 +91,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           })}
         </nav>
 
-        <div className="border-ink-100 border-t p-3">
+        <div className="border-ink-800 border-t p-3">
           <div className="px-3 py-2">
-            <p className="text-ink-900 truncate text-sm font-medium">{user.name}</p>
-            <p className="text-ink-500 truncate text-xs">{user.email}</p>
+            <p className="text-silver-100 truncate text-sm font-medium">{user.name}</p>
+            <p className="text-silver-500 truncate text-xs">{user.email}</p>
           </div>
           <button
             type="button"
             onClick={() => void logout()}
-            className="rounded-btn text-ink-600 hover:bg-danger-50 hover:text-danger-700 mt-1 flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors"
+            className="rounded-btn text-silver-400 hover:bg-danger-500/10 hover:text-danger-400 mt-1 flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors"
           >
             <LogOut className="size-4.5" />
             Sair
@@ -109,7 +109,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Navegação do topo — some no desktop, onde a lateral assume. */}
-        <header className="border-ink-200 flex h-16 items-center gap-1 border-b bg-white px-4 lg:hidden">
+        <header className="border-ink-800 flex h-16 items-center gap-1 border-b bg-ink-900 px-4 lg:hidden">
           {NAV.map(({ href, label, icon: Icon }) => {
             const active = pathname === href || pathname.startsWith(`${href}/`);
             return (
@@ -119,7 +119,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 aria-label={label}
                 className={cn(
                   'rounded-btn flex size-10 items-center justify-center transition-colors',
-                  active ? 'bg-brand-50 text-brand-700' : 'text-ink-500 hover:bg-ink-50',
+                  active ? 'bg-brand-600/10 text-brand-300' : 'text-silver-500 hover:bg-ink-850',
                 )}
               >
                 <Icon className="size-5" />
@@ -129,7 +129,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <button
             type="button"
             onClick={() => void logout()}
-            className="rounded-btn text-ink-500 hover:bg-danger-50 hover:text-danger-700 ml-auto flex size-10 items-center justify-center transition-colors"
+            className="rounded-btn text-silver-500 hover:bg-danger-500/10 hover:text-danger-400 ml-auto flex size-10 items-center justify-center transition-colors"
             aria-label="Sair"
           >
             <LogOut className="size-5" />

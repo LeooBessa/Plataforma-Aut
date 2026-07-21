@@ -7,28 +7,29 @@ type Variant = 'primary' | 'success' | 'secondary' | 'ghost' | 'danger';
 type Size = 'sm' | 'md' | 'lg';
 
 const VARIANTS: Record<Variant, string> = {
-  // Azul: a ação principal da tela. Só uma por tela — se tudo é primário,
-  // nada é.
-  primary: 'bg-brand-600 text-white hover:bg-brand-700 active:bg-brand-800 shadow-sm',
-  // Verde: reservado para o que é positivo e converte — "Agendar visita".
-  // Usá-lo em qualquer botão diluiria o sinal. Base em 700 (não 600) por
-  // contraste: branco sobre 600 reprovava na WCAG AA.
-  success: 'bg-success-700 text-white hover:bg-success-800 active:bg-success-800 shadow-sm',
-  secondary: 'bg-white text-ink-900 border border-ink-200 hover:bg-ink-50 active:bg-ink-100',
-  ghost: 'text-ink-700 hover:bg-ink-100 active:bg-ink-200',
+  // Dourado com texto PRETO. O ouro é claro; texto branco em cima dele
+  // reprovaria em contraste. Preto sobre ouro é o par legível — e é também o
+  // que dá a leitura de "peça metálica", não de "botão colorido".
+  primary:
+    'bg-gradient-to-b from-brand-400 to-brand-600 text-ink-950 font-semibold hover:from-brand-300 hover:to-brand-500',
+  // Verde: reservado ao que converte — "Agendar visita".
+  success: 'bg-success-700 text-white hover:bg-success-800',
+  // Contorno prata sobre o preto: presente sem competir com o dourado.
+  secondary:
+    'border border-ink-700 bg-ink-900/60 text-silver-200 hover:border-ink-600 hover:bg-ink-800 hover:text-silver-100',
+  ghost: 'text-silver-400 hover:bg-ink-800 hover:text-silver-100',
   danger: 'bg-danger-600 text-white hover:bg-danger-700',
 };
 
 const SIZES: Record<Size, string> = {
   sm: 'h-9 px-3.5 text-sm gap-1.5',
   md: 'h-11 px-5 text-sm gap-2',
-  lg: 'h-13 px-7 text-base gap-2.5',
+  lg: 'h-13 px-7 text-[15px] gap-2.5',
 };
 
 const BASE = cn(
   'inline-flex items-center justify-center rounded-btn font-medium',
-  'transition-colors duration-150',
-  // `active:scale` dá o retorno tátil do clique sem animação chamativa.
+  'transition-all duration-200',
   'active:scale-[0.98] motion-reduce:active:scale-100',
   'disabled:pointer-events-none disabled:opacity-50',
   'whitespace-nowrap',

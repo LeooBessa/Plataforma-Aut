@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Car, LogIn, Menu, Search, X } from 'lucide-react';
+import { LogIn, Menu, Search, X } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
@@ -19,20 +19,16 @@ export function Navbar() {
   const pathname = usePathname();
 
   return (
-    // `sticky top-0` em vez de `fixed`: a navbar acompanha a rolagem sem tirar o
-    // conteúdo do fluxo. Com `fixed`, seria preciso um padding compensatório no
-    // topo de todas as páginas — e alguém sempre esquece numa delas.
-    <header className="border-ink-100 shadow-nav sticky top-0 z-50 border-b bg-white/85 backdrop-blur-md">
+    // `sticky` em vez de `fixed`: acompanha a rolagem sem tirar o conteúdo do
+    // fluxo. Com `fixed`, seria preciso um padding compensatório no topo de
+    // todas as páginas — e alguém sempre esquece numa delas.
+    <header className="border-ink-800/80 bg-ink-950/85 sticky top-0 z-50 border-b backdrop-blur-xl">
       <nav className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
-        {/* Sem aria-label: o texto visível "AutoPremium" já nomeia o link. Um
-            aria-label diferente do texto ("Página inicial") quebraria o controle
-            por voz — o usuário diz "clicar em AutoPremium" e nada acontece. */}
-        <Link href="/" className="flex shrink-0 items-center gap-2">
-          <span className="rounded-btn bg-ink-950 flex size-9 items-center justify-center text-white">
-            <Car className="size-5" aria-hidden />
-          </span>
-          <span className="text-ink-950 text-lg font-bold tracking-tight">
-            Auto<span className="text-brand-600">Premium</span>
+        {/* Sem aria-label: o texto visível "ÂUREON" já nomeia o link. Um
+            aria-label diferente do texto quebraria o controle por voz. */}
+        <Link href="/" className="flex shrink-0 items-baseline gap-2">
+          <span className="text-gold-gradient text-lg font-semibold tracking-[0.2em]">
+            ÂUREON
           </span>
         </Link>
 
@@ -47,10 +43,8 @@ export function Navbar() {
                   // Sem ele, a indicação seria apenas visual.
                   aria-current={active ? 'page' : undefined}
                   className={cn(
-                    'rounded-btn px-3 py-2 text-sm font-medium transition-colors',
-                    active
-                      ? 'bg-ink-100 text-ink-950'
-                      : 'text-ink-600 hover:bg-ink-50 hover:text-ink-950',
+                    'rounded-btn px-3 py-2 text-sm transition-colors',
+                    active ? 'text-brand-400' : 'text-silver-400 hover:text-silver-100',
                   )}
                 >
                   {link.label}
@@ -63,7 +57,7 @@ export function Navbar() {
         <div className="ml-auto flex items-center gap-2">
           <Link
             href="/veiculos"
-            className="rounded-btn text-ink-600 hover:bg-ink-100 hover:text-ink-950 flex size-10 items-center justify-center transition-colors"
+            className="rounded-btn text-silver-400 hover:bg-ink-800 hover:text-silver-100 flex size-10 items-center justify-center transition-colors"
             aria-label="Pesquisar veículos"
           >
             <Search className="size-5" />
@@ -71,7 +65,7 @@ export function Navbar() {
 
           <Link
             href="/admin/login"
-            className="rounded-btn border-ink-200 text-ink-700 hover:bg-ink-50 hidden items-center gap-2 border px-4 py-2 text-sm font-medium transition-colors sm:flex"
+            className="rounded-btn border-ink-700 text-silver-300 hover:border-brand-600/50 hover:text-brand-400 hidden items-center gap-2 border px-4 py-2 text-sm transition-colors sm:flex"
           >
             <LogIn className="size-4" />
             Admin
@@ -80,7 +74,7 @@ export function Navbar() {
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
-            className="rounded-btn text-ink-700 hover:bg-ink-100 flex size-10 items-center justify-center transition-colors md:hidden"
+            className="rounded-btn text-silver-300 hover:bg-ink-800 flex size-10 items-center justify-center transition-colors md:hidden"
             aria-label={open ? 'Fechar menu' : 'Abrir menu'}
             aria-expanded={open}
           >
@@ -90,7 +84,7 @@ export function Navbar() {
       </nav>
 
       {open && (
-        <div className="border-ink-100 border-t bg-white md:hidden">
+        <div className="border-ink-800 bg-ink-950 border-t md:hidden">
           <ul className="space-y-1 px-4 py-3">
             {LINKS.map((link) => (
               <li key={link.href}>
@@ -98,10 +92,10 @@ export function Navbar() {
                   href={link.href}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    'rounded-btn block px-3 py-2.5 text-sm font-medium',
+                    'rounded-btn block px-3 py-2.5 text-sm transition-colors',
                     pathname === link.href
-                      ? 'bg-ink-100 text-ink-950'
-                      : 'text-ink-700 hover:bg-ink-50',
+                      ? 'bg-ink-900 text-brand-400'
+                      : 'text-silver-300 hover:bg-ink-900',
                   )}
                 >
                   {link.label}
@@ -112,7 +106,7 @@ export function Navbar() {
               <Link
                 href="/admin/login"
                 onClick={() => setOpen(false)}
-                className="rounded-btn text-ink-700 hover:bg-ink-50 flex items-center gap-2 px-3 py-2.5 text-sm font-medium"
+                className="rounded-btn text-silver-300 hover:bg-ink-900 flex items-center gap-2 px-3 py-2.5 text-sm"
               >
                 <LogIn className="size-4" />
                 Área do administrador
