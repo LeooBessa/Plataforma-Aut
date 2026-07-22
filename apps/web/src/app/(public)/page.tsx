@@ -42,25 +42,18 @@ export default function HomePage() {
 }
 
 async function HeroSection() {
-  // Em PARALELO: são duas consultas independentes, e encadeá-las somaria as
-  // latências no elemento mais importante da página.
-  //
-  // `safely` nas duas porque uma queda da API não pode derrubar a home — sem
-  // destaque o hero perde a foto, sem filtros ele perde a busca, e o resto
-  // continua de pé.
-  const [featured, options] = await Promise.all([
-    safely(listFeaturedVehicles(1)),
-    safely(getFilterOptions()),
-  ]);
+  // O hero só depende dos filtros agora: o carro do topo virou um PNG recortado
+  // e estático (ver o comentário em `hero.tsx`). `safely` porque uma queda da
+  // API não pode derrubar a home — sem filtros o hero perde só a busca.
+  const options = await safely(getFilterOptions());
 
   return (
     <Hero
-      featured={featured?.[0] ?? null}
       search={
         options ? (
           // Dentro do hero a busca não precisa da própria moldura — ela já está
           // numa. Um card dentro de outro card é ruído. Só o fundo semiopaco,
-          // para o brilho dourado do hero atravessar de leve.
+          // para o véu dourado do hero atravessar de leve.
           <SearchFilters options={options} compact className="bg-surface/60" />
         ) : null
       }
@@ -212,26 +205,22 @@ function SectionHeader({
 function HeroSkeleton() {
   return (
     <section className="border-line bg-canvas border-b">
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
-        <div className="grid items-center gap-10 lg:grid-cols-[1fr_auto_1fr] lg:gap-12">
-          <div className="order-2 space-y-4 lg:order-1">
-            <div className="bg-sunken h-6 w-44 animate-pulse rounded-full" />
-            <div className="bg-sunken h-10 w-full animate-pulse rounded" />
+      {/* O esqueleto repete a MEDIDA do hero real — mesmo padding, mesmas
+          colunas, mesma proporção do carro. Um placeholder de outro tamanho
+          faria a página saltar quando o conteúdo chegasse: foi exatamente esse
+          o CLS de 0,24 que a listagem acusou no Lighthouse. */}
+      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
+        <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-8">
+          <div className="space-y-5">
+            <div className="bg-sunken h-6 w-52 animate-pulse rounded-full" />
+            <div className="bg-sunken h-28 w-full animate-pulse rounded" />
             <div className="bg-sunken h-16 w-full animate-pulse rounded" />
+            <div className="bg-sunken h-13 w-64 animate-pulse rounded-xl" />
           </div>
-          <div className="order-1 flex justify-center lg:order-2">
-            {/* Mesma proporção do logo (900×581). Um esqueleto redondo faria a
-                página se ajustar quando a imagem real, retangular, chegasse. */}
-            <div className="bg-sunken aspect-[900/581] w-60 animate-pulse rounded-xl sm:w-72 lg:w-[17.5rem] xl:w-[20rem]" />
-          </div>
-          <div className="rounded-card bg-sunken order-3 aspect-[4/3] animate-pulse" />
+          <div className="bg-sunken aspect-[775/383] w-full animate-pulse rounded-xl" />
         </div>
 
-        {/* A busca também entra no esqueleto, na mesma altura que ela terá.
-            Um placeholder mais baixo faria a página inteira saltar quando os
-            filtros chegassem — foi exatamente esse o CLS de 0,24 que a
-            listagem acusou no Lighthouse. */}
-        <div className="border-line/70 mt-12 border-t pt-8 lg:mt-16">
+        <div className="border-line/70 mt-16 border-t pt-8 lg:mt-24">
           <div className="bg-sunken h-3 w-40 animate-pulse rounded-full" />
           <div className="rounded-card bg-surface mt-4 h-[5.5rem] animate-pulse sm:h-[4.75rem]" />
         </div>
