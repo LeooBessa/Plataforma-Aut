@@ -3,16 +3,16 @@ import { Mail, MapPin, Phone } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="border-ink-800 bg-ink-950 mt-28 border-t">
+    <footer className="bg-inverse mt-28">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
         <div>
           <span className="text-gold-gradient text-lg font-semibold tracking-[0.2em]">
             ÂUREON
           </span>
-          <p className="text-silver-500 mt-1 text-[10px] font-medium tracking-[0.22em] uppercase">
+          <p className="mt-1 text-[10px] text-white/40 font-medium tracking-[0.22em] uppercase">
             Conecta você ao extraordinário
           </p>
-          <p className="text-silver-500 mt-5 max-w-xs text-sm leading-relaxed">
+          <p className="mt-5 max-w-xs text-sm text-white/55 leading-relaxed">
             Seminovos premium com procedência verificada, revisão completa e histórico
             transparente.
           </p>
@@ -35,7 +35,7 @@ export function Footer() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-silver-400 hover:text-brand-400 transition-colors"
+                  className="text-white/70 transition-colors hover:text-brand-400"
                 >
                   {link.label}
                 </Link>
@@ -50,26 +50,26 @@ export function Footer() {
           </h2>
           <ul className="mt-5 space-y-3 text-sm">
             <li className="flex items-center gap-2.5">
-              <Phone className="text-silver-600 size-4 shrink-0" />
+              <Phone className="size-4 shrink-0 text-white/35" />
               <a
                 href="tel:+551133334444"
-                className="text-silver-400 hover:text-brand-400 transition-colors"
+                className="text-white/70 transition-colors hover:text-brand-400"
               >
                 (11) 3333-4444
               </a>
             </li>
             <li className="flex items-center gap-2.5">
-              <Mail className="text-silver-600 size-4 shrink-0" />
+              <Mail className="size-4 shrink-0 text-white/35" />
               <a
                 href="mailto:contato@aureon.com.br"
-                className="text-silver-400 hover:text-brand-400 transition-colors"
+                className="text-white/70 transition-colors hover:text-brand-400"
               >
                 contato@aureon.com.br
               </a>
             </li>
             <li className="flex items-start gap-2.5">
-              <MapPin className="text-silver-600 mt-0.5 size-4 shrink-0" />
-              <span className="text-silver-400">São Paulo, SP</span>
+              <MapPin className="mt-0.5 size-4 shrink-0 text-white/35" />
+              <span className="text-white/70">São Paulo, SP</span>
             </li>
           </ul>
         </div>
@@ -78,7 +78,7 @@ export function Footer() {
       {/* Filete dourado separando o rodapé do crédito. */}
       <div aria-hidden className="rule-gold mx-auto h-px max-w-7xl" />
 
-      <div className="text-silver-600 px-4 py-6 text-center text-xs">
+      <div className="px-4 py-6 text-center text-xs text-white/40">
         © {new Date().getFullYear()} ÂUREON. Todos os direitos reservados.
       </div>
     </footer>

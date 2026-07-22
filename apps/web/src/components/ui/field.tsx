@@ -3,13 +3,13 @@ import type { ComponentProps, ReactNode } from 'react';
 import { cn } from '@/lib/utils';
 
 const CONTROL = cn(
-  'w-full rounded-btn border border-ink-700 bg-ink-900',
-  'px-3.5 py-2.5 text-sm text-silver-100',
-  'placeholder:text-silver-600',
+  'w-full rounded-btn border border-line-strong bg-surface',
+  'px-3.5 py-2.5 text-sm text-content',
+  'placeholder:text-faint',
   'transition-colors',
   'hover:border-ink-600',
   'focus:border-brand-600 focus:ring-2 focus:ring-brand-600/20 focus:outline-none',
-  'disabled:cursor-not-allowed disabled:bg-ink-900/50 disabled:text-silver-600',
+  'disabled:cursor-not-allowed disabled:bg-surface/50 disabled:text-faint',
   // Estado de erro via `aria-invalid`: o atributo serve ao leitor de tela E ao
   // estilo. Uma classe CSS de erro sozinha comunicaria só a quem enxerga.
   'aria-invalid:border-danger-500 aria-invalid:focus:ring-danger-500/20',
@@ -56,7 +56,7 @@ export function Field({
 }) {
   return (
     <div className={cn('space-y-1.5', className)}>
-      <label htmlFor={htmlFor} className="text-silver-300 block text-sm font-medium">
+      <label htmlFor={htmlFor} className="text-muted block text-sm font-medium">
         {label}
         {required && (
           <span className="text-danger-500 ml-0.5" aria-hidden>
@@ -67,7 +67,7 @@ export function Field({
 
       {children}
 
-      {hint && !error && <p className="text-silver-500 text-xs">{hint}</p>}
+      {hint && !error && <p className="text-faint text-xs">{hint}</p>}
 
       {error && (
         // `role="alert"` faz o leitor de tela anunciar o erro assim que ele

@@ -51,7 +51,7 @@ export function Gallery({ images, title }: { images: VehicleImage[]; title: stri
 
   if (total === 0) {
     return (
-      <div className="rounded-card border-ink-800 bg-ink-900 text-silver-500 flex aspect-[4/3] items-center justify-center border text-sm">
+      <div className="rounded-card border-line bg-surface text-faint flex aspect-[4/3] items-center justify-center border text-sm">
         Sem fotos
       </div>
     );
@@ -62,7 +62,7 @@ export function Gallery({ images, title }: { images: VehicleImage[]; title: stri
   return (
     <>
       <div className="space-y-3">
-        <div className="group rounded-card border-ink-800 bg-ink-900 relative aspect-[4/3] overflow-hidden border">
+        <div className="group rounded-card border-line bg-surface relative aspect-[4/3] overflow-hidden border">
           <Image
             src={active.url}
             alt={active.alt_text ?? `${title} — foto ${current + 1} de ${total}`}
@@ -186,7 +186,7 @@ function NavButton({
         side === 'left' ? 'left-3' : 'right-3',
         dark
           ? 'bg-white/10 text-white hover:bg-white/20'
-          : 'text-silver-100 bg-ink-950/80 hover:bg-ink-900 border-ink-700 border',
+          : 'text-content bg-canvas/80 hover:bg-surface border-line-strong border',
       )}
     >
       <Icon className="size-5" />

@@ -7,13 +7,13 @@ type Tone = 'gold' | 'brand' | 'success' | 'neutral' | 'warning' | 'danger' | 'd
 const TONES: Record<Tone, string> = {
   // Dourado: o selo de destaque. Contorno e brilho, não preenchimento — sobre
   // foto, um bloco sólido de ouro brigaria com a imagem.
-  gold: 'border-brand-500/40 bg-ink-950/80 text-brand-300 backdrop-blur',
-  brand: 'border-brand-500/40 bg-brand-500/10 text-brand-300',
+  gold: 'border-brand-500/40 bg-canvas/80 text-accent backdrop-blur',
+  brand: 'border-brand-500/40 bg-brand-500/10 text-accent',
   success: 'border-success-500/30 bg-success-500/10 text-success-500',
-  neutral: 'border-ink-700 bg-ink-950/80 text-silver-300 backdrop-blur',
+  neutral: 'border-line-strong bg-canvas/80 text-muted backdrop-blur',
   warning: 'border-warning-600/40 bg-warning-600/10 text-warning-600',
   danger: 'border-danger-500/40 bg-danger-500/10 text-danger-500',
-  dark: 'border-ink-700 bg-ink-950/90 text-silver-100 backdrop-blur',
+  dark: 'border-line-strong bg-canvas/90 text-content backdrop-blur',
 };
 
 export function Badge({

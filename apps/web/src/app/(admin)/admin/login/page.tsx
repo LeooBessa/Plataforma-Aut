@@ -62,25 +62,25 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="bg-ink-950 flex min-h-dvh flex-col">
+    <div className="bg-sunken flex min-h-dvh flex-col">
       <div className="flex flex-1 items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
           <Link
             href="/"
-            className="text-silver-500 hover:text-silver-100 mb-8 inline-flex items-center gap-1.5 text-sm transition-colors"
+            className="text-faint hover:text-content mb-8 inline-flex items-center gap-1.5 text-sm transition-colors"
           >
             <ArrowLeft className="size-4" />
             Voltar ao site
           </Link>
 
-          <div className="rounded-card shadow-card ring-ink-800 bg-ink-900 p-8 ring-1">
+          <div className="rounded-card shadow-card ring-line bg-surface p-8 ring-1">
             <div className="flex items-center gap-2.5">
-              <span className="rounded-btn border-brand-600/30 bg-brand-600/10 text-brand-400 flex size-10 items-center justify-center border">
+              <span className="rounded-btn border-accent/30 bg-accent-soft text-accent flex size-10 items-center justify-center border">
                 <Car className="size-5" />
               </span>
               <div>
-                <h1 className="text-silver-100 font-bold">Área do administrador</h1>
-                <p className="text-silver-500 text-xs">Gerencie anúncios e agendamentos</p>
+                <h1 className="text-content font-bold">Área do administrador</h1>
+                <p className="text-faint text-xs">Gerencie anúncios e agendamentos</p>
               </div>
             </div>
 
@@ -137,7 +137,7 @@ export default function LoginPage() {
             </form>
           </div>
 
-          <p className="text-silver-600 mt-6 text-center text-xs">
+          <p className="text-faint mt-6 text-center text-xs">
             Acesso restrito. Contas são criadas por um administrador.
           </p>
         </div>

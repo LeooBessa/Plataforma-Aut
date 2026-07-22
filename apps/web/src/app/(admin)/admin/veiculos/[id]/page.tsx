@@ -125,7 +125,7 @@ export default function EditarVeiculoPage({ params }: { params: Promise<{ id: st
 
   if (!vehicle) {
     return (
-      <div className="text-silver-500 flex items-center gap-3 text-sm">
+      <div className="text-faint flex items-center gap-3 text-sm">
         <Loader2 className="size-4 animate-spin" />
         Carregando anúncio...
       </div>
@@ -139,7 +139,7 @@ export default function EditarVeiculoPage({ params }: { params: Promise<{ id: st
       <div>
         <Link
           href="/admin/veiculos"
-          className="text-silver-500 hover:text-silver-100 inline-flex items-center gap-1.5 text-sm transition-colors"
+          className="text-faint hover:text-content inline-flex items-center gap-1.5 text-sm transition-colors"
         >
           <ArrowLeft className="size-4" />
           Voltar aos anúncios
@@ -148,7 +148,7 @@ export default function EditarVeiculoPage({ params }: { params: Promise<{ id: st
         <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="flex flex-wrap items-center gap-2">
-              <h1 className="text-silver-100 text-2xl font-bold tracking-tight">
+              <h1 className="text-content text-2xl font-bold tracking-tight">
                 {vehicle.title}
               </h1>
               <Badge tone={STATUS_TONE[vehicle.status]}>{STATUS_LABELS[vehicle.status]}</Badge>
@@ -159,7 +159,7 @@ export default function EditarVeiculoPage({ params }: { params: Promise<{ id: st
                 href={`/veiculos/${vehicle.slug}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-brand-400 hover:text-brand-200 mt-1.5 inline-flex items-center gap-1.5 text-sm font-medium"
+                className="text-accent hover:text-accent mt-1.5 inline-flex items-center gap-1.5 text-sm font-medium"
               >
                 Ver no site
                 <ExternalLink className="size-3.5" />
@@ -218,10 +218,10 @@ export default function EditarVeiculoPage({ params }: { params: Promise<{ id: st
           É a primeira coisa que falta depois de criar o rascunho, e sem elas o
           anúncio não pode ser publicado. Enterrá-las no fim da página faria o
           admin procurar. */}
-      <section className="rounded-card shadow-card ring-ink-800 bg-ink-900 p-6 ring-1">
+      <section className="rounded-card shadow-card ring-line bg-surface p-6 ring-1">
         <div className="flex items-center justify-between">
-          <h2 className="text-silver-100 text-sm font-semibold">Fotos</h2>
-          <span className="text-silver-500 text-xs">{vehicle.images.length} de 20</span>
+          <h2 className="text-content text-sm font-semibold">Fotos</h2>
+          <span className="text-faint text-xs">{vehicle.images.length} de 20</span>
         </div>
 
         {vehicle.images.length === 0 && (

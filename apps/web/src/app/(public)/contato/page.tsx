@@ -15,10 +15,10 @@ const WHATSAPP = '11999998888';
 export default function ContatoPage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
-      <h1 className="text-silver-100 text-3xl font-bold tracking-tight sm:text-4xl">
+      <h1 className="text-content text-3xl font-bold tracking-tight sm:text-4xl">
         Fale com a gente
       </h1>
-      <p className="text-silver-400 mt-3">
+      <p className="text-muted mt-3">
         Tem dúvida sobre um veículo, quer negociar a troca do seu ou precisa de ajuda com
         financiamento? Estamos aqui.
       </p>
@@ -51,11 +51,11 @@ export default function ContatoPage() {
         <Card icon={<MapPin className="size-5" />} title="Endereço" value="São Paulo, SP" />
       </div>
 
-      <div className="rounded-card bg-ink-900 ring-ink-800 mt-8 flex items-start gap-3 p-5 ring-1">
-        <Clock className="text-silver-600 mt-0.5 size-5 shrink-0" />
+      <div className="rounded-card bg-surface ring-line mt-8 flex items-start gap-3 p-5 ring-1">
+        <Clock className="text-faint mt-0.5 size-5 shrink-0" />
         <div className="text-sm">
-          <p className="text-silver-100 font-semibold">Horário de atendimento</p>
-          <p className="text-silver-400 mt-1">
+          <p className="text-content font-semibold">Horário de atendimento</p>
+          <p className="text-muted mt-1">
             Segunda a sexta, 8h às 18h30 · Sábado, 9h às 14h
           </p>
         </div>
@@ -64,9 +64,9 @@ export default function ContatoPage() {
       {/* Este bloco era um retângulo preto sobre fundo preto — sumia. Ganha
           contorno dourado tênue e um brilho ao fundo para se destacar sem
           precisar de uma cor que brigue com a marca. */}
-      <div className="rounded-card border-brand-600/25 bg-brand-600/[0.06] mt-10 border p-8 text-center">
-        <h2 className="text-silver-100 text-xl font-bold">Prefere ver o carro pessoalmente?</h2>
-        <p className="text-silver-400 mt-2 text-sm">
+      <div className="rounded-card border-accent/30 bg-brand-600/[0.06] mt-10 border p-8 text-center">
+        <h2 className="text-content text-xl font-bold">Prefere ver o carro pessoalmente?</h2>
+        <p className="text-muted mt-2 text-sm">
           Escolha um veículo e agende sua visita direto pelo site.
         </p>
         <ButtonLink href="/veiculos" size="lg" className="mt-6">
@@ -96,20 +96,20 @@ function Card({
         className={
           tone === 'success'
             ? 'rounded-btn bg-success-500/10 text-success-500 flex size-11 items-center justify-center'
-            : 'rounded-btn bg-brand-600/10 text-brand-400 flex size-11 items-center justify-center'
+            : 'rounded-btn bg-accent-soft text-accent flex size-11 items-center justify-center'
         }
       >
         {icon}
       </span>
       <div className="min-w-0">
-        <p className="text-silver-100 text-sm font-semibold">{title}</p>
-        <p className="text-silver-400 truncate text-sm">{value}</p>
+        <p className="text-content text-sm font-semibold">{title}</p>
+        <p className="text-muted truncate text-sm">{value}</p>
       </div>
     </>
   );
 
   const className =
-    'flex items-center gap-4 rounded-card bg-ink-900 p-5 shadow-card ring-1 ring-ink-800 transition-shadow hover:shadow-card-hover';
+    'flex items-center gap-4 rounded-card bg-surface p-5 shadow-card ring-1 ring-line transition-shadow hover:shadow-card-hover';
 
   if (!href) {
     return <div className={className}>{content}</div>;

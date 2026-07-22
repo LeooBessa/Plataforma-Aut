@@ -60,8 +60,8 @@ export default function DashboardPage() {
     <div className="space-y-8">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-silver-100 text-2xl font-bold tracking-tight">Dashboard</h1>
-          <p className="text-silver-500 mt-1 text-sm">Visão geral do estoque e dos agendamentos</p>
+          <h1 className="text-content text-2xl font-bold tracking-tight">Dashboard</h1>
+          <p className="text-faint mt-1 text-sm">Visão geral do estoque e dos agendamentos</p>
         </div>
         <ButtonLink href="/admin/veiculos">
           <Car className="size-4" />
@@ -76,19 +76,19 @@ export default function DashboardPage() {
       {stats && stats.pending_appointments > 0 && (
         <Link
           href="/admin/agendamentos"
-          className="rounded-card bg-brand-600/10 ring-brand-500/25 hover:ring-brand-500/50 flex items-center gap-4 p-5 ring-1 transition-all ring-inset"
+          className="rounded-card bg-accent-soft ring-brand-500/25 hover:ring-brand-500/50 flex items-center gap-4 p-5 ring-1 transition-all ring-inset"
         >
           <span className="rounded-btn from-brand-400 to-brand-600 text-ink-950 flex size-11 shrink-0 items-center justify-center bg-gradient-to-b">
             <CalendarClock className="size-5" />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-brand-300 font-semibold">
+            <p className="text-accent font-semibold">
               {stats.pending_appointments}{' '}
               {stats.pending_appointments === 1
                 ? 'visita aguardando confirmação'
                 : 'visitas aguardando confirmação'}
             </p>
-            <p className="text-brand-300/80 mt-0.5 text-sm">
+            <p className="text-accent/80 mt-0.5 text-sm">
               Cada uma é um cliente esperando seu retorno.
             </p>
           </div>
@@ -97,7 +97,7 @@ export default function DashboardPage() {
       )}
 
       <section>
-        <h2 className="text-silver-200 text-sm font-semibold">Estoque</h2>
+        <h2 className="text-content text-sm font-semibold">Estoque</h2>
         <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Stat
             label="Total de veículos"
@@ -128,7 +128,7 @@ export default function DashboardPage() {
       </section>
 
       <section>
-        <h2 className="text-silver-200 text-sm font-semibold">Movimento</h2>
+        <h2 className="text-content text-sm font-semibold">Movimento</h2>
         <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           <Stat
             label="Valor do estoque"
@@ -171,15 +171,15 @@ function Stat({
   hint?: string;
 }) {
   const toneClass = {
-    neutral: 'bg-ink-850 text-silver-400',
+    neutral: 'bg-sunken text-muted',
     success: 'bg-success-500/10 text-success-400',
     warning: 'bg-warning-500/10 text-warning-400',
   }[tone];
 
   return (
-    <div className="rounded-card shadow-card ring-ink-800 bg-ink-900 p-5 ring-1">
+    <div className="rounded-card shadow-card ring-line bg-surface p-5 ring-1">
       <div className="flex items-start justify-between gap-3">
-        <p className="text-silver-500 text-sm">{label}</p>
+        <p className="text-faint text-sm">{label}</p>
         <span
           className={`rounded-btn flex size-9 shrink-0 items-center justify-center ${toneClass}`}
         >
@@ -190,12 +190,12 @@ function Stat({
       {/* O esqueleto tem a MESMA altura do número. Sem isso, a tela "pula"
           quando os dados chegam — e o admin clica no lugar errado. */}
       {value === undefined ? (
-        <div className="bg-ink-850 mt-3 h-8 w-20 animate-pulse rounded" />
+        <div className="bg-sunken mt-3 h-8 w-20 animate-pulse rounded" />
       ) : (
-        <p className="text-silver-100 mt-3 text-2xl font-bold tracking-tight">{value}</p>
+        <p className="text-content mt-3 text-2xl font-bold tracking-tight">{value}</p>
       )}
 
-      {hint && <p className="text-silver-600 mt-1 text-xs">{hint}</p>}
+      {hint && <p className="text-faint mt-1 text-xs">{hint}</p>}
     </div>
   );
 }

@@ -34,34 +34,32 @@ export function Hero({
   search?: React.ReactNode;
 }) {
   return (
-    <section className="border-ink-800 bg-ink-950 relative overflow-hidden border-b">
-      {/* Brilho dourado difuso ao fundo — dá profundidade ao preto sem competir
-          com o logo. Dois focos, um quente e um frio, para o preto não ficar
-          chapado. */}
+    <section className="border-line bg-canvas relative overflow-hidden border-b">
+      {/* Um véu dourado bem diluído no topo — tira o branco chapado sem virar
+          "fundo colorido". Percebe-se como luz, não como cor. */}
       <div
         aria-hidden
-        className="bg-brand-600/10 absolute -top-32 left-1/2 size-[42rem] -translate-x-1/2 rounded-full blur-[120px]"
-      />
-      <div
-        aria-hidden
-        className="bg-brand-700/10 absolute -right-20 -bottom-40 size-[32rem] rounded-full blur-[100px]"
+        className="from-brand-50 absolute inset-x-0 top-0 h-80 bg-gradient-to-b to-transparent"
       />
 
       <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
         <div className="grid items-center gap-10 lg:grid-cols-[1fr_auto_1fr] lg:gap-12">
           {/* ---------------------------------------------------- ESQUERDA */}
           <div className="order-2 text-center lg:order-1 lg:text-left">
-            <p className="border-brand-600/30 bg-brand-600/10 text-brand-300 inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-semibold tracking-[0.18em] uppercase">
+            <p className="border-accent/30 bg-accent-soft text-accent inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-semibold tracking-[0.18em] uppercase">
               <BadgeCheck className="size-3.5" />
               Procedência verificada
             </p>
 
-            <h1 className="text-silver-100 mt-5 text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+            <h1 className="text-content mt-5 text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
               O extraordinário
-              <span className="text-gold-gradient mt-1 block">ao seu alcance</span>
+              {/* `text-accent` (dourado escuro), e não o degradê metálico: o
+                  brilho quase branco do meio do degradê some no fundo claro.
+                  Este tom passa em contraste e continua sendo ouro. */}
+              <span className="text-accent mt-1 block">ao seu alcance</span>
             </h1>
 
-            <p className="text-silver-400 mx-auto mt-5 max-w-sm text-[15px] leading-relaxed text-pretty lg:mx-0">
+            <p className="text-muted mx-auto mt-5 max-w-sm text-[15px] leading-relaxed text-pretty lg:mx-0">
               Seleção criteriosa de seminovos premium. Cada veículo com histórico verificado,
               revisão completa e a transparência que a compra de um carro merece.
             </p>
@@ -78,22 +76,24 @@ export function Hero({
           </div>
 
           {/* ------------------------------------------------------- CENTRO */}
+          {/* O logo mora num PAINEL PRETO, e isso não é enfeite: a palavra
+              "ÂUREON" do arquivo é branca/prata e sumiria por completo no papel.
+              O painel resolve o problema e ainda dá à página o peso escuro que
+              um site todo branco não tem — vira o ponto de ancoragem do hero. */}
           <div className="order-1 flex justify-center lg:order-2">
-            <Image
-              src="/aureon-logo.png"
-              alt="ÂUREON — conecta você ao extraordinário"
-              width={420}
-              height={420}
-              // É o maior elemento acima da dobra: quase certamente o LCP.
-              // No Next 16 `priority` está depreciado; a forma atual é esta.
-              loading="eager"
-              fetchPriority="high"
-              // O PNG já tem transparência real (o fundo do arquivo original era
-              // rgb(2,2,2), quase preto — e desenhava um retângulo visível sobre
-              // o brilho dourado do hero). Com o alfa embutido, o logo funciona
-              // em qualquer fundo, inclusive no preview de link do WhatsApp.
-              className="w-56 max-w-full sm:w-72 lg:w-[19rem] xl:w-[21rem]"
-            />
+            <div className="rounded-card bg-inverse ring-brand-600/20 shadow-card p-7 ring-1 sm:p-9">
+              <Image
+                src="/aureon-logo.png"
+                alt="ÂUREON — conecta você ao extraordinário"
+                width={420}
+                height={420}
+                // É o maior elemento acima da dobra: quase certamente o LCP.
+                // No Next 16 `priority` está depreciado; a forma atual é esta.
+                loading="eager"
+                fetchPriority="high"
+                className="w-44 max-w-full sm:w-56 lg:w-60 xl:w-64"
+              />
+            </div>
           </div>
 
           {/* ----------------------------------------------------- DIREITA */}
@@ -104,8 +104,8 @@ export function Hero({
 
         {/* ------------------------------------------------------- BUSCA */}
         {search && (
-          <div className="border-ink-800/70 mt-12 border-t pt-8 lg:mt-16">
-            <p className="text-silver-500 mb-4 flex items-center gap-2.5 text-[11px] font-semibold tracking-[0.18em] uppercase">
+          <div className="border-line/70 mt-12 border-t pt-8 lg:mt-16">
+            <p className="text-faint mb-4 flex items-center gap-2.5 text-[11px] font-semibold tracking-[0.18em] uppercase">
               <Search className="text-brand-500 size-3.5" />
               Busque no estoque
               {/* O filete dourado é o mesmo elemento que fecha os títulos das
@@ -131,9 +131,9 @@ function FeaturedCar({ vehicle }: { vehicle: VehicleSummary }) {
   return (
     <Link
       href={`/veiculos/${vehicle.slug}`}
-      className="group rounded-card border-ink-800 bg-ink-900 hover:border-brand-600/50 hover:shadow-gold relative block overflow-hidden border transition-all duration-500"
+      className="group rounded-card border-line bg-surface shadow-card hover:shadow-card-hover relative block overflow-hidden border transition-all duration-500"
     >
-      <div className="bg-ink-900 relative aspect-[4/3] overflow-hidden">
+      <div className="bg-sunken relative aspect-[4/3] overflow-hidden">
         {cover ? (
           <Image
             src={cover.url}
@@ -145,7 +145,7 @@ function FeaturedCar({ vehicle }: { vehicle: VehicleSummary }) {
             className="object-cover transition-transform duration-700 group-hover:scale-[1.05] motion-reduce:group-hover:scale-100"
           />
         ) : (
-          <div className="text-silver-500 flex h-full items-center justify-center text-sm">
+          <div className="text-faint flex h-full items-center justify-center text-sm">
             Sem foto
           </div>
         )}
@@ -157,16 +157,19 @@ function FeaturedCar({ vehicle }: { vehicle: VehicleSummary }) {
           className="from-ink-950 via-ink-950/70 absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t to-transparent"
         />
 
-        <span className="border-brand-500/40 bg-ink-950/80 text-brand-300 absolute top-4 left-4 rounded-full border px-3 py-1 text-[10px] font-semibold tracking-[0.16em] uppercase backdrop-blur">
+        <span className="border-brand-500/40 bg-canvas/80 text-accent absolute top-4 left-4 rounded-full border px-3 py-1 text-[10px] font-semibold tracking-[0.16em] uppercase backdrop-blur">
           Destaque
         </span>
 
+        {/* Texto CLARO, e não os papéis do tema: aqui o fundo não é a página,
+            é o degradê escuro sobre a foto. `text-content` (preto) sumiria. */}
         <div className="absolute inset-x-0 bottom-0 p-5">
-          <p className="text-silver-100 text-sm font-medium">{vehicle.title}</p>
-          <p className="text-silver-400 mt-0.5 text-xs">
+          <p className="text-sm font-medium text-white">{vehicle.title}</p>
+          <p className="mt-0.5 text-xs text-white/65">
             {formatYears(vehicle.year_manufacture, vehicle.year_model)} ·{' '}
             {formatMileage(vehicle.mileage)}
           </p>
+          {/* O degradê metálico volta a funcionar: estamos sobre o escuro. */}
           <p className="text-gold-gradient mt-2.5 text-2xl font-semibold tracking-tight">
             {formatPrice(vehicle.price)}
           </p>
@@ -179,10 +182,10 @@ function FeaturedCar({ vehicle }: { vehicle: VehicleSummary }) {
 /** Sem destaque cadastrado: um cartão sóbrio, nunca um buraco na página. */
 function CarPlaceholder() {
   return (
-    <div className="rounded-card border-ink-700 bg-ink-900/60 flex aspect-[4/3] flex-col items-center justify-center border border-dashed p-8 text-center">
+    <div className="rounded-card border-line-strong bg-surface/60 flex aspect-[4/3] flex-col items-center justify-center border border-dashed p-8 text-center">
       <ShieldCheck className="text-brand-600/60 size-8" />
-      <p className="text-silver-300 mt-4 text-sm font-medium">Vitrine em preparação</p>
-      <p className="text-silver-500 mt-1 text-xs">
+      <p className="text-muted mt-4 text-sm font-medium">Vitrine em preparação</p>
+      <p className="text-faint mt-1 text-xs">
         Marque um veículo como destaque no painel para exibi-lo aqui.
       </p>
     </div>

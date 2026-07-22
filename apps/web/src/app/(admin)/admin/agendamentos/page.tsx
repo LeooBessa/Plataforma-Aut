@@ -74,15 +74,15 @@ export default function AdminAgendamentosPage() {
   return (
     <div className="space-y-6">
       <header>
-        <h1 className="text-silver-100 text-2xl font-bold tracking-tight">Agendamentos</h1>
-        <p className="text-silver-500 mt-1 text-sm">
+        <h1 className="text-content text-2xl font-bold tracking-tight">Agendamentos</h1>
+        <p className="text-faint mt-1 text-sm">
           Cada linha é um cliente que quer ver um carro.
         </p>
       </header>
 
       <div className="flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
-          <Search className="text-silver-600 pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
+          <Search className="text-faint pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
           <Input
             type="search"
             value={customer}
@@ -117,22 +117,22 @@ export default function AdminAgendamentosPage() {
         </div>
       )}
 
-      <div className="rounded-card shadow-card ring-ink-800 overflow-hidden bg-ink-900 ring-1">
+      <div className="rounded-card shadow-card ring-line overflow-hidden bg-surface ring-1">
         {page === null ? (
-          <div className="divide-ink-800 divide-y">
+          <div className="divide-line divide-y">
             {Array.from({ length: 4 }).map((_, i) => (
               <div key={i} className="space-y-2 p-5">
-                <div className="bg-ink-850 h-4 w-1/3 animate-pulse rounded" />
-                <div className="bg-ink-850 h-3 w-1/2 animate-pulse rounded" />
+                <div className="bg-sunken h-4 w-1/3 animate-pulse rounded" />
+                <div className="bg-sunken h-3 w-1/2 animate-pulse rounded" />
               </div>
             ))}
           </div>
         ) : page.items.length === 0 ? (
-          <p className="text-silver-500 p-12 text-center text-sm">
+          <p className="text-faint p-12 text-center text-sm">
             Nenhum agendamento encontrado.
           </p>
         ) : (
-          <ul className="divide-ink-800 divide-y">
+          <ul className="divide-line divide-y">
             {page.items.map((appointment) => {
               // Concluído ou cancelado é histórico: não muda mais. A API recusa,
               // e a interface não oferece o botão — evitar o erro é melhor do
@@ -145,7 +145,7 @@ export default function AdminAgendamentosPage() {
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
-                        <p className="text-silver-100 font-semibold">
+                        <p className="text-content font-semibold">
                           {appointment.customer_name}
                         </p>
                         <Badge tone={STATUS_TONE[appointment.status]}>
@@ -153,15 +153,15 @@ export default function AdminAgendamentosPage() {
                         </Badge>
                       </div>
 
-                      <p className="text-silver-400 mt-1 text-sm">{appointment.vehicle.title}</p>
+                      <p className="text-muted mt-1 text-sm">{appointment.vehicle.title}</p>
 
-                      <p className="text-silver-100 mt-1 text-sm font-medium">
+                      <p className="text-content mt-1 text-sm font-medium">
                         {formatDate(appointment.scheduled_date)} às{' '}
                         {formatTime(appointment.scheduled_time)}
                       </p>
 
                       {appointment.notes && (
-                        <p className="rounded-btn bg-ink-950 text-silver-400 mt-2 p-2.5 text-sm">
+                        <p className="rounded-btn bg-canvas text-muted mt-2 p-2.5 text-sm">
                           {appointment.notes}
                         </p>
                       )}
@@ -172,7 +172,7 @@ export default function AdminAgendamentosPage() {
                       <div className="mt-3 flex flex-wrap gap-2">
                         <a
                           href={`tel:+55${appointment.phone}`}
-                          className="rounded-btn bg-ink-850 text-silver-200 hover:bg-ink-800 inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium transition-colors"
+                          className="rounded-btn bg-sunken text-content hover:bg-sunken inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium transition-colors"
                         >
                           <Phone className="size-3.5" />
                           {formatPhone(appointment.phone)}

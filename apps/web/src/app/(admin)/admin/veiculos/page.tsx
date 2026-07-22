@@ -56,8 +56,8 @@ export default function AdminVeiculosPage() {
     <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-silver-100 text-2xl font-bold tracking-tight">Anúncios</h1>
-          <p className="text-silver-500 mt-1 text-sm">
+          <h1 className="text-content text-2xl font-bold tracking-tight">Anúncios</h1>
+          <p className="text-faint mt-1 text-sm">
             {/* Diferente do site público, aqui aparecem TAMBÉM rascunhos e
                 arquivados — é a visão de quem opera o estoque. */}
             Todos os anúncios, incluindo rascunhos e arquivados.
@@ -71,7 +71,7 @@ export default function AdminVeiculosPage() {
 
       <div className="flex flex-col gap-3 sm:flex-row">
         <div className="relative flex-1">
-          <Search className="text-silver-600 pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
+          <Search className="text-faint pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2" />
           <Input
             type="search"
             value={query}
@@ -106,32 +106,32 @@ export default function AdminVeiculosPage() {
         </div>
       )}
 
-      <div className="rounded-card shadow-card ring-ink-800 overflow-hidden bg-ink-900 ring-1">
+      <div className="rounded-card shadow-card ring-line overflow-hidden bg-surface ring-1">
         {page === null ? (
-          <div className="divide-ink-800 divide-y">
+          <div className="divide-line divide-y">
             {Array.from({ length: 5 }).map((_, i) => (
               <div key={i} className="flex items-center gap-4 p-4">
-                <div className="rounded-btn bg-ink-850 size-16 shrink-0 animate-pulse" />
+                <div className="rounded-btn bg-sunken size-16 shrink-0 animate-pulse" />
                 <div className="flex-1 space-y-2">
-                  <div className="bg-ink-850 h-4 w-1/3 animate-pulse rounded" />
-                  <div className="bg-ink-850 h-3 w-1/4 animate-pulse rounded" />
+                  <div className="bg-sunken h-4 w-1/3 animate-pulse rounded" />
+                  <div className="bg-sunken h-3 w-1/4 animate-pulse rounded" />
                 </div>
               </div>
             ))}
           </div>
         ) : page.items.length === 0 ? (
-          <p className="text-silver-500 p-12 text-center text-sm">Nenhum anúncio encontrado.</p>
+          <p className="text-faint p-12 text-center text-sm">Nenhum anúncio encontrado.</p>
         ) : (
-          <ul className="divide-ink-800 divide-y">
+          <ul className="divide-line divide-y">
             {page.items.map((vehicle) => (
               <li key={vehicle.id}>
                 {/* A linha INTEIRA é um link. Um "editar" pequeno no canto
                     obrigaria o admin a mirar — e ele passa o dia nesta tela. */}
                 <Link
                   href={`/admin/veiculos/${vehicle.id}`}
-                  className="hover:bg-ink-850 flex items-center gap-4 p-4 transition-colors"
+                  className="hover:bg-sunken flex items-center gap-4 p-4 transition-colors"
                 >
-                  <div className="rounded-btn bg-ink-850 relative size-16 shrink-0 overflow-hidden">
+                  <div className="rounded-btn bg-sunken relative size-16 shrink-0 overflow-hidden">
                     {vehicle.cover_image ? (
                       <Image
                         src={vehicle.cover_image.url}
@@ -141,22 +141,22 @@ export default function AdminVeiculosPage() {
                         className="object-cover"
                       />
                     ) : (
-                      <span className="text-silver-600 flex h-full items-center justify-center text-[10px]">
+                      <span className="text-faint flex h-full items-center justify-center text-[10px]">
                         sem foto
                       </span>
                     )}
                   </div>
 
                   <div className="min-w-0 flex-1">
-                    <p className="text-silver-100 truncate font-medium">{vehicle.title}</p>
-                    <p className="text-silver-500 mt-0.5 truncate text-sm">
+                    <p className="text-content truncate font-medium">{vehicle.title}</p>
+                    <p className="text-faint mt-0.5 truncate text-sm">
                       {formatYears(vehicle.year_manufacture, vehicle.year_model)} ·{' '}
                       {formatMileage(vehicle.mileage)} · {vehicle.city}
                     </p>
                   </div>
 
                   <div className="hidden shrink-0 text-right sm:block">
-                    <p className="text-silver-100 font-semibold">{formatPrice(vehicle.price)}</p>
+                    <p className="text-content font-semibold">{formatPrice(vehicle.price)}</p>
                   </div>
 
                   <div className="flex shrink-0 items-center gap-2">
@@ -173,7 +173,7 @@ export default function AdminVeiculosPage() {
       </div>
 
       {page && page.meta.total > 0 && (
-        <p className="text-silver-500 text-sm">
+        <p className="text-faint text-sm">
           {page.meta.total} {page.meta.total === 1 ? 'anúncio' : 'anúncios'}
         </p>
       )}

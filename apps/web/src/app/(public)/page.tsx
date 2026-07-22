@@ -61,7 +61,7 @@ async function HeroSection() {
           // Dentro do hero a busca não precisa da própria moldura — ela já está
           // numa. Um card dentro de outro card é ruído. Só o fundo semiopaco,
           // para o brilho dourado do hero atravessar de leve.
-          <SearchFilters options={options} compact className="bg-ink-900/60" />
+          <SearchFilters options={options} compact className="bg-surface/60" />
         ) : null
       }
     />
@@ -98,9 +98,9 @@ async function LatestSection() {
   if (!page) {
     return (
       <section className="mx-auto mt-16 max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-card border-ink-700 border border-dashed py-16 text-center">
-          <p className="text-silver-200 font-medium">Não foi possível carregar os veículos.</p>
-          <p className="text-silver-500 mt-1 text-sm">
+        <div className="rounded-card border-line-strong border border-dashed py-16 text-center">
+          <p className="text-content font-medium">Não foi possível carregar os veículos.</p>
+          <p className="text-faint mt-1 text-sm">
             Estamos com uma instabilidade momentânea. Tente novamente em instantes.
           </p>
         </div>
@@ -111,7 +111,7 @@ async function LatestSection() {
   if (page.items.length === 0) {
     return (
       <section className="mx-auto mt-16 max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-        <p className="text-silver-500">Nenhum veículo disponível no momento.</p>
+        <p className="text-faint">Nenhum veículo disponível no momento.</p>
       </section>
     );
   }
@@ -161,14 +161,14 @@ function TrustSection() {
 
   return (
     <section className="mx-auto mt-24 max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div className="rounded-card border-ink-800 bg-ink-900/50 grid gap-8 border p-8 sm:grid-cols-3 sm:p-12">
+      <div className="rounded-card border-line bg-surface/50 grid gap-8 border p-8 sm:grid-cols-3 sm:p-12">
         {items.map(({ icon: Icon, title, text }) => (
           <div key={title}>
-            <span className="rounded-btn border-brand-600/30 bg-brand-600/10 text-brand-400 flex size-11 items-center justify-center border">
+            <span className="rounded-btn border-accent/30 bg-accent-soft text-accent flex size-11 items-center justify-center border">
               <Icon className="size-5" />
             </span>
-            <h3 className="text-silver-100 mt-4 font-medium">{title}</h3>
-            <p className="text-silver-400 mt-1.5 text-sm leading-relaxed">{text}</p>
+            <h3 className="text-content mt-4 font-medium">{title}</h3>
+            <p className="text-muted mt-1.5 text-sm leading-relaxed">{text}</p>
           </div>
         ))}
       </div>
@@ -188,7 +188,7 @@ function SectionHeader({
   return (
     <div className="flex items-end justify-between gap-4">
       <div>
-        <h2 className="text-silver-100 text-2xl font-semibold tracking-tight sm:text-3xl">
+        <h2 className="text-content text-2xl font-semibold tracking-tight sm:text-3xl">
           {title}
         </h2>
         {/* Filete dourado sob o título — o detalhe que amarra a identidade. */}
@@ -196,11 +196,11 @@ function SectionHeader({
           aria-hidden
           className="from-brand-500 mt-2 h-px w-16 bg-gradient-to-r to-transparent"
         />
-        <p className="text-silver-500 mt-2.5 text-sm">{subtitle}</p>
+        <p className="text-faint mt-2.5 text-sm">{subtitle}</p>
       </div>
       <a
         href={href}
-        className="text-brand-400 hover:text-brand-300 hidden shrink-0 items-center gap-1 text-sm font-medium transition-colors sm:flex"
+        className="text-accent hover:text-accent hidden shrink-0 items-center gap-1 text-sm font-medium transition-colors sm:flex"
       >
         Ver todos
         <ArrowRight className="size-4" />
@@ -211,27 +211,27 @@ function SectionHeader({
 
 function HeroSkeleton() {
   return (
-    <section className="border-ink-800 bg-ink-950 border-b">
+    <section className="border-line bg-canvas border-b">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
         <div className="grid items-center gap-10 lg:grid-cols-[1fr_auto_1fr] lg:gap-12">
           <div className="order-2 space-y-4 lg:order-1">
-            <div className="bg-ink-800 h-6 w-44 animate-pulse rounded-full" />
-            <div className="bg-ink-800 h-10 w-full animate-pulse rounded" />
-            <div className="bg-ink-800 h-16 w-full animate-pulse rounded" />
+            <div className="bg-sunken h-6 w-44 animate-pulse rounded-full" />
+            <div className="bg-sunken h-10 w-full animate-pulse rounded" />
+            <div className="bg-sunken h-16 w-full animate-pulse rounded" />
           </div>
           <div className="order-1 flex justify-center lg:order-2">
-            <div className="bg-ink-800 size-56 animate-pulse rounded-full sm:size-72" />
+            <div className="bg-sunken size-56 animate-pulse rounded-full sm:size-72" />
           </div>
-          <div className="rounded-card bg-ink-800 order-3 aspect-[4/3] animate-pulse" />
+          <div className="rounded-card bg-sunken order-3 aspect-[4/3] animate-pulse" />
         </div>
 
         {/* A busca também entra no esqueleto, na mesma altura que ela terá.
             Um placeholder mais baixo faria a página inteira saltar quando os
             filtros chegassem — foi exatamente esse o CLS de 0,24 que a
             listagem acusou no Lighthouse. */}
-        <div className="border-ink-800/70 mt-12 border-t pt-8 lg:mt-16">
-          <div className="bg-ink-800 h-3 w-40 animate-pulse rounded-full" />
-          <div className="rounded-card bg-ink-900 mt-4 h-[5.5rem] animate-pulse sm:h-[4.75rem]" />
+        <div className="border-line/70 mt-12 border-t pt-8 lg:mt-16">
+          <div className="bg-sunken h-3 w-40 animate-pulse rounded-full" />
+          <div className="rounded-card bg-surface mt-4 h-[5.5rem] animate-pulse sm:h-[4.75rem]" />
         </div>
       </div>
     </section>
@@ -241,7 +241,7 @@ function HeroSkeleton() {
 function GridSkeleton({ title, count }: { title: string; count: number }) {
   return (
     <section className="mx-auto mt-20 max-w-7xl px-4 sm:px-6 lg:px-8">
-      <h2 className="text-silver-100 text-2xl font-semibold tracking-tight sm:text-3xl">
+      <h2 className="text-content text-2xl font-semibold tracking-tight sm:text-3xl">
         {title}
       </h2>
       <div className="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">

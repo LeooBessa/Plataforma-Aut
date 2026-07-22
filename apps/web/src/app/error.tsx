@@ -24,10 +24,10 @@ export default function ErrorPage({
         <AlertTriangle className="size-7" />
       </span>
 
-      <h1 className="text-silver-100 mt-6 text-2xl font-bold tracking-tight">
+      <h1 className="text-content mt-6 text-2xl font-bold tracking-tight">
         Algo deu errado
       </h1>
-      <p className="text-silver-400 mt-2 text-sm leading-relaxed">
+      <p className="text-muted mt-2 text-sm leading-relaxed">
         Tivemos um problema ao carregar esta página. Tente novamente — se persistir, fale com a
         gente.
       </p>
@@ -36,7 +36,7 @@ export default function ErrorPage({
           permite ao usuário nos dizer QUAL erro aconteceu, em vez de "deu erro".
           A mensagem em si NÃO é exibida: ela pode conter detalhes internos. */}
       {error.digest && (
-        <p className="text-silver-600 mt-3 font-mono text-xs">código: {error.digest}</p>
+        <p className="text-faint mt-3 font-mono text-xs">código: {error.digest}</p>
       )}
 
       <div className="mt-8 flex gap-3">

@@ -7,17 +7,22 @@ type Variant = 'primary' | 'success' | 'secondary' | 'ghost' | 'danger';
 type Size = 'sm' | 'md' | 'lg';
 
 const VARIANTS: Record<Variant, string> = {
-  // Dourado com texto PRETO. O ouro é claro; texto branco em cima dele
-  // reprovaria em contraste. Preto sobre ouro é o par legível — e é também o
-  // que dá a leitura de "peça metálica", não de "botão colorido".
-  primary:
-    'bg-gradient-to-b from-brand-400 to-brand-600 text-ink-950 font-semibold hover:from-brand-300 hover:to-brand-500',
-  // Verde: reservado ao que converte — "Agendar visita".
+  // PRETO com texto branco.
+  //
+  // O botão é o elemento mais repetido do site. Pintá-lo de dourado gastaria a
+  // cor da marca justamente onde ela deixa de ser "detalhe" — e o dourado vale
+  // pelo que ele NÃO ocupa. Reservado ao preço, aos selos e aos filetes, ele
+  // continua chamando atenção; espalhado por toda tela, vira só mais uma cor.
+  //
+  // O preto ainda ganha em contraste (17:1) e é a leitura clássica de luxo
+  // discreto num fundo branco.
+  primary: 'bg-inverse text-on-inverse font-semibold hover:bg-ink-800',
+  // Verde: reservado ao que confirma — "Confirmar agendamento" no painel.
   success: 'bg-success-700 text-white hover:bg-success-800',
-  // Contorno prata sobre o preto: presente sem competir com o dourado.
+  // Contorno cinza: presente, secundário, sem pedir a vez.
   secondary:
-    'border border-ink-700 bg-ink-900/60 text-silver-200 hover:border-ink-600 hover:bg-ink-800 hover:text-silver-100',
-  ghost: 'text-silver-400 hover:bg-ink-800 hover:text-silver-100',
+    'border border-line-strong bg-surface text-content hover:border-ink-400 hover:bg-sunken',
+  ghost: 'text-muted hover:bg-sunken hover:text-content',
   danger: 'bg-danger-600 text-white hover:bg-danger-700',
 };
 

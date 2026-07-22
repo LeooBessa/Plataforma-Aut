@@ -31,7 +31,7 @@ export function VehicleCard({
       href={`/veiculos/${vehicle.slug}`}
       className={cn(
         'group rounded-card relative flex flex-col overflow-hidden',
-        'border-ink-800 bg-ink-900 border',
+        'border-line bg-surface border',
         'transition-all duration-500 ease-out',
         // Num site escuro, sombra não separa nada (preto sobre preto). A
         // elevação vem da BORDA que acende em dourado.
@@ -39,7 +39,7 @@ export function VehicleCard({
         'motion-reduce:hover:translate-y-0',
       )}
     >
-      <div className="bg-ink-850 relative aspect-[4/3] overflow-hidden">
+      <div className="bg-sunken relative aspect-[4/3] overflow-hidden">
         {cover ? (
           <Image
             src={cover.url}
@@ -57,7 +57,7 @@ export function VehicleCard({
             )}
           />
         ) : (
-          <div className="text-silver-500 flex h-full items-center justify-center text-sm">
+          <div className="text-faint flex h-full items-center justify-center text-sm">
             Sem foto
           </div>
         )}
@@ -70,17 +70,17 @@ export function VehicleCard({
       </div>
 
       <div className="flex flex-1 flex-col p-5">
-        <h3 className="text-silver-100 line-clamp-2 leading-snug font-medium">
+        <h3 className="text-content line-clamp-2 leading-snug font-medium">
           {vehicle.title}
         </h3>
 
-        <p className="text-silver-500 mt-1 text-sm">
+        <p className="text-faint mt-1 text-sm">
           {formatYears(vehicle.year_manufacture, vehicle.year_model)}
         </p>
 
         {/* `<ul>`, não `<dl>`: são chips de ícone+texto, não pares
             termo/definição. Um `<dl>` com `<div>` dentro é HTML inválido. */}
-        <ul className="text-silver-400 mt-4 grid grid-cols-2 gap-x-3 gap-y-2 text-xs">
+        <ul className="text-muted mt-4 grid grid-cols-2 gap-x-3 gap-y-2 text-xs">
           <Spec icon={<Gauge className="size-3.5" />} label={formatMileage(vehicle.mileage)} />
           <Spec icon={<Fuel className="size-3.5" />} label={FUEL_LABELS[vehicle.fuel_type]} />
           <Spec
@@ -92,11 +92,11 @@ export function VehicleCard({
 
         {/* `mt-auto` alinha os preços de todos os cards na mesma linha, mesmo
             que um título ocupe duas linhas e outro só uma. */}
-        <div className="border-ink-800 mt-5 mt-auto flex items-end justify-between border-t pt-4">
-          <p className="text-gold-gradient text-xl font-semibold tracking-tight">
+        <div className="border-line mt-5 mt-auto flex items-end justify-between border-t pt-4">
+          <p className="text-accent text-xl font-semibold tracking-tight">
             {formatPrice(vehicle.price)}
           </p>
-          <span className="text-silver-500 group-hover:text-brand-400 text-sm transition-colors">
+          <span className="text-faint group-hover:text-accent text-sm transition-colors">
             Ver detalhes
           </span>
         </div>
@@ -108,7 +108,7 @@ export function VehicleCard({
 function Spec({ icon, label }: { icon: React.ReactNode; label: string }) {
   return (
     <li className="flex items-center gap-1.5">
-      <span className="text-silver-600" aria-hidden>
+      <span className="text-faint" aria-hidden>
         {icon}
       </span>
       <span className="truncate">{label}</span>
@@ -119,17 +119,17 @@ function Spec({ icon, label }: { icon: React.ReactNode; label: string }) {
 /** Esqueleto exibido enquanto a listagem carrega. */
 export function VehicleCardSkeleton() {
   return (
-    <div className="rounded-card border-ink-800 bg-ink-900 overflow-hidden border">
-      <div className="bg-ink-850 aspect-[4/3] animate-pulse" />
+    <div className="rounded-card border-line bg-surface overflow-hidden border">
+      <div className="bg-sunken aspect-[4/3] animate-pulse" />
       <div className="space-y-3 p-5">
-        <div className="bg-ink-800 h-4 w-3/4 animate-pulse rounded" />
-        <div className="bg-ink-800 h-3 w-1/3 animate-pulse rounded" />
+        <div className="bg-sunken h-4 w-3/4 animate-pulse rounded" />
+        <div className="bg-sunken h-3 w-1/3 animate-pulse rounded" />
         <div className="grid grid-cols-2 gap-2 pt-1">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="bg-ink-800 h-3 animate-pulse rounded" />
+            <div key={i} className="bg-sunken h-3 animate-pulse rounded" />
           ))}
         </div>
-        <div className="bg-ink-800 h-6 w-1/2 animate-pulse rounded" />
+        <div className="bg-sunken h-6 w-1/2 animate-pulse rounded" />
       </div>
     </div>
   );
