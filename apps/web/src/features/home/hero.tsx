@@ -76,24 +76,25 @@ export function Hero({
           </div>
 
           {/* ------------------------------------------------------- CENTRO */}
-          {/* O logo mora num PAINEL PRETO, e isso não é enfeite: a palavra
-              "ÂUREON" do arquivo é branca/prata e sumiria por completo no papel.
-              O painel resolve o problema e ainda dá à página o peso escuro que
-              um site todo branco não tem — vira o ponto de ancoragem do hero. */}
+          {/* Sem painel: o logo agora é a versão para fundo claro, com a
+              palavra em preto. Ele fica solto no branco, que é o acabamento
+              limpo — o painel preto existia só para salvar a versão anterior,
+              cuja palavra era branca e sumia no papel. */}
           <div className="order-1 flex justify-center lg:order-2">
-            <div className="rounded-card bg-inverse ring-brand-600/20 shadow-card p-7 ring-1 sm:p-9">
-              <Image
-                src="/aureon-logo.png"
-                alt="ÂUREON — conecta você ao extraordinário"
-                width={420}
-                height={420}
-                // É o maior elemento acima da dobra: quase certamente o LCP.
-                // No Next 16 `priority` está depreciado; a forma atual é esta.
-                loading="eager"
-                fetchPriority="high"
-                className="w-44 max-w-full sm:w-56 lg:w-60 xl:w-64"
-              />
-            </div>
+            <Image
+              src="/aureon-logo.png"
+              alt="ÂUREON — conecta você ao extraordinário"
+              // As medidas reais do arquivo, já aparado. Declarar a proporção
+              // certa é o que reserva o espaço exato antes de a imagem chegar —
+              // sem isso a página salta quando ela carrega.
+              width={900}
+              height={581}
+              // É o maior elemento acima da dobra: quase certamente o LCP.
+              // No Next 16 `priority` está depreciado; a forma atual é esta.
+              loading="eager"
+              fetchPriority="high"
+              className="w-60 max-w-full sm:w-72 lg:w-[17.5rem] xl:w-[20rem]"
+            />
           </div>
 
           {/* ----------------------------------------------------- DIREITA */}

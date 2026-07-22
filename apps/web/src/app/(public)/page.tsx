@@ -220,7 +220,9 @@ function HeroSkeleton() {
             <div className="bg-sunken h-16 w-full animate-pulse rounded" />
           </div>
           <div className="order-1 flex justify-center lg:order-2">
-            <div className="bg-sunken size-56 animate-pulse rounded-full sm:size-72" />
+            {/* Mesma proporção do logo (900×581). Um esqueleto redondo faria a
+                página se ajustar quando a imagem real, retangular, chegasse. */}
+            <div className="bg-sunken aspect-[900/581] w-60 animate-pulse rounded-xl sm:w-72 lg:w-[17.5rem] xl:w-[20rem]" />
           </div>
           <div className="rounded-card bg-sunken order-3 aspect-[4/3] animate-pulse" />
         </div>
