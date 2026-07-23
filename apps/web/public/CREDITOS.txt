@@ -1,0 +1,5 @@
+carro-hero.png
+  Genesis GV60 (prata, estúdio) — foto Hyundai Motor Group via Unsplash
+  (Unsplash License: uso comercial livre, atribuição não obrigatória).
+  Recortada offline com scripts/recortar-carro.swift (Vision do macOS).
+  Origem: https://unsplash.com/photos/a-silver-suv-sits-against-a-dark-background-nh6bNAKdjVk

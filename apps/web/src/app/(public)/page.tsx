@@ -217,7 +217,7 @@ function HeroSkeleton() {
             <div className="bg-sunken h-16 w-full animate-pulse rounded" />
             <div className="bg-sunken h-13 w-64 animate-pulse rounded-xl" />
           </div>
-          <div className="bg-sunken aspect-[775/383] w-full animate-pulse rounded-xl" />
+          <div className="bg-sunken aspect-[1500/639] w-full animate-pulse rounded-xl" />
         </div>
 
         <div className="border-line/70 mt-16 border-t pt-8 lg:mt-24">
