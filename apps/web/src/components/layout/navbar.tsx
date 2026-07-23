@@ -22,7 +22,11 @@ export function Navbar() {
     // `sticky` em vez de `fixed`: acompanha a rolagem sem tirar o conteúdo do
     // fluxo. Com `fixed`, seria preciso um padding compensatório no topo de
     // todas as páginas — e alguém sempre esquece numa delas.
-    <header className="border-line/80 bg-canvas/85 sticky top-0 z-50 border-b backdrop-blur-xl">
+    //
+    // SEM borda embaixo: a linha separava a navbar do hero. O fundo semiopaco
+    // com desfoque (`backdrop-blur`) já destaca a barra do conteúdo que rola por
+    // baixo, sem precisar de traço.
+    <header className="bg-canvas/85 sticky top-0 z-50 backdrop-blur-xl">
       {/* `relative` para o menu poder ser centralizado em relação à barra
           inteira, e não ao espaço que sobra entre logo e ações. */}
       <nav className="relative mx-auto flex h-16 max-w-7xl items-center px-4 sm:px-6 lg:px-8">
