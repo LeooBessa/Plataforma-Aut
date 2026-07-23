@@ -211,7 +211,6 @@ function HeroSkeleton() {
           chegasse: foi esse o CLS de 0,24 que a listagem acusou no Lighthouse. */}
       <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-32">
         <div className="space-y-5 lg:w-[50%]">
-          <div className="bg-sunken h-6 w-52 animate-pulse rounded-full" />
           <div className="bg-sunken h-28 w-full animate-pulse rounded" />
           <div className="bg-sunken h-16 w-full animate-pulse rounded" />
           <div className="bg-sunken h-13 w-64 animate-pulse rounded-xl" />

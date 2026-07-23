@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { ArrowRight, BadgeCheck, Search } from 'lucide-react';
+import { ArrowRight, Search } from 'lucide-react';
 
 import { ButtonLink } from '@/components/ui/button';
 
@@ -92,12 +92,7 @@ export function Hero({ search }: { search?: React.ReactNode }) {
             </div>
 
             <div className="relative">
-              <p className="border-accent/30 bg-accent-soft text-accent inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-semibold tracking-[0.18em] uppercase">
-                <BadgeCheck className="size-3.5" />
-                Procedência verificada
-              </p>
-
-              <h1 className="text-content mt-6 text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-[3.4rem] lg:leading-[1.05]">
+              <h1 className="text-content text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-[3.4rem] lg:leading-[1.05]">
                 O extraordinário
                 <span className="text-accent mt-1 block">ao seu alcance</span>
               </h1>

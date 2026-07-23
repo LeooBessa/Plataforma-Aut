@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LogIn, Menu, Search, X } from 'lucide-react';
+import { Menu, Search, X } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
@@ -23,7 +23,9 @@ export function Navbar() {
     // fluxo. Com `fixed`, seria preciso um padding compensatório no topo de
     // todas as páginas — e alguém sempre esquece numa delas.
     <header className="border-line/80 bg-canvas/85 sticky top-0 z-50 border-b backdrop-blur-xl">
-      <nav className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4 sm:px-6 lg:px-8">
+      {/* `relative` para o menu poder ser centralizado em relação à barra
+          inteira, e não ao espaço que sobra entre logo e ações. */}
+      <nav className="relative mx-auto flex h-16 max-w-7xl items-center px-4 sm:px-6 lg:px-8">
         {/* Sem aria-label: o texto visível "ÂUREON" já nomeia o link. Um
             aria-label diferente do texto quebraria o controle por voz. */}
         <Link href="/" className="flex shrink-0 items-center gap-2.5">
@@ -38,7 +40,10 @@ export function Navbar() {
           <span className="text-content text-lg font-semibold tracking-[0.2em]">ÂUREON</span>
         </Link>
 
-        <ul className="hidden items-center gap-1 md:flex">
+        {/* CENTRALIZADO na barra: posicionado no meio absoluto, não empurrado
+            pelo logo à esquerda. Assim fica centrado de verdade, independente da
+            largura do logo ou das ações à direita. */}
+        <ul className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 md:flex">
           {LINKS.map((link) => {
             const active = pathname === link.href;
             return (
@@ -60,6 +65,8 @@ export function Navbar() {
           })}
         </ul>
 
+        {/* O acesso ao painel é só pela URL /admin — não há botão de admin na
+            barra pública de propósito. */}
         <div className="ml-auto flex items-center gap-2">
           <Link
             href="/veiculos"
@@ -67,14 +74,6 @@ export function Navbar() {
             aria-label="Pesquisar veículos"
           >
             <Search className="size-5" />
-          </Link>
-
-          <Link
-            href="/admin/login"
-            className="rounded-btn border-line-strong text-muted hover:border-brand-600/50 hover:text-accent hidden items-center gap-2 border px-4 py-2 text-sm transition-colors sm:flex"
-          >
-            <LogIn className="size-4" />
-            Admin
           </Link>
 
           <button
@@ -108,16 +107,6 @@ export function Navbar() {
                 </Link>
               </li>
             ))}
-            <li className="pt-1">
-              <Link
-                href="/admin/login"
-                onClick={() => setOpen(false)}
-                className="rounded-btn text-muted hover:bg-surface flex items-center gap-2 px-3 py-2.5 text-sm"
-              >
-                <LogIn className="size-4" />
-                Área do administrador
-              </Link>
-            </li>
           </ul>
         </div>
       )}
