@@ -26,12 +26,21 @@ import { ButtonLink } from '@/components/ui/button';
  *
  * O carro é ESTÁTICO (é uma foto de vitrine, não um veículo do estoque). Os
  * destaques do banco continuam logo abaixo, na "Seleção da casa".
+ *
+ * ----------------------------------------------------------------------------
+ * A DOBRA: só o hero na primeira tela, a busca aparece ao rolar
+ * ----------------------------------------------------------------------------
+ *
+ * A área superior ocupa a tela inteira (`100svh` menos a altura da navbar), sem
+ * linha divisória embaixo. Assim, ao abrir o site, o visitante vê apenas o carro
+ * e a promessa — nada de barra de busca competindo com a primeira impressão. A
+ * busca é uma seção logo abaixo da dobra: a primeira rolada a revela.
  */
 export function Hero({ search }: { search?: React.ReactNode }) {
   return (
-    <section className="border-line bg-canvas relative overflow-hidden border-b">
-      {/* -------------------------------------------------- ÁREA SUPERIOR */}
-      <div className="relative">
+    <section className="bg-canvas relative overflow-hidden">
+      {/* ------ ÁREA SUPERIOR — ocupa a tela inteira (menos a navbar) ------ */}
+      <div className="relative flex lg:min-h-[calc(100svh-4rem)]">
         {/* FOTO — painel à direita, sangrando até a borda da tela.
             A transição branco→dourado é um CORTE DIAGONAL reto (clip-path), não
             mais um desvanecer largo — era essa faixa borrada que incomodava. Um
@@ -68,10 +77,11 @@ export function Hero({ search }: { search?: React.ReactNode }) {
           </div>
         </div>
 
-        <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-32">
+        {/* `items-center` centra o texto na vertical agora que a área é alta. */}
+        <div className="relative mx-auto flex w-full max-w-7xl items-center px-4 py-20 sm:px-6 lg:px-8">
           {/* Bloco de texto: no desktop ocupa a metade esquerda; a foto cuida
               da direita. */}
-          <div className="relative text-center lg:w-[50%] lg:text-left">
+          <div className="relative w-full text-center lg:w-[50%] lg:text-left">
             {/* MARCA D'ÁGUA — o monograma atrás do texto, INTEIRO e visível.
                 Fica na esquerda, onde a foto não alcança: era isso que faltava,
                 o carro cobria o logo. Só o símbolo, não o logo com texto —
@@ -129,20 +139,20 @@ export function Hero({ search }: { search?: React.ReactNode }) {
         </div>
       </div>
 
-      {/* ------------------------------------------------------- BUSCA */}
+      {/* ------ BUSCA — seção logo abaixo da dobra, sem linha divisória ------
+          Aparece na primeira rolada. Nada de `border-t` aqui: era essa a linha
+          que cortava o hero da página. */}
       {search && (
-        <div className="relative mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8 lg:pb-20">
-          <div className="border-line/70 border-t pt-8">
-            <p className="text-faint mb-4 flex items-center gap-2.5 text-[11px] font-semibold tracking-[0.18em] uppercase">
-              <Search className="text-brand-500 size-3.5" />
-              Busque no estoque
-              <span
-                aria-hidden
-                className="from-brand-500/50 h-px flex-1 bg-gradient-to-r to-transparent"
-              />
-            </p>
-            {search}
-          </div>
+        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+          <p className="text-faint mb-4 flex items-center gap-2.5 text-[11px] font-semibold tracking-[0.18em] uppercase">
+            <Search className="text-brand-500 size-3.5" />
+            Busque no estoque
+            <span
+              aria-hidden
+              className="from-brand-500/50 h-px flex-1 bg-gradient-to-r to-transparent"
+            />
+          </p>
+          {search}
         </div>
       )}
     </section>

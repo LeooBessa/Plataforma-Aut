@@ -204,24 +204,22 @@ function SectionHeader({
 
 function HeroSkeleton() {
   return (
-    <section className="border-line bg-canvas border-b">
-      {/* Repete a MEDIDA do hero real — mesmo padding e a mesma coluna de texto
-          à esquerda (a foto é absoluta no hero real, não entra na altura). Um
+    <section className="bg-canvas">
+      {/* Repete a MEDIDA do hero real — a área superior ocupa a tela inteira
+          (menos a navbar), com o texto centrado na vertical à esquerda. Um
           placeholder de outra medida faria a página saltar quando o conteúdo
           chegasse: foi esse o CLS de 0,24 que a listagem acusou no Lighthouse. */}
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-32">
-        <div className="space-y-5 lg:w-[50%]">
+      <div className="mx-auto flex max-w-7xl items-center px-4 py-20 sm:px-6 lg:min-h-[calc(100svh-4rem)] lg:px-8">
+        <div className="w-full space-y-5 lg:w-[50%]">
           <div className="bg-sunken h-28 w-full animate-pulse rounded" />
           <div className="bg-sunken h-16 w-full animate-pulse rounded" />
           <div className="bg-sunken h-13 w-64 animate-pulse rounded-xl" />
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8 lg:pb-20">
-        <div className="border-line/70 border-t pt-8">
-          <div className="bg-sunken h-3 w-40 animate-pulse rounded-full" />
-          <div className="rounded-card bg-surface mt-4 h-[5.5rem] animate-pulse sm:h-[4.75rem]" />
-        </div>
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+        <div className="bg-sunken h-3 w-40 animate-pulse rounded-full" />
+        <div className="rounded-card bg-surface mt-4 h-[5.5rem] animate-pulse sm:h-[4.75rem]" />
       </div>
     </section>
   );
