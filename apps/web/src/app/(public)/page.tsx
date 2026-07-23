@@ -205,22 +205,21 @@ function SectionHeader({
 function HeroSkeleton() {
   return (
     <section className="border-line bg-canvas border-b">
-      {/* O esqueleto repete a MEDIDA do hero real — mesmo padding, mesmas
-          colunas, mesma proporção do carro. Um placeholder de outro tamanho
-          faria a página saltar quando o conteúdo chegasse: foi exatamente esse
-          o CLS de 0,24 que a listagem acusou no Lighthouse. */}
-      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
-        <div className="grid items-center gap-14 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-8">
-          <div className="space-y-5">
-            <div className="bg-sunken h-6 w-52 animate-pulse rounded-full" />
-            <div className="bg-sunken h-28 w-full animate-pulse rounded" />
-            <div className="bg-sunken h-16 w-full animate-pulse rounded" />
-            <div className="bg-sunken h-13 w-64 animate-pulse rounded-xl" />
-          </div>
-          <div className="bg-sunken aspect-[1500/639] w-full animate-pulse rounded-xl" />
+      {/* Repete a MEDIDA do hero real — mesmo padding e a mesma coluna de texto
+          à esquerda (a foto é absoluta no hero real, não entra na altura). Um
+          placeholder de outra medida faria a página saltar quando o conteúdo
+          chegasse: foi esse o CLS de 0,24 que a listagem acusou no Lighthouse. */}
+      <div className="mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-32">
+        <div className="space-y-5 lg:w-[50%]">
+          <div className="bg-sunken h-6 w-52 animate-pulse rounded-full" />
+          <div className="bg-sunken h-28 w-full animate-pulse rounded" />
+          <div className="bg-sunken h-16 w-full animate-pulse rounded" />
+          <div className="bg-sunken h-13 w-64 animate-pulse rounded-xl" />
         </div>
+      </div>
 
-        <div className="border-line/70 mt-16 border-t pt-8 lg:mt-24">
+      <div className="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8 lg:pb-20">
+        <div className="border-line/70 border-t pt-8">
           <div className="bg-sunken h-3 w-40 animate-pulse rounded-full" />
           <div className="rounded-card bg-surface mt-4 h-[5.5rem] animate-pulse sm:h-[4.75rem]" />
         </div>
