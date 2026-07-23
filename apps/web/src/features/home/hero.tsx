@@ -33,32 +33,39 @@ export function Hero({ search }: { search?: React.ReactNode }) {
       {/* -------------------------------------------------- ÁREA SUPERIOR */}
       <div className="relative">
         {/* FOTO — painel à direita, sangrando até a borda da tela.
-            A máscara desvanece a ESQUERDA (para a foto derreter no branco) e um
-            fio embaixo (para encontrar a busca sem linha dura). Só no desktop;
-            no celular a foto vira um bloco normal, mais abaixo. */}
-        <div
-          aria-hidden
-          className="absolute inset-y-0 right-0 hidden w-[56%] lg:block"
-          style={{
-            WebkitMaskImage:
-              'linear-gradient(to right, transparent, #000 34%), linear-gradient(to bottom, #000 82%, transparent)',
-            WebkitMaskComposite: 'source-in',
-            maskImage:
-              'linear-gradient(to right, transparent, #000 34%), linear-gradient(to bottom, #000 82%, transparent)',
-            maskComposite: 'intersect',
-          }}
-        >
-          <Image
-            src="/hero-car.jpg"
-            alt="Porsche 911 — vitrine ÂUREON"
-            fill
-            sizes="56vw"
-            // Maior elemento acima da dobra: quase certamente o LCP. No Next 16
-            // `priority` está depreciado; a forma atual é esta.
-            loading="eager"
-            fetchPriority="high"
-            className="object-cover object-[center_62%]"
+            A transição branco→dourado é um CORTE DIAGONAL reto (clip-path), não
+            mais um desvanecer largo — era essa faixa borrada que incomodava. Um
+            fio dourado fino corre na diagonal, para o corte parecer proposital.
+            Só no desktop; no celular a foto vira um bloco normal, mais abaixo.
+
+            Como funciona o fio: dois planos com a MESMA diagonal, o da foto
+            deslocado 2,5px à direita do plano dourado de trás. O que sobra do
+            dourado nesses 2,5px, ao longo da diagonal, é a linha. Fica preso à
+            geometria, então acompanha qualquer tamanho de tela sozinho. */}
+        <div aria-hidden className="absolute inset-y-0 right-0 hidden w-[58%] lg:block">
+          <div
+            className="from-brand-300 to-brand-600 absolute inset-0 bg-gradient-to-b"
+            style={{ clipPath: 'polygon(24% 0, 100% 0, 100% 100%, 5% 100%)' }}
           />
+          <div
+            className="absolute inset-0"
+            style={{ clipPath: 'polygon(calc(24% + 2.5px) 0, 100% 0, 100% 100%, calc(5% + 2.5px) 100%)' }}
+          >
+            <Image
+              src="/hero-car.jpg"
+              alt="Porsche 911 — vitrine ÂUREON"
+              fill
+              sizes="58vw"
+              // Maior elemento acima da dobra: quase certamente o LCP. No Next 16
+              // `priority` está depreciado; a forma atual é esta.
+              loading="eager"
+              fetchPriority="high"
+              className="object-cover object-[center_62%]"
+            />
+            {/* Fade curto só na base: suaviza o encontro com a busca, sem a
+                faixa larga que incomodava na lateral. */}
+            <div className="from-canvas absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t to-transparent" />
+          </div>
         </div>
 
         <div className="relative mx-auto max-w-7xl px-4 py-20 sm:px-6 lg:px-8 lg:py-32">
