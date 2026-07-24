@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { ArrowRight, Search } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 import { ButtonLink } from '@/components/ui/button';
 
@@ -139,19 +139,17 @@ export function Hero({ search }: { search?: React.ReactNode }) {
         </div>
       </div>
 
-      {/* ------ BUSCA — seção logo abaixo da dobra, sem linha divisória ------
-          Aparece na primeira rolada. Nada de `border-t` aqui: era essa a linha
-          que cortava o hero da página. */}
+      {/* ------ BUSCA — card elevado que SOBREPÕE a emenda do hero ------
+          A margem negativa (no desktop) faz o card subir e CRUZAR a borda
+          inferior do hero: metade sobre a foto, metade no branco. A sombra o
+          levanta. Assim ele vira a ponte entre o hero e o estoque, em vez de um
+          card solto no meio do branco. O `z-20` o mantém acima da foto.
+
+          Como o hero ocupa a tela inteira, o topo do card fica rente à base da
+          janela — um leve espiar que convida a rolar. A primeira rolada o revela
+          por completo, atravessando a emenda. */}
       {search && (
-        <div className="relative mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-          <p className="text-faint mb-4 flex items-center gap-2.5 text-[11px] font-semibold tracking-[0.18em] uppercase">
-            <Search className="text-brand-500 size-3.5" />
-            Busque no estoque
-            <span
-              aria-hidden
-              className="from-brand-500/50 h-px flex-1 bg-gradient-to-r to-transparent"
-            />
-          </p>
+        <div className="relative z-20 mx-auto max-w-7xl px-4 pt-10 pb-16 sm:px-6 lg:-mt-20 lg:px-8 lg:pt-0">
           {search}
         </div>
       )}

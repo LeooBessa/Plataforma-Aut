@@ -51,10 +51,11 @@ async function HeroSection() {
     <Hero
       search={
         options ? (
-          // Dentro do hero a busca não precisa da própria moldura — ela já está
-          // numa. Um card dentro de outro card é ruído. Só o fundo semiopaco,
-          // para o véu dourado do hero atravessar de leve.
-          <SearchFilters options={options} compact className="bg-surface/60" />
+          // Card ELEVADO: fundo sólido e sombra forte, porque ele sobrepõe a
+          // emenda do hero (metade sobre a foto). Semiopaco deixaria o carro
+          // aparecer atrás dos campos e sujar a leitura; a sombra é o que dá a
+          // sensação de "flutuando acima", ligando o hero ao estoque.
+          <SearchFilters options={options} compact className="bg-surface shadow-2xl" />
         ) : null
       }
     />
@@ -217,9 +218,8 @@ function HeroSkeleton() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-        <div className="bg-sunken h-3 w-40 animate-pulse rounded-full" />
-        <div className="rounded-card bg-surface mt-4 h-[5.5rem] animate-pulse sm:h-[4.75rem]" />
+      <div className="relative z-20 mx-auto max-w-7xl px-4 pt-10 pb-16 sm:px-6 lg:-mt-20 lg:px-8 lg:pt-0">
+        <div className="rounded-card bg-surface shadow-2xl h-[6.5rem] animate-pulse sm:h-[5.75rem]" />
       </div>
     </section>
   );
