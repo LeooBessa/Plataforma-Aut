@@ -23,8 +23,10 @@ conexão direta (5432). Ver `migrations/env.py`.
 
 from __future__ import annotations
 
+import os
 from collections.abc import AsyncIterator
 from functools import lru_cache
+from typing import Any
 
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
@@ -42,26 +44,63 @@ class Base(DeclarativeBase):
     """Base declarativa de todos os models. Ver `src/infrastructure/database/models`."""
 
 
+def _is_serverless() -> bool:
+    """Estamos rodando como função serverless (Vercel)?
+
+    A variável `VERCEL` é definida pelo runtime da Vercel e é o sinal MAIS
+    CONFIÁVEL de serverless — mais que o `ENVIRONMENT`, que alguém pode esquecer
+    de setar. `is_production` entra junto por garantia (cinto e suspensório):
+    qualquer um dos dois verdadeiro ⇒ trata como serverless.
+    """
+    return bool(os.getenv("VERCEL")) or get_settings().is_production
+
+
 @lru_cache
 def get_engine() -> AsyncEngine:
     """Engine criada sob demanda (lazy).
 
     Lazy de propósito: permite que a aplicação suba e responda `/health` mesmo
     sem banco configurado — útil em CI e no primeiro boot local.
+
+    O TIPO DE POOL depende de ONDE roda:
+
+    • Serverless (Vercel): `NullPool`. Cada invocação é um processo efêmero; um
+      pool nosso esgotaria o limite de conexões do Postgres em minutos. Quem faz
+      o pooling é o pgbouncer do Supabase (6543).
+
+    • Dev local (uvicorn de longa duração): um POOL PERSISTENTE. Sem ele, o
+      `NullPool` reabre a conexão com o Supabase (que fica em sa-east-1) a CADA
+      request — e o handshake TLS + auth do pooler custa ~1s. Reaproveitando a
+      conexão, o request cai para o tempo da query. Um processo só, sem risco de
+      estourar conexões.
     """
     settings = get_settings()
     if not settings.database_url:
         raise RuntimeError("DATABASE_URL não configurada. Copie .env.example para .env e preencha.")
 
-    return create_async_engine(
-        settings.database_url,
-        poolclass=NullPool,  # o pooling é do pgbouncer, não nosso
-        connect_args={
-            "statement_cache_size": 0,  # obrigatório atrás de pgbouncer/transaction
+    engine_kwargs: dict[str, Any] = {
+        "connect_args": {
+            # Obrigatório atrás do pgbouncer em transaction mode, com pool nosso
+            # OU sem — o pooler devolve conexão diferente por transação, e
+            # prepared statements amarrados a uma conexão quebram.
+            "statement_cache_size": 0,
             "prepared_statement_cache_size": 0,
         },
-        echo=settings.debug and not settings.is_production,
-    )
+        "echo": settings.debug and not settings.is_production,
+    }
+
+    if _is_serverless():
+        engine_kwargs["poolclass"] = NullPool
+    else:
+        # `pre_ping` descarta conexão morta (o pooler derruba as ociosas) antes
+        # de usar; `recycle` renova as antigas. Um round-trip barato em troca de
+        # não tomar "connection was closed" no meio de um request.
+        engine_kwargs["pool_size"] = 5
+        engine_kwargs["max_overflow"] = 5
+        engine_kwargs["pool_pre_ping"] = True
+        engine_kwargs["pool_recycle"] = 1800
+
+    return create_async_engine(settings.database_url, **engine_kwargs)
 
 
 @lru_cache
