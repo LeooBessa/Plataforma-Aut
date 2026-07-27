@@ -200,3 +200,59 @@
     );
   }
 }
+
+/* ============================================================================
+   BOTÃO DE GRADIENTE ROTATIVO  (src/components/ui/button-1.tsx)
+   ============================================================================
+   O componente traz a estrutura (o anel + o miolo via ::after); a ANIMAÇÃO e as
+   cores moram aqui.
+
+   `@property --r` registra o ângulo como um tipo `<angle>` de verdade — é isso
+   que permite ANIMAR um gradiente cônico. Sem o @property, o navegador trata
+   `--r` como string e a transição fica travada: o gradiente pularia de 0 a 360
+   em vez de girar suave. */
+
+@property --r {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes aureon-rotate {
+  to {
+    --r: 360deg;
+  }
+}
+
+.rotatingGradient {
+  /* Miolo e texto — as variáveis que o componente lê. Preto quase puro no
+     centro, texto em creme dourado (legível sobre o preto). */
+  --color-background: oklch(0.12 0 0);
+  --color-text: oklch(0.92 0.07 90);
+
+  /* O anel: um cônico dourado que gira a partir de `--r`. */
+  background: conic-gradient(
+    from var(--r),
+    oklch(0.55 0.11 80),
+    oklch(0.86 0.1 89),
+    oklch(0.97 0.04 92),
+    oklch(0.83 0.115 88),
+    oklch(0.55 0.11 80)
+  );
+  animation: aureon-rotate 4s linear infinite;
+}
+
+/* Peso e espaçamento do rótulo do botão. */
+.rotatingGradient .label {
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+/* Quem pediu menos movimento não vê o anel girar — o gradiente fica parado.
+   A regra global de reduced-motion já congela a animação; isto deixa explícito
+   e evita qualquer resíduo de rotação. */
+@media (prefers-reduced-motion: reduce) {
+  .rotatingGradient {
+    animation: none;
+  }
+}

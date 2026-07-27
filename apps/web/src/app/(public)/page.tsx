@@ -1,7 +1,8 @@
 import { Suspense } from 'react';
+import Link from 'next/link';
 import { ArrowRight, BadgeCheck, Search, ShieldCheck, Wrench } from 'lucide-react';
 
-import { ButtonLink } from '@/components/ui/button';
+import GradientButton from '@/components/ui/button-1';
 import { Hero } from '@/features/home/hero';
 import { VehicleCard, VehicleCardSkeleton } from '@/features/vehicles/vehicle-card';
 import { listFeaturedVehicles, listVehicles, safely } from '@/lib/api';
@@ -71,14 +72,18 @@ function EstoqueCTA() {
           <p className="mt-4 text-base leading-relaxed text-white/65 text-pretty">
             Filtre por marca, preço, ano, câmbio e cidade — e encontre o carro certo em segundos.
           </p>
-          <ButtonLink
-            href="/veiculos"
-            size="lg"
-            className="from-brand-400 to-brand-600 text-ink-950 shadow-gold mt-8 bg-gradient-to-b font-semibold hover:from-brand-300 hover:to-brand-500"
-          >
-            Ver todo o estoque
-            <ArrowRight className="size-4" />
-          </ButtonLink>
+          {/* O botão de gradiente rotativo (components/ui/button-1.tsx).
+              Ele é um <div role="button"> — para navegar de verdade (e ser
+              rastreável pelo Google), envolvo num <Link>. O `role`/`tabIndex`
+              do miolo são anulados via props (o <Link> já é o elemento
+              interativo e focável); sem isso, haveria um botão dentro de um
+              link, que o leitor de tela anuncia duas vezes. */}
+          <Link href="/veiculos" className="mt-9 inline-block">
+            <GradientButton width="19rem" height="62px" role="presentation" tabIndex={-1}>
+              Ver todo o estoque
+              <ArrowRight className="ml-2 size-4" />
+            </GradientButton>
+          </Link>
         </div>
       </div>
     </section>
