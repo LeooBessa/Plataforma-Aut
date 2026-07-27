@@ -1,11 +1,10 @@
 import { Suspense } from 'react';
-import Link from 'next/link';
-import { ArrowRight, BadgeCheck, Search, ShieldCheck, Wrench } from 'lucide-react';
+import { BadgeCheck, SearchX, ShieldCheck, Wrench } from 'lucide-react';
 
-import GradientButton from '@/components/ui/button-1';
 import { Hero } from '@/features/home/hero';
+import { SearchFilters } from '@/features/vehicles/search-filters';
 import { VehicleCard, VehicleCardSkeleton } from '@/features/vehicles/vehicle-card';
-import { listFeaturedVehicles, listVehicles, safely } from '@/lib/api';
+import { getFilterOptions, listVehicles, safely, type VehicleSearchParams } from '@/lib/api';
 
 /**
  * Home.
@@ -13,30 +12,28 @@ import { listFeaturedVehicles, listVehicles, safely } from '@/lib/api';
  * Server Component: os veículos vêm no HTML. O Googlebot lê os carros, os preços
  * e os links sem executar JavaScript — e o visitante vê conteúdo já no primeiro
  * frame, em vez de um esqueleto girando.
+ *
+ * A home LÊ `searchParams` (a busca vive aqui embaixo, na seção "Nosso
+ * estoque"), então é renderizada sob demanda — não mais estática. O SSR entrega
+ * o estoque completo por padrão, então o Googlebot continua vendo os carros.
  */
 
-// ISR: servida estática, regenerada a cada 5 min. Quando o admin publica ou
-// edita um anúncio, a revalidação por tag atualiza a home em segundos.
-export const revalidate = 300;
+const PAGE_SIZE = 12;
 
-export default function HomePage() {
+type Props = {
+  // No Next 16, `searchParams` é uma PROMISE — acesso síncrono foi removido.
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export default async function HomePage({ searchParams }: Props) {
+  const params = await searchParams;
+
   return (
     <>
-      {/* O hero é estático (foto de vitrine + texto), sem dado de API — por isso
-          entra direto, sem Suspense. */}
+      {/* Hero estático (foto de vitrine + texto), sem dado de API. */}
       <Hero />
 
-      {/* Logo abaixo da dobra: o convite CHAMATIVO para o estoque, no lugar onde
-          antes ficava a busca. */}
-      <EstoqueCTA />
-
-      <Suspense fallback={<GridSkeleton title="Seleção da casa" count={3} />}>
-        <FeaturedSection />
-      </Suspense>
-
-      <Suspense fallback={<GridSkeleton title="No estoque" count={6} />}>
-        <LatestSection />
-      </Suspense>
+      <EstoqueSection params={params} />
 
       <TrustSection />
     </>
@@ -44,114 +41,134 @@ export default function HomePage() {
 }
 
 /**
- * O convite para o estoque.
+ * A seção de estoque — e a razão de a busca ter voltado para a home.
  *
- * Um bloco PRETO com botão DOURADO. Sobre a página clara, o preto salta e o
- * dourado grita "clique aqui" — é o único lugar da home onde o dourado vira
- * botão inteiro (em todo o resto ele é só detalhe), justamente porque aqui ele
- * TEM de chamar atenção. A busca completa (marca, preço, ano, câmbio) mora na
- * página de estoque, para onde este botão leva.
+ * A busca é o CABEÇALHO desta seção, e a grade de carros vem logo abaixo. Ela
+ * não flutua mais solta no branco (era essa a reclamação): pertence à grade que
+ * controla. E filtra AO VIVO — digitar ou escolher um filtro atualiza os cards
+ * aqui mesmo, sem trocar de página, que é exatamente o que faltava.
+ *
+ * Duas fronteiras de Suspense, como na página /veiculos: os filtros carregam de
+ * um lado, a grade do outro. A `key` na grade a força a remontar quando o filtro
+ * muda — sem ela, o React reusaria a árvore e o esqueleto nunca apareceria.
  */
-function EstoqueCTA() {
+function EstoqueSection({ params }: { params: Record<string, string | string[] | undefined> }) {
   return (
-    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20 lg:px-8">
-      <div className="rounded-card bg-inverse relative overflow-hidden px-6 py-12 text-center sm:px-14 sm:py-16">
-        {/* Brilho dourado difuso ao fundo — dá profundidade ao preto. */}
+    <section id="estoque" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+      <div>
+        <h2 className="text-content text-2xl font-semibold tracking-tight sm:text-3xl">
+          Nosso estoque
+        </h2>
+        {/* Filete dourado sob o título — o detalhe que amarra a identidade. */}
         <div
           aria-hidden
-          className="bg-brand-500/15 pointer-events-none absolute -top-1/3 left-1/2 size-[36rem] -translate-x-1/2 rounded-full blur-[120px]"
+          className="from-brand-500 mt-2 h-px w-16 bg-gradient-to-r to-transparent"
         />
-        <div className="relative mx-auto flex max-w-2xl flex-col items-center">
-          <p className="text-brand-400 flex items-center gap-2 text-[11px] font-semibold tracking-[0.2em] uppercase">
-            <Search className="size-3.5" />
-            Explore o estoque
-          </p>
-          <h2 className="text-on-inverse mt-4 text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
-            Todo o estoque, num só lugar
-          </h2>
-          <p className="mt-4 text-base leading-relaxed text-white/65 text-pretty">
-            Filtre por marca, preço, ano, câmbio e cidade — e encontre o carro certo em segundos.
-          </p>
-          {/* O botão de gradiente rotativo (components/ui/button-1.tsx).
-              Ele é um <div role="button"> — para navegar de verdade (e ser
-              rastreável pelo Google), envolvo num <Link>. O `role`/`tabIndex`
-              do miolo são anulados via props (o <Link> já é o elemento
-              interativo e focável); sem isso, haveria um botão dentro de um
-              link, que o leitor de tela anuncia duas vezes. */}
-          <Link href="/veiculos" className="mt-9 inline-block">
-            <GradientButton width="19rem" height="62px" role="presentation" tabIndex={-1}>
-              Ver todo o estoque
-              <ArrowRight className="ml-2 size-4" />
-            </GradientButton>
-          </Link>
-        </div>
+        <p className="text-faint mt-2.5 text-sm">
+          Busque e filtre sem sair da página — os resultados aparecem aqui embaixo.
+        </p>
       </div>
+
+      <div className="mt-6">
+        <Suspense fallback={<FiltersSkeleton />}>
+          <Filters />
+        </Suspense>
+      </div>
+
+      <Suspense key={JSON.stringify(params)} fallback={<ResultsSkeleton />}>
+        <Results params={params} />
+      </Suspense>
     </section>
   );
 }
 
-async function FeaturedSection() {
-  const vehicles = await safely(listFeaturedVehicles(3));
-  if (!vehicles || vehicles.length === 0) return null;
-
-  return (
-    <section className="mx-auto mt-20 max-w-7xl px-4 sm:px-6 lg:px-8">
-      <SectionHeader
-        title="Seleção da casa"
-        subtitle="Escolhidos a dedo pela nossa equipe"
-        href="/veiculos?featured=true"
-      />
-
-      <div className="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {vehicles.map((vehicle) => (
-          <VehicleCard key={vehicle.id} vehicle={vehicle} />
-        ))}
-      </div>
-    </section>
-  );
+async function Filters() {
+  const options = await safely(getFilterOptions());
+  if (!options) return null;
+  return <SearchFilters options={options} compact />;
 }
 
-async function LatestSection() {
-  const page = await safely(listVehicles({ sort: 'newest', page_size: 6 }));
+/** Converte os parâmetros da URL (strings) no formato tipado da API. */
+function parseParams(raw: Record<string, string | string[] | undefined>): VehicleSearchParams {
+  const first = (key: string): string | undefined => {
+    const value = raw[key];
+    return Array.isArray(value) ? value[0] : value;
+  };
+  const all = (key: string): string[] | undefined => {
+    const value = raw[key];
+    if (!value) return undefined;
+    return Array.isArray(value) ? value : [value];
+  };
+  const number = (key: string): number | undefined => {
+    const value = first(key);
+    if (!value) return undefined;
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : undefined;
+  };
+
+  return {
+    q: first('q'),
+    brand: first('brand'),
+    model: first('model'),
+    city: first('city'),
+    year_min: number('year_min'),
+    year_max: number('year_max'),
+    price_min: number('price_min'),
+    price_max: number('price_max'),
+    fuel: all('fuel') as VehicleSearchParams['fuel'],
+    transmission: all('transmission') as VehicleSearchParams['transmission'],
+    body: all('body') as VehicleSearchParams['body'],
+    features: all('features'),
+    sort: first('sort'),
+    page: number('page') ?? 1,
+    page_size: PAGE_SIZE,
+  };
+}
+
+async function Results({ params }: { params: Record<string, string | string[] | undefined> }) {
+  const page = await safely(listVehicles(parseParams(params)));
 
   // Falha da API e catálogo vazio são coisas DIFERENTES, e a mensagem precisa
-  // ser diferente. Dizer "nenhum veículo disponível" quando a API caiu esconde
-  // a falha atrás de uma tela plausível — e ninguém vai investigar.
+  // ser diferente. Dizer "nenhum resultado" quando a API caiu esconde a falha
+  // atrás de uma tela plausível — e ninguém vai investigar.
   if (!page) {
     return (
-      <section className="mx-auto mt-16 max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-card border-line-strong border border-dashed py-16 text-center">
-          <p className="text-content font-medium">Não foi possível carregar os veículos.</p>
-          <p className="text-faint mt-1 text-sm">
-            Estamos com uma instabilidade momentânea. Tente novamente em instantes.
-          </p>
-        </div>
-      </section>
+      <div className="rounded-card border-line-strong mt-8 border border-dashed py-16 text-center">
+        <p className="text-content font-medium">Não foi possível carregar os veículos.</p>
+        <p className="text-faint mt-1 text-sm">
+          Estamos com uma instabilidade momentânea. Tente novamente em instantes.
+        </p>
+      </div>
     );
   }
 
   if (page.items.length === 0) {
     return (
-      <section className="mx-auto mt-16 max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-        <p className="text-faint">Nenhum veículo disponível no momento.</p>
-      </section>
+      <div className="rounded-card border-line-strong mt-8 flex flex-col items-center border border-dashed py-16 text-center">
+        <span className="bg-sunken text-faint flex size-14 items-center justify-center rounded-full">
+          <SearchX className="size-6" />
+        </span>
+        <h3 className="text-content mt-5 text-lg font-semibold">Nenhum veículo para esse filtro</h3>
+        <p className="text-faint mt-1.5 max-w-sm text-sm">
+          Tente remover algum filtro ou buscar por outro termo.
+        </p>
+      </div>
     );
   }
 
   return (
-    <section className="mx-auto mt-20 max-w-7xl px-4 sm:px-6 lg:px-8">
-      <SectionHeader
-        title="No estoque"
-        subtitle={`${page.meta.total} ${page.meta.total === 1 ? 'veículo disponível' : 'veículos disponíveis'}`}
-        href="/veiculos"
-      />
+    <>
+      <h3 className="text-faint mt-8 text-sm font-normal">
+        <strong className="text-content font-semibold">{page.meta.total}</strong>{' '}
+        {page.meta.total === 1 ? 'veículo encontrado' : 'veículos encontrados'}
+      </h3>
 
-      <div className="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {page.items.map((vehicle) => (
-          <VehicleCard key={vehicle.id} vehicle={vehicle} />
+      <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {page.items.map((vehicle, index) => (
+          <VehicleCard key={vehicle.id} vehicle={vehicle} priority={index < 3} />
         ))}
       </div>
-    </section>
+    </>
   );
 }
 
@@ -175,7 +192,7 @@ function TrustSection() {
   ];
 
   return (
-    <section className="mx-auto mt-24 max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section className="mx-auto mt-8 max-w-7xl px-4 pb-4 sm:px-6 lg:px-8">
       <div className="rounded-card border-line bg-surface/50 grid gap-8 border p-8 sm:grid-cols-3 sm:p-12">
         {items.map(({ icon: Icon, title, text }) => (
           <div key={title}>
@@ -191,50 +208,19 @@ function TrustSection() {
   );
 }
 
-function SectionHeader({
-  title,
-  subtitle,
-  href,
-}: {
-  title: string;
-  subtitle: string;
-  href: '/veiculos' | '/veiculos?featured=true';
-}) {
-  return (
-    <div className="flex items-end justify-between gap-4">
-      <div>
-        <h2 className="text-content text-2xl font-semibold tracking-tight sm:text-3xl">
-          {title}
-        </h2>
-        {/* Filete dourado sob o título — o detalhe que amarra a identidade. */}
-        <div
-          aria-hidden
-          className="from-brand-500 mt-2 h-px w-16 bg-gradient-to-r to-transparent"
-        />
-        <p className="text-faint mt-2.5 text-sm">{subtitle}</p>
-      </div>
-      <a
-        href={href}
-        className="text-accent hover:text-accent hidden shrink-0 items-center gap-1 text-sm font-medium transition-colors sm:flex"
-      >
-        Ver todos
-        <ArrowRight className="size-4" />
-      </a>
-    </div>
-  );
+function FiltersSkeleton() {
+  return <div className="rounded-card bg-sunken h-[5.5rem] animate-pulse sm:h-[4.75rem]" />;
 }
 
-function GridSkeleton({ title, count }: { title: string; count: number }) {
+function ResultsSkeleton() {
   return (
-    <section className="mx-auto mt-20 max-w-7xl px-4 sm:px-6 lg:px-8">
-      <h2 className="text-content text-2xl font-semibold tracking-tight sm:text-3xl">
-        {title}
-      </h2>
-      <div className="mt-7 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {Array.from({ length: count }).map((_, i) => (
+    <>
+      <div className="bg-sunken mt-8 h-4 w-40 animate-pulse rounded" />
+      <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, i) => (
           <VehicleCardSkeleton key={i} />
         ))}
       </div>
-    </section>
+    </>
   );
 }
