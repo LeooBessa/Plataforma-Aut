@@ -8,7 +8,6 @@ import { ButtonLink } from '@/components/ui/button';
  *
  *   ESQUERDA: a promessa da marca, com o monograma como marca d'água atrás
  *   DIREITA:  uma foto GRANDE do carro, dissolvida na página
- *   RODAPÉ:   a busca no estoque
  *
  * ----------------------------------------------------------------------------
  * A FOTO É USADA INTEIRA, NÃO RECORTADA
@@ -28,18 +27,17 @@ import { ButtonLink } from '@/components/ui/button';
  * destaques do banco continuam logo abaixo, na "Seleção da casa".
  *
  * ----------------------------------------------------------------------------
- * A DOBRA: só o hero na primeira tela, a busca aparece ao rolar
+ * A DOBRA: só o hero na primeira tela
  * ----------------------------------------------------------------------------
  *
- * A área superior ocupa a tela inteira (`100svh` menos a altura da navbar), sem
- * linha divisória embaixo. Assim, ao abrir o site, o visitante vê apenas o carro
- * e a promessa — nada de barra de busca competindo com a primeira impressão. A
- * busca é uma seção logo abaixo da dobra: a primeira rolada a revela.
+ * O hero ocupa a tela inteira (`100svh` menos a navbar), sem nada embaixo. Ao
+ * abrir o site, o visitante vê apenas o carro e a promessa. O convite para o
+ * estoque vem logo abaixo da dobra, como um bloco de destaque próprio (na home).
  */
-export function Hero({ search }: { search?: React.ReactNode }) {
+export function Hero() {
   return (
     <section className="bg-canvas relative overflow-hidden">
-      {/* ------ ÁREA SUPERIOR — ocupa a tela inteira (menos a navbar) ------ */}
+      {/* ------ HERO — ocupa a tela inteira (menos a navbar) ------ */}
       <div className="relative flex lg:min-h-[calc(100svh-4rem)]">
         {/* FOTO — painel à direita, sangrando até a borda da tela.
             A transição branco→dourado é um CORTE DIAGONAL reto (clip-path), não
@@ -71,8 +69,8 @@ export function Hero({ search }: { search?: React.ReactNode }) {
               fetchPriority="high"
               className="object-cover object-[center_62%]"
             />
-            {/* Fade curto só na base: suaviza o encontro com a busca, sem a
-                faixa larga que incomodava na lateral. */}
+            {/* Fade curto na base: a foto encontra o branco da página sem uma
+                linha dura embaixo. */}
             <div className="from-canvas absolute inset-x-0 bottom-0 h-14 bg-gradient-to-t to-transparent" />
           </div>
         </div>
@@ -138,21 +136,6 @@ export function Hero({ search }: { search?: React.ReactNode }) {
           </div>
         </div>
       </div>
-
-      {/* ------ BUSCA — card elevado que SOBREPÕE a emenda do hero ------
-          A margem negativa (no desktop) faz o card subir e CRUZAR a borda
-          inferior do hero: metade sobre a foto, metade no branco. A sombra o
-          levanta. Assim ele vira a ponte entre o hero e o estoque, em vez de um
-          card solto no meio do branco. O `z-20` o mantém acima da foto.
-
-          Como o hero ocupa a tela inteira, o topo do card fica rente à base da
-          janela — um leve espiar que convida a rolar. A primeira rolada o revela
-          por completo, atravessando a emenda. */}
-      {search && (
-        <div className="relative z-20 mx-auto max-w-7xl px-4 pt-10 pb-16 sm:px-6 lg:-mt-20 lg:px-8 lg:pt-0">
-          {search}
-        </div>
-      )}
     </section>
   );
 }

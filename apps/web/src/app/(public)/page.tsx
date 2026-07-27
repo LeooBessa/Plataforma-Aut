@@ -1,11 +1,10 @@
 import { Suspense } from 'react';
-import { ArrowRight, BadgeCheck, ShieldCheck, Wrench } from 'lucide-react';
+import { ArrowRight, BadgeCheck, Search, ShieldCheck, Wrench } from 'lucide-react';
 
 import { ButtonLink } from '@/components/ui/button';
 import { Hero } from '@/features/home/hero';
-import { SearchFilters } from '@/features/vehicles/search-filters';
 import { VehicleCard, VehicleCardSkeleton } from '@/features/vehicles/vehicle-card';
-import { getFilterOptions, listFeaturedVehicles, listVehicles, safely } from '@/lib/api';
+import { listFeaturedVehicles, listVehicles, safely } from '@/lib/api';
 
 /**
  * Home.
@@ -22,17 +21,19 @@ export const revalidate = 300;
 export default function HomePage() {
   return (
     <>
-      {/* O hero busca o destaque e os filtros no servidor; o Suspense evita que
-          a página inteira espere por essas consultas. */}
-      <Suspense fallback={<HeroSkeleton />}>
-        <HeroSection />
-      </Suspense>
+      {/* O hero é estático (foto de vitrine + texto), sem dado de API — por isso
+          entra direto, sem Suspense. */}
+      <Hero />
 
-      <Suspense fallback={<GridSkeleton title="Destaques" count={3} />}>
+      {/* Logo abaixo da dobra: o convite CHAMATIVO para o estoque, no lugar onde
+          antes ficava a busca. */}
+      <EstoqueCTA />
+
+      <Suspense fallback={<GridSkeleton title="Seleção da casa" count={3} />}>
         <FeaturedSection />
       </Suspense>
 
-      <Suspense fallback={<GridSkeleton title="Últimos anúncios" count={6} />}>
+      <Suspense fallback={<GridSkeleton title="No estoque" count={6} />}>
         <LatestSection />
       </Suspense>
 
@@ -41,24 +42,46 @@ export default function HomePage() {
   );
 }
 
-async function HeroSection() {
-  // O hero só depende dos filtros agora: o carro do topo virou um PNG recortado
-  // e estático (ver o comentário em `hero.tsx`). `safely` porque uma queda da
-  // API não pode derrubar a home — sem filtros o hero perde só a busca.
-  const options = await safely(getFilterOptions());
-
+/**
+ * O convite para o estoque.
+ *
+ * Um bloco PRETO com botão DOURADO. Sobre a página clara, o preto salta e o
+ * dourado grita "clique aqui" — é o único lugar da home onde o dourado vira
+ * botão inteiro (em todo o resto ele é só detalhe), justamente porque aqui ele
+ * TEM de chamar atenção. A busca completa (marca, preço, ano, câmbio) mora na
+ * página de estoque, para onde este botão leva.
+ */
+function EstoqueCTA() {
   return (
-    <Hero
-      search={
-        options ? (
-          // Card ELEVADO: fundo sólido e sombra forte, porque ele sobrepõe a
-          // emenda do hero (metade sobre a foto). Semiopaco deixaria o carro
-          // aparecer atrás dos campos e sujar a leitura; a sombra é o que dá a
-          // sensação de "flutuando acima", ligando o hero ao estoque.
-          <SearchFilters options={options} compact className="bg-surface shadow-2xl" />
-        ) : null
-      }
-    />
+    <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:py-20 lg:px-8">
+      <div className="rounded-card bg-inverse relative overflow-hidden px-6 py-12 text-center sm:px-14 sm:py-16">
+        {/* Brilho dourado difuso ao fundo — dá profundidade ao preto. */}
+        <div
+          aria-hidden
+          className="bg-brand-500/15 pointer-events-none absolute -top-1/3 left-1/2 size-[36rem] -translate-x-1/2 rounded-full blur-[120px]"
+        />
+        <div className="relative mx-auto flex max-w-2xl flex-col items-center">
+          <p className="text-brand-400 flex items-center gap-2 text-[11px] font-semibold tracking-[0.2em] uppercase">
+            <Search className="size-3.5" />
+            Explore o estoque
+          </p>
+          <h2 className="text-on-inverse mt-4 text-3xl font-semibold tracking-tight text-balance sm:text-4xl">
+            Todo o estoque, num só lugar
+          </h2>
+          <p className="mt-4 text-base leading-relaxed text-white/65 text-pretty">
+            Filtre por marca, preço, ano, câmbio e cidade — e encontre o carro certo em segundos.
+          </p>
+          <ButtonLink
+            href="/veiculos"
+            size="lg"
+            className="from-brand-400 to-brand-600 text-ink-950 shadow-gold mt-8 bg-gradient-to-b font-semibold hover:from-brand-300 hover:to-brand-500"
+          >
+            Ver todo o estoque
+            <ArrowRight className="size-4" />
+          </ButtonLink>
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -122,13 +145,6 @@ async function LatestSection() {
         {page.items.map((vehicle) => (
           <VehicleCard key={vehicle.id} vehicle={vehicle} />
         ))}
-      </div>
-
-      <div className="mt-12 flex justify-center">
-        <ButtonLink href="/veiculos" variant="secondary" size="lg">
-          Ver todo o estoque
-          <ArrowRight className="size-4" />
-        </ButtonLink>
       </div>
     </section>
   );
@@ -200,28 +216,6 @@ function SectionHeader({
         <ArrowRight className="size-4" />
       </a>
     </div>
-  );
-}
-
-function HeroSkeleton() {
-  return (
-    <section className="bg-canvas">
-      {/* Repete a MEDIDA do hero real — a área superior ocupa a tela inteira
-          (menos a navbar), com o texto centrado na vertical à esquerda. Um
-          placeholder de outra medida faria a página saltar quando o conteúdo
-          chegasse: foi esse o CLS de 0,24 que a listagem acusou no Lighthouse. */}
-      <div className="mx-auto flex max-w-7xl items-center px-4 py-20 sm:px-6 lg:min-h-[calc(100svh-4rem)] lg:px-8">
-        <div className="w-full space-y-5 lg:w-[50%]">
-          <div className="bg-sunken h-28 w-full animate-pulse rounded" />
-          <div className="bg-sunken h-16 w-full animate-pulse rounded" />
-          <div className="bg-sunken h-13 w-64 animate-pulse rounded-xl" />
-        </div>
-      </div>
-
-      <div className="relative z-20 mx-auto max-w-7xl px-4 pt-10 pb-16 sm:px-6 lg:-mt-20 lg:px-8 lg:pt-0">
-        <div className="rounded-card bg-surface shadow-2xl h-[6.5rem] animate-pulse sm:h-[5.75rem]" />
-      </div>
-    </section>
   );
 }
 
