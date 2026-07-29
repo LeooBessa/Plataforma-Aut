@@ -75,11 +75,18 @@ export function AppointmentModal({
   vehicleSlug,
   vehicleTitle,
   onClose,
+  mode = 'visit',
 }: {
   vehicleSlug: string;
   vehicleTitle: string;
   onClose: () => void;
+  /** Visita comum ou test drive — muda o título e já deixa a intenção na nota. */
+  mode?: 'visit' | 'test_drive';
 }) {
+  const isTestDrive = mode === 'test_drive';
+  const heading = isTestDrive ? 'Agendar test drive' : 'Agendar visita';
+  const successHeading = isTestDrive ? 'Test drive agendado!' : 'Visita agendada!';
+
   const [serverError, setServerError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const dialogRef = useRef<HTMLDivElement>(null);
@@ -90,7 +97,15 @@ export function AppointmentModal({
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { customer_name: '', phone: '', email: '', notes: '' },
+    // No test drive a nota já vem preenchida: o mesmo formulário serve às duas
+    // intenções, e o admin lê no agendamento que é test drive. Sem endpoint
+    // novo — a diferença é só a nota, que o cliente pode editar.
+    defaultValues: {
+      customer_name: '',
+      phone: '',
+      email: '',
+      notes: isTestDrive ? 'Tenho interesse em fazer um test drive.' : '',
+    },
   });
 
   // Esc fecha, e a rolagem do fundo trava. Sem a trava, rolar dentro do modal
@@ -152,7 +167,7 @@ export function AppointmentModal({
             <span className="bg-success-500/10 text-success-500 mx-auto flex size-14 items-center justify-center rounded-full">
               <CheckCircle2 className="size-7" />
             </span>
-            <h2 className="text-content mt-5 text-xl font-bold">Visita agendada!</h2>
+            <h2 className="text-content mt-5 text-xl font-bold">{successHeading}</h2>
             <p className="text-muted mt-2 text-sm leading-relaxed">
               Recebemos seu pedido. Entraremos em contato em breve para confirmar o horário.
             </p>
@@ -165,7 +180,7 @@ export function AppointmentModal({
             <div className="flex items-start justify-between gap-4">
               <div>
                 <h2 id="agendamento-titulo" className="text-content text-lg font-bold">
-                  Agendar visita
+                  {heading}
                 </h2>
                 <p className="text-faint mt-0.5 text-sm">{vehicleTitle}</p>
               </div>

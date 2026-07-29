@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { CalendarCheck, Check, Share2 } from 'lucide-react';
+import { CalendarCheck, Car, Check, Share2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { AppointmentModal } from '@/features/appointments/appointment-modal';
@@ -14,7 +14,9 @@ import { AppointmentModal } from '@/features/appointments/appointment-modal';
  * só os botões — que precisam de interatividade — carregam JavaScript.
  */
 export function VehicleActions({ slug, title }: { slug: string; title: string }) {
-  const [modalOpen, setModalOpen] = useState(false);
+  // `null` = fechado. Guardar o MODO (visita/test drive) em vez de um booleano
+  // deixa o mesmo modal servir aos dois botões.
+  const [modalMode, setModalMode] = useState<null | 'visit' | 'test_drive'>(null);
   const [shared, setShared] = useState(false);
 
   const share = async () => {
@@ -45,43 +47,56 @@ export function VehicleActions({ slug, title }: { slug: string; title: string })
 
   return (
     <>
-      <div className="flex gap-3">
-        {/* Dourado, e não verde: este é O botão da página. Ele tem de ser a
-            mesma cor da marca em toda parte, senão o site tem dois "botões
-            principais" competindo — o dourado do hero e o verde daqui. */}
-        <Button size="lg" onClick={() => setModalOpen(true)} className="flex-1">
-          <CalendarCheck className="size-4" />
-          Agendar visita
-        </Button>
+      <div className="flex flex-col gap-3">
+        <div className="flex gap-3">
+          {/* Agendar visita é O botão principal (dourado). */}
+          <Button size="lg" onClick={() => setModalMode('visit')} className="flex-1">
+            <CalendarCheck className="size-4" />
+            Agendar visita
+          </Button>
 
+          <Button
+            variant="secondary"
+            size="lg"
+            onClick={() => void share()}
+            aria-label="Compartilhar anúncio"
+            className="shrink-0 px-4"
+          >
+            {shared ? (
+              <>
+                <Check className="text-success-500 size-4" />
+                <span className="hidden sm:inline">Copiado!</span>
+              </>
+            ) : (
+              <>
+                <Share2 className="size-4" />
+                <span className="hidden sm:inline">Compartilhar</span>
+              </>
+            )}
+          </Button>
+        </div>
+
+        {/* Fazer test drive — secundário (a visita é o CTA principal), mas do
+            mesmo tamanho e abrindo o mesmo formulário, já em modo test drive. */}
         <Button
           variant="secondary"
           size="lg"
-          onClick={() => void share()}
-          aria-label="Compartilhar anúncio"
-          className="shrink-0 px-4"
+          onClick={() => setModalMode('test_drive')}
+          className="w-full"
         >
-          {shared ? (
-            <>
-              <Check className="text-success-500 size-4" />
-              <span className="hidden sm:inline">Copiado!</span>
-            </>
-          ) : (
-            <>
-              <Share2 className="size-4" />
-              <span className="hidden sm:inline">Compartilhar</span>
-            </>
-          )}
+          <Car className="size-4" />
+          Fazer test drive
         </Button>
       </div>
 
       {/* Montado só quando aberto: o estado do formulário nasce limpo a cada
           abertura, sem precisar de um efeito para resetá-lo. */}
-      {modalOpen && (
+      {modalMode && (
         <AppointmentModal
+          mode={modalMode}
           vehicleSlug={slug}
           vehicleTitle={title}
-          onClose={() => setModalOpen(false)}
+          onClose={() => setModalMode(null)}
         />
       )}
     </>

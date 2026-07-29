@@ -3,7 +3,7 @@ import { Mail, MapPin, Phone } from 'lucide-react';
 
 export function Footer() {
   return (
-    <footer className="bg-inverse mt-28">
+    <footer className="bg-inverse mt-16">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
         <div>
           <span className="text-gold-gradient text-lg font-semibold tracking-[0.2em]">

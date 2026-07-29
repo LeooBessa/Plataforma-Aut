@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { BadgeCheck, SearchX, ShieldCheck, Wrench } from 'lucide-react';
+import { SearchX } from 'lucide-react';
 
 import { Hero } from '@/features/home/hero';
 import { SearchFilters } from '@/features/vehicles/search-filters';
@@ -34,8 +34,6 @@ export default async function HomePage({ searchParams }: Props) {
       <Hero />
 
       <EstoqueSection params={params} />
-
-      <TrustSection />
     </>
   );
 }
@@ -53,8 +51,11 @@ export default async function HomePage({ searchParams }: Props) {
  * muda — sem ela, o React reusaria a árvore e o esqueleto nunca apareceria.
  */
 function EstoqueSection({ params }: { params: Record<string, string | string[] | undefined> }) {
+  // Padding de baixo pequeno (`pb-4`): esta é a última seção antes do rodapé (o
+  // bloco de confiança saiu). O respiro até o rodapé vem do `mt` do próprio
+  // rodapé — assim o estoque "encosta" nele, sem uma faixa branca no meio.
   return (
-    <section id="estoque" className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+    <section id="estoque" className="mx-auto max-w-7xl px-4 pt-16 pb-4 sm:px-6 lg:px-8 lg:pt-20">
       <div>
         <h2 className="text-content text-2xl font-semibold tracking-tight sm:text-3xl">
           Nosso estoque
@@ -169,42 +170,6 @@ async function Results({ params }: { params: Record<string, string | string[] | 
         ))}
       </div>
     </>
-  );
-}
-
-function TrustSection() {
-  const items = [
-    {
-      icon: ShieldCheck,
-      title: 'Procedência verificada',
-      text: 'Histórico consultado e laudo cautelar em todos os veículos do estoque.',
-    },
-    {
-      icon: Wrench,
-      title: 'Revisão completa',
-      text: 'Cada carro passa por checklist técnico antes de ser anunciado.',
-    },
-    {
-      icon: BadgeCheck,
-      title: 'Transparência total',
-      text: 'Quilometragem, número de donos e manutenções — tudo no anúncio.',
-    },
-  ];
-
-  return (
-    <section className="mx-auto mt-8 max-w-7xl px-4 pb-4 sm:px-6 lg:px-8">
-      <div className="rounded-card border-line bg-surface/50 grid gap-8 border p-8 sm:grid-cols-3 sm:p-12">
-        {items.map(({ icon: Icon, title, text }) => (
-          <div key={title}>
-            <span className="rounded-btn border-accent/30 bg-accent-soft text-accent flex size-11 items-center justify-center border">
-              <Icon className="size-5" />
-            </span>
-            <h3 className="text-content mt-4 font-medium">{title}</h3>
-            <p className="text-muted mt-1.5 text-sm leading-relaxed">{text}</p>
-          </div>
-        ))}
-      </div>
-    </section>
   );
 }
 
