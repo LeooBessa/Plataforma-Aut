@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { CalendarCheck, Car, Check, Share2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { ShinyButton } from '@/components/ui/shiny-button';
 import { AppointmentModal } from '@/features/appointments/appointment-modal';
 
 /**
@@ -76,18 +77,13 @@ export function VehicleActions({ slug, title }: { slug: string; title: string })
           </Button>
         </div>
 
-        {/* Fazer Test Drive — DOURADO cheio, para ter destaque ao lado do preto.
-            É a segunda ação de conversão da página (não um mero secundário), e
-            abre o mesmo formulário, já em modo test drive. */}
-        <Button
-          variant="gold"
-          size="lg"
-          onClick={() => setModalMode('test_drive')}
-          className="w-full"
-        >
+        {/* Fazer Test Drive — o ShinyButton: preto com borda dourada girando e
+            brilho no hover. É a segunda ação de conversão da página, e o efeito
+            dá o destaque pedido. Abre o mesmo formulário, em modo test drive. */}
+        <ShinyButton onClick={() => setModalMode('test_drive')} className="w-full">
           <Car className="size-4" />
           Fazer Test Drive
-        </Button>
+        </ShinyButton>
       </div>
 
       {/* Montado só quando aberto: o estado do formulário nasce limpo a cada
