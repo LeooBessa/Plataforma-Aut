@@ -84,8 +84,8 @@ export function AppointmentModal({
   mode?: 'visit' | 'test_drive';
 }) {
   const isTestDrive = mode === 'test_drive';
-  const heading = isTestDrive ? 'Agendar test drive' : 'Agendar visita';
-  const successHeading = isTestDrive ? 'Test drive agendado!' : 'Visita agendada!';
+  const heading = isTestDrive ? 'Agendar Test Drive' : 'Agendar Visita';
+  const successHeading = isTestDrive ? 'Test Drive agendado!' : 'Visita agendada!';
 
   const [serverError, setServerError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -104,7 +104,7 @@ export function AppointmentModal({
       customer_name: '',
       phone: '',
       email: '',
-      notes: isTestDrive ? 'Tenho interesse em fazer um test drive.' : '',
+      notes: isTestDrive ? 'Tenho interesse em fazer um Test Drive.' : '',
     },
   });
 

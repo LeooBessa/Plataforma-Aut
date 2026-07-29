@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 import { cn } from '@/lib/utils';
 
-type Variant = 'primary' | 'success' | 'secondary' | 'ghost' | 'danger';
+type Variant = 'primary' | 'gold' | 'success' | 'secondary' | 'ghost' | 'danger';
 type Size = 'sm' | 'md' | 'lg';
 
 const VARIANTS: Record<Variant, string> = {
@@ -17,6 +17,10 @@ const VARIANTS: Record<Variant, string> = {
   // O preto ainda ganha em contraste (17:1) e é a leitura clássica de luxo
   // discreto num fundo branco.
   primary: 'bg-inverse text-on-inverse font-semibold hover:bg-ink-800',
+  // DOURADO cheio, texto preto. Uso PONTUAL — para uma ação que precisa saltar
+  // ao lado do preto (ex.: "Fazer Test Drive" ao lado de "Agendar Visita").
+  // Justamente por ser raro, o dourado cheio não perde o valor de destaque.
+  gold: 'bg-gradient-to-b from-brand-400 to-brand-600 text-ink-950 font-semibold shadow-gold hover:from-brand-300 hover:to-brand-500',
   // Verde: reservado ao que confirma — "Confirmar agendamento" no painel.
   success: 'bg-success-700 text-white hover:bg-success-800',
   // Contorno cinza: presente, secundário, sem pedir a vez.

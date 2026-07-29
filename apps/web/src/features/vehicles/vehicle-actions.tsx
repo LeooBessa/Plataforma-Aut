@@ -49,10 +49,10 @@ export function VehicleActions({ slug, title }: { slug: string; title: string })
     <>
       <div className="flex flex-col gap-3">
         <div className="flex gap-3">
-          {/* Agendar visita é O botão principal (dourado). */}
+          {/* Agendar Visita: o botão principal (preto). */}
           <Button size="lg" onClick={() => setModalMode('visit')} className="flex-1">
             <CalendarCheck className="size-4" />
-            Agendar visita
+            Agendar Visita
           </Button>
 
           <Button
@@ -76,16 +76,17 @@ export function VehicleActions({ slug, title }: { slug: string; title: string })
           </Button>
         </div>
 
-        {/* Fazer test drive — secundário (a visita é o CTA principal), mas do
-            mesmo tamanho e abrindo o mesmo formulário, já em modo test drive. */}
+        {/* Fazer Test Drive — DOURADO cheio, para ter destaque ao lado do preto.
+            É a segunda ação de conversão da página (não um mero secundário), e
+            abre o mesmo formulário, já em modo test drive. */}
         <Button
-          variant="secondary"
+          variant="gold"
           size="lg"
           onClick={() => setModalMode('test_drive')}
           className="w-full"
         >
           <Car className="size-4" />
-          Fazer test drive
+          Fazer Test Drive
         </Button>
       </div>
 
