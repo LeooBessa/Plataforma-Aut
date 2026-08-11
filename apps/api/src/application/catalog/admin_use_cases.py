@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from uuid import UUID
 
 from src.application.ports import RevalidationService, SignedUpload, StorageService
@@ -231,15 +231,58 @@ class PrepareImageUploadUseCase:
 
 @dataclass(frozen=True, slots=True)
 class RegisterImageUseCase:
-    """Grava no banco a foto que o browser já subiu ao Storage."""
+    """Grava no banco a foto que o browser já subiu ao Storage.
+
+    ESTE É O PASSO EM QUE O BACKEND VOLTA A MANDAR.
+    ===============================================
+    O upload em duas etapas tem um ponto cego: entre "autorizei" e "confirmou",
+    quem fala é o cliente. Se acreditássemos no `storage_path` que ele manda, um
+    admin (ou uma conta de admin comprometida) poderia confirmar o caminho da foto
+    de OUTRO anúncio — e depois apagá-la pelo `DELETE /images/{id}`, que recebe o
+    caminho do banco e o repassa ao Storage sem questionar.
+
+    Duas travas fecham isso:
+
+    1. O caminho tem que estar DENTRO da pasta deste veículo. É a mesma pasta que
+       `build_storage_path` gerou no passo 1; qualquer outra coisa é recusada.
+    2. A URL pública é DERIVADA do caminho, não aceita do cliente. Sem isso, dava
+       para registrar uma foto apontando para um host externo — e a vitrine do
+       cliente passaria a exibir (e a legitimar) imagem de terceiro.
+    """
 
     repository: VehicleAdminRepository
+    storage: StorageService
 
     async def execute(self, vehicle_id: UUID, image: ImageWrite) -> Image:
-        registered = await self.repository.add_image(vehicle_id, image)
+        safe_path = self._validate_path(vehicle_id, image.storage_path)
+
+        trusted = replace(image, storage_path=safe_path, url=self.storage.public_url(safe_path))
+
+        registered = await self.repository.add_image(vehicle_id, trusted)
         if registered is None:
             raise NotFoundError("Veículo não encontrado.")
         return registered
+
+    @staticmethod
+    def _validate_path(vehicle_id: UUID, path: str) -> str:
+        expected_prefix = f"vehicles/{vehicle_id}/"
+
+        # `..` é checado à parte: `vehicles/<id>/../../outro` PASSA no teste de
+        # prefixo e ainda assim escapa da pasta.
+        if ".." in path or not path.startswith(expected_prefix):
+            raise ValidationError(
+                "Caminho de imagem inválido para este veículo.",
+                details={"storage_path": path},
+            )
+
+        # Precisa sobrar um nome de arquivo depois da pasta.
+        if not path[len(expected_prefix) :].strip("/"):
+            raise ValidationError(
+                "Caminho de imagem inválido para este veículo.",
+                details={"storage_path": path},
+            )
+
+        return path
 
 
 @dataclass(frozen=True, slots=True)

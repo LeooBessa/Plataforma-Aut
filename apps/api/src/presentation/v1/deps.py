@@ -308,8 +308,10 @@ def get_prepare_upload_use_case(
     return PrepareImageUploadUseCase(repo, storage)
 
 
-def get_register_image_use_case(repo: VehicleAdminRepositoryDep) -> RegisterImageUseCase:
-    return RegisterImageUseCase(repo)
+def get_register_image_use_case(
+    repo: VehicleAdminRepositoryDep, storage: StorageDep
+) -> RegisterImageUseCase:
+    return RegisterImageUseCase(repo, storage)
 
 
 def get_delete_image_use_case(

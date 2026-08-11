@@ -1,7 +1,11 @@
 # Segredos — NUNCA versionar
-.env
-.env.local
-.env.*.local
+#
+# `.env*` e não a lista de nomes conhecidos: os padrões antigos (.env,
+# .env.local, .env.*.local) deixavam passar justamente os nomes que aparecem
+# numa rotação de credencial — `.env.bak`, `.env.old`, `.env.producao`,
+# `.env.novo`. Nenhum deles casava com nada aqui, então nasciam já rastreáveis
+# pelo git, com o segredo dentro.
+.env*
 !.env.example
 
 # Python
@@ -39,3 +43,4 @@ test-results/
 !.vscode/settings.json
 !.vscode/extensions.json
 deploy/
+.vercel
