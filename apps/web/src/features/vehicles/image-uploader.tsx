@@ -81,17 +81,28 @@ export function ImageUploader({
       // 3. Enviar direto ao Storage. Repare: `fetch` puro, não o nosso `http` —
       //    esta requisição vai para o Supabase, não para a nossa API, e não deve
       //    levar o token de autenticação junto.
-      const response = await fetch(signed.upload_url, {
+      //
+      //    O token do upload assinado vai na QUERY STRING, não num header
+      //    `Authorization`. O endpoint de upload assinado do Supabase lê
+      //    `?token=`; mandando no header ele responde
+      //    `400 querystring must have required property 'token'` — que é o que
+      //    acontecia aqui, e por isso nenhuma foto subia.
+      const uploadUrl = `${signed.upload_url}?token=${encodeURIComponent(signed.token)}`;
+
+      const response = await fetch(uploadUrl, {
         method: 'PUT',
-        headers: {
-          Authorization: `Bearer ${signed.token}`,
-          'Content-Type': 'image/webp',
-        },
+        headers: { 'Content-Type': 'image/webp' },
         body: compressed,
       });
 
       if (!response.ok) {
-        throw new Error('Falha ao enviar a imagem para o servidor de arquivos.');
+        // A mensagem do Storage entra no erro: sem ela, qualquer falha aqui vira
+        // "Algo deu errado" na tela, que não diz nada a quem precisa consertar.
+        const detalhe = await response.text().catch(() => '');
+        throw new Error(
+          `Falha ao enviar a imagem para o servidor de arquivos. ` +
+            `(HTTP ${response.status}${detalhe ? ` — ${detalhe.slice(0, 200)}` : ''})`,
+        );
       }
 
       // 4. Só agora o banco sabe que a foto existe. Nesta ordem: se o passo 3
