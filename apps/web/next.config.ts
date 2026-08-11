@@ -58,6 +58,20 @@ function contentSecurityPolicy(): string {
     // next/font/google baixa a fonte no BUILD e a serve de /_next/static — não há
     // requisição a fonts.gstatic.com em runtime, então 'self' basta.
     'font-src': ["'self'", 'data:'],
+    // `blob:` é obrigatório aqui, e a ausência dele quebrou o upload de fotos em
+    // produção. A `browser-image-compression` comprime a imagem num Web Worker
+    // que ela mesma monta em tempo de execução: `URL.createObjectURL(new Blob(…))`
+    // seguido de `new Worker(url)`. Sem `worker-src`, o navegador cai na cadeia
+    // `child-src` → `script-src` → `default-src`, e nenhum deles libera `blob:`.
+    //
+    // O Worker morria antes de qualquer requisição de rede, então o sintoma era
+    // "não consigo adicionar foto" sem nada aparecer no servidor — o upload
+    // falhava no passo 1 de 4, antes de sequer pedir a URL assinada.
+    //
+    // Não afrouxa nada na prática: com `'unsafe-inline'` já em `script-src`, quem
+    // conseguisse executar script na página não ganha capacidade nova por poder
+    // criar um worker.
+    'worker-src': ["'self'", 'blob:'],
     'connect-src': ["'self'", supabase, ...(isDev ? ['ws:'] : [])],
     // Complementa o X-Frame-Options: DENY (que navegadores novos ignoram em favor
     // deste).
