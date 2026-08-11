@@ -47,6 +47,14 @@ class StorageService(Protocol):
 
     async def delete(self, *, path: str) -> bool: ...
 
+    def public_url(self, path: str) -> str:
+        """URL pública de um arquivo já no bucket.
+
+        Está na porta porque o backend precisa DERIVAR a URL a partir do caminho,
+        em vez de aceitar a que o cliente mandar — ver `RegisterImageUseCase`.
+        """
+        ...
+
 
 @dataclass(frozen=True, slots=True)
 class RateLimitResult:

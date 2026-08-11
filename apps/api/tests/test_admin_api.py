@@ -47,10 +47,23 @@ class FakeStorage:
         self.deleted.append(path)
         return True
 
+    def public_url(self, path: str) -> str:
+        return f"https://cdn.fake/{path}"
+
 
 @pytest.fixture
 def storage() -> FakeStorage:
     return FakeStorage()
+
+
+def _imagem(vehicle_id: str, nome: str) -> dict[str, str]:
+    """Payload de registro de foto.
+
+    O caminho tem que estar DENTRO da pasta do veículo — é o que
+    `RegisterImageUseCase` exige, justamente para que um cliente não confirme a
+    foto de outro anúncio. E não se manda `url`: o servidor a deriva do caminho.
+    """
+    return {"storage_path": f"vehicles/{vehicle_id}/{nome}.webp"}
 
 
 @pytest.fixture
@@ -264,7 +277,7 @@ async def test_publica_com_foto_e_grava_published_at(
 
     await client.post(
         f"{ADMIN}/vehicles/{vehicle_id}/images",
-        json={"storage_path": "v/1.jpg", "url": "https://cdn.fake/1.jpg"},
+        json=_imagem(vehicle_id, "1"),
         headers=headers,
     )
 
@@ -292,12 +305,12 @@ async def test_primeira_foto_vira_capa_automaticamente(
 
     primeira = await client.post(
         f"{ADMIN}/vehicles/{vid}/images",
-        json={"storage_path": "v/1.jpg", "url": "https://cdn.fake/1.jpg"},
+        json=_imagem(vid, "1"),
         headers=headers,
     )
     segunda = await client.post(
         f"{ADMIN}/vehicles/{vid}/images",
-        json={"storage_path": "v/2.jpg", "url": "https://cdn.fake/2.jpg"},
+        json=_imagem(vid, "2"),
         headers=headers,
     )
 
@@ -322,13 +335,13 @@ async def test_apagar_a_capa_promove_a_proxima_foto(
     capa = (
         await client.post(
             f"{ADMIN}/vehicles/{vid}/images",
-            json={"storage_path": "v/1.jpg", "url": "https://cdn.fake/1.jpg"},
+            json=_imagem(vid, "1"),
             headers=headers,
         )
     ).json()
     await client.post(
         f"{ADMIN}/vehicles/{vid}/images",
-        json={"storage_path": "v/2.jpg", "url": "https://cdn.fake/2.jpg"},
+        json=_imagem(vid, "2"),
         headers=headers,
     )
 
@@ -339,7 +352,7 @@ async def test_apagar_a_capa_promove_a_proxima_foto(
     assert len(detalhe["images"]) == 1
     assert detalhe["images"][0]["is_cover"] is True, "o anúncio ficou sem capa"
     # E o arquivo foi removido do Storage — nada de lixo acumulando.
-    assert "v/1.jpg" in storage.deleted
+    assert _imagem(vid, "1")["storage_path"] in storage.deleted
 
 
 async def test_upload_url_e_emitida_com_caminho_gerado_pelo_servidor(
@@ -398,7 +411,7 @@ async def test_duplicar_gera_rascunho_sem_fotos_e_sem_destaque(
     ).json()
     await client.post(
         f"{ADMIN}/vehicles/{original['id']}/images",
-        json={"storage_path": "v/1.jpg", "url": "https://cdn.fake/1.jpg"},
+        json=_imagem(original["id"], "1"),
         headers=headers,
     )
     await client.patch(
@@ -822,7 +835,7 @@ async def test_publicar_dispara_revalidacao_da_pagina(
     ).json()["id"]
     await client_with_spy.post(
         f"{ADMIN}/vehicles/{vid}/images",
-        json={"storage_path": "v/1.jpg", "url": "https://cdn.fake/1.jpg"},
+        json=_imagem(vid, "1"),
         headers=headers,
     )
 

@@ -158,8 +158,17 @@ class UploadUrlOut(BaseModel):
 
 
 class ImageRegisterIn(BaseModel):
+    """Confirmação de que a foto subiu.
+
+    Repare que NÃO existe campo `url`. A URL pública é derivada do
+    `storage_path` pelo `RegisterImageUseCase` — aceitá-la do cliente permitiria
+    registrar uma foto hospedada em outro domínio e exibi-la na vitrine.
+
+    O `storage_path` também não é aceito de olhos fechados: o caso de uso exige
+    que ele esteja dentro da pasta deste veículo.
+    """
+
     storage_path: str = Field(max_length=500)
-    url: str = Field(max_length=700)
     alt_text: str | None = Field(default=None, max_length=200)
     width: int | None = Field(default=None, ge=1, le=20000)
     height: int | None = Field(default=None, ge=1, le=20000)
@@ -167,7 +176,10 @@ class ImageRegisterIn(BaseModel):
     def to_domain(self) -> ImageWrite:
         return ImageWrite(
             storage_path=self.storage_path,
-            url=self.url,
+            # Placeholder: o caso de uso substitui pela URL derivada do caminho já
+            # validado. `ImageWrite.url` é obrigatório porque no domínio uma foto
+            # sem URL não faz sentido — mas quem a define é o servidor.
+            url="",
             alt_text=self.alt_text,
             width=self.width,
             height=self.height,

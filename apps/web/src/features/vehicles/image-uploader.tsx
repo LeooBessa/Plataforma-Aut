@@ -99,9 +99,11 @@ export function ImageUploader({
       //    que apareceria quebrada na galeria do site.
       const dimensions = await readDimensions(compressed);
 
+      // Sem `url`: o backend a deriva do `storage_path` (que ele mesmo gerou no
+      // passo 2 e revalida agora). Mandar a URL daqui permitiria apontar a foto
+      // do anúncio para um host qualquer.
       await http.post(`/admin/vehicles/${vehicleId}/images`, {
         storage_path: signed.storage_path,
-        url: signed.public_url,
         width: dimensions?.width,
         height: dimensions?.height,
       });
