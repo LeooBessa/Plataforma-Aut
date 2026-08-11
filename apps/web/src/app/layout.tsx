@@ -19,6 +19,18 @@ export const metadata: Metadata = {
   // `metadataBase` é obrigatório para que URLs relativas do Open Graph virem
   // absolutas. Sem ele, o preview do link no WhatsApp e no Facebook sai sem imagem.
   metadataBase: new URL(SITE_URL),
+  // Canonical em TODA página, resolvido a partir do caminho dela.
+  //
+  // O site responde em dois endereços: o domínio da loja e o `.vercel.app` que a
+  // Vercel cria e não permite redirecionar. Sem canonical, o Google trata os dois
+  // como sites distintos com conteúdo idêntico e divide o sinal entre eles — ou
+  // indexa o `.vercel.app`, que é o endereço que ninguém deveria ver.
+  //
+  // `'./'` (e não `SITE_URL`) porque o valor é resolvido contra o caminho da
+  // página. Um canonical fixo apontaria TUDO para a home, e aí `/veiculos` e
+  // `/contato` se declarariam duplicatas da raiz — pior que não ter canonical
+  // nenhum. A página de veículo define o seu próprio, mais específico.
+  alternates: { canonical: './' },
   title: {
     default: 'ÂUREON — Seminovos selecionados',
     // Cada página preenche o %s. Assim o título nunca fica só "Corolla", sem
