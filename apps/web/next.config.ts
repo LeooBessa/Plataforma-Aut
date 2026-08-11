@@ -11,6 +11,71 @@ const SUPABASE_HOSTNAME = process.env.SUPABASE_URL
   ? new URL(process.env.SUPABASE_URL).hostname
   : undefined;
 
+const isDev = process.env.NODE_ENV === 'development';
+
+/**
+ * Content-Security-Policy.
+ *
+ * A última classe de header que faltava, e a que mais importa: os outros mitigam
+ * ataques, este limita o ESTRAGO de um XSS. Sem CSP, um script injetado faz o que
+ * quiser — inclusive chamar a nossa API com a sessão do admin e mandar os dados
+ * para fora. Com CSP, ele não consegue carregar código de outro domínio, não
+ * consegue exfiltrar para um host arbitrário, e não consegue sequestrar um form.
+ *
+ * ------------------------------------------------------------------------------
+ * O COMPROMISSO DO 'unsafe-inline' EM script-src — leia antes de "melhorar"
+ * ------------------------------------------------------------------------------
+ * O App Router injeta scripts INLINE em toda página (o payload de hidratação,
+ * `self.__next_f.push(...)`). Para bloqueá-los seria preciso um nonce por
+ * requisição, e nonce exige gerar HTML a cada visita — ou seja, DESLIGAR o
+ * cache/ISR que este projeto construiu de propósito (ver lib/api.ts). Trocar a
+ * performance de todas as páginas por uma defesa parcial contra um XSS que ainda
+ * não existe é um mau negócio para um site cujo conteúdo é 100% texto escapado
+ * pelo React e sem nenhum `dangerouslySetInnerHTML` que aceite entrada de usuário.
+ *
+ * O que continua valendo, mesmo com 'unsafe-inline': `script-src` sem host
+ * externo barra `<script src="evil.com">`; `connect-src` barra a exfiltração;
+ * `form-action` barra o roubo de credencial por form reescrito; `object-src` e
+ * `base-uri` fecham vetores antigos. O CSP não é só sobre inline.
+ */
+function contentSecurityPolicy(): string {
+  // O browser do admin faz PUT DIRETO no Storage (ver image-uploader.tsx). Sem o
+  // host do Supabase aqui, o upload de fotos quebra — e o erro no console não
+  // explica o motivo.
+  const supabase = SUPABASE_HOSTNAME ? `https://${SUPABASE_HOSTNAME}` : '';
+
+  const directives: Record<string, string[]> = {
+    'default-src': ["'self'"],
+    // 'unsafe-eval' só em dev: o HMR do Next compila módulos com eval.
+    'script-src': ["'self'", "'unsafe-inline'", ...(isDev ? ["'unsafe-eval'"] : [])],
+    // O Next e o Tailwind injetam <style> inline; sem 'unsafe-inline' a página
+    // renderiza sem estilo nenhum.
+    'style-src': ["'self'", "'unsafe-inline'"],
+    // `data:`/`blob:` para as prévias locais do uploader antes de subir a foto.
+    // As fotos publicadas passam pelo otimizador do Next (mesma origem), mas o
+    // host do Supabase entra para o caso de uma URL direta.
+    'img-src': ["'self'", 'data:', 'blob:', supabase, 'https://picsum.photos'],
+    // next/font/google baixa a fonte no BUILD e a serve de /_next/static — não há
+    // requisição a fonts.gstatic.com em runtime, então 'self' basta.
+    'font-src': ["'self'", 'data:'],
+    'connect-src': ["'self'", supabase, ...(isDev ? ['ws:'] : [])],
+    // Complementa o X-Frame-Options: DENY (que navegadores novos ignoram em favor
+    // deste).
+    'frame-ancestors': ["'none'"],
+    'form-action': ["'self'"],
+    'base-uri': ["'self'"],
+    'object-src': ["'none'"],
+  };
+
+  const policy = Object.entries(directives)
+    .map(([name, values]) => `${name} ${values.filter(Boolean).join(' ')}`)
+    .join('; ');
+
+  // Em dev o site roda em http://localhost, e este diretivo tentaria promover
+  // tudo para https — quebrando o ambiente local.
+  return isDev ? policy : `${policy}; upgrade-insecure-requests`;
+}
+
 const nextConfig: NextConfig = {
   // Rotas tipadas: um <Link href="/veiculo/x"> com typo vira erro de compilação,
   // em vez de um 404 que só aparece em produção.
@@ -62,6 +127,9 @@ const nextConfig: NextConfig = {
             key: 'Strict-Transport-Security',
             value: 'max-age=63072000; includeSubDomains; preload',
           },
+          // Limita o que a página pode carregar e para onde pode falar. Ver
+          // `contentSecurityPolicy()` acima — inclusive o porquê do 'unsafe-inline'.
+          { key: 'Content-Security-Policy', value: contentSecurityPolicy() },
           // O navegador não "adivinha" o tipo do conteúdo (vetor de XSS).
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           // Ninguém embute o site num iframe: fecha clickjacking.
