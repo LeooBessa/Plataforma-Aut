@@ -64,7 +64,7 @@ export function Hero() {
           >
             <Image
               src="/hero-car.jpg"
-              alt="Porsche 911 — vitrine Giro Auto"
+              alt="SUV em destaque na vitrine da Giro Auto"
               fill
               sizes="58vw"
               // Maior elemento acima da dobra: quase certamente o LCP. No Next 16
@@ -171,7 +171,7 @@ export function Hero() {
             <div className="rounded-card mt-12 overflow-hidden lg:hidden">
               <Image
                 src="/hero-car.jpg"
-                alt="Porsche 911 — vitrine Giro Auto"
+                alt="SUV em destaque na vitrine da Giro Auto"
                 width={1700}
                 height={2125}
                 loading="eager"
