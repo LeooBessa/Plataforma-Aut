@@ -85,14 +85,22 @@ export function Hero() {
                 o carro cobria o logo. Só o símbolo, não o logo com texto —
                 texto apagado continua sendo lido como texto e disputa com o
                 título; um símbolo vira textura. */}
+            {/* CENTRADA NA FRASE, não na caixa que a contém.
+                Esta distinção é o que estava errado. A caixa do h1 ocupa os 608px
+                da coluna, mas o texto só chega a ~404px — centrar na caixa jogava
+                o símbolo ~109px à direita da frase, e era visível.
+                A solução não é um deslocamento chutado: este contêiner recebe
+                `max-w-md`, a MESMA medida do parágrafo abaixo, e centra a imagem
+                dentro dela. Assim a marca acompanha a coluna de texto, e não a
+                largura sobrando ao lado dela.
+                `inset-y-0` + `items-center` cuidam do eixo vertical. */}
             <div
               aria-hidden
-              className="pointer-events-none absolute -top-10 left-1/2 -z-0 hidden -translate-x-1/2 lg:left-[42%] lg:block"
+              className="pointer-events-none absolute inset-y-0 left-0 -z-0 hidden w-full max-w-md items-center justify-center lg:flex"
             >
-              {/* A marca anterior era horizontal (779×337) e ocupava 34rem de
-                  largura. Esta é quase quadrada (497×512): na mesma largura ela
-                  ficaria alta demais e invadiria o título. 22rem mantém a
-                  ÁREA parecida com a de antes. */}
+              {/* A marca anterior ocupava 34rem de largura. Esta é quase
+                  quadrada: na mesma largura ficaria alta demais e invadiria o
+                  título. 22rem mantém a ÁREA parecida com a de antes. */}
               <Image
                 src="/giro-auto-logo.png"
                 alt=""
