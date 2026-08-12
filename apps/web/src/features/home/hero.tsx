@@ -1,7 +1,11 @@
 import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 
+import AnimatedTextCycle from '@/components/ui/animated-text-cycle';
 import { ButtonLink } from '@/components/ui/button';
+
+/** As palavras que giram no título. A ordem é a que aparece na tela. */
+const QUALIDADES = ['Preço acessível.', 'Economia.', 'Qualidade.', 'Conforto.'];
 
 /**
  * Hero da home.
@@ -126,9 +130,25 @@ export function Hero() {
             </div>
 
             <div className="relative">
-              <h1 className="text-content text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-[3.4rem] lg:leading-[1.05]">
-                O extraordinário
-                <span className="text-accent mt-1 block">ao seu alcance</span>
+              {/* O `aria-label` fixa o nome acessível do título.
+                  Sem ele, o h1 — que é o rótulo principal da página — mudaria de
+                  texto a cada 3 segundos. Leitor de tela relê, controle por voz
+                  perde a referência, e a página passa a não ter um nome estável.
+                  Aqui o visitante vê a palavra girar e a tecnologia assistiva
+                  ouve a frase inteira, uma vez. */}
+              <h1
+                aria-label="Carros para quem quer mais: preço acessível, economia, qualidade e conforto."
+                className="text-content text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-[3.4rem] lg:leading-[1.05]"
+              >
+                Carros para quem quer mais
+                {/* `animateWidth={false}`: a palavra está sozinha na linha, não
+                    há texto depois dela para ser empurrado. Sem isso, o
+                    componente renderiza todas as variações num bloco oculto para
+                    medi-las — e esse bloco entra no texto do h1, deixando o
+                    título da página com as quatro palavras concatenadas no DOM. */}
+                <span className="text-accent mt-1 block">
+                  <AnimatedTextCycle words={QUALIDADES} interval={3000} animateWidth={false} />
+                </span>
               </h1>
 
               <p className="text-muted mx-auto mt-6 max-w-md text-base leading-relaxed text-pretty lg:mx-0">
