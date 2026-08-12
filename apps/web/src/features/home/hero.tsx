@@ -195,11 +195,11 @@ export function Hero() {
 
               <div className="mt-9 flex flex-wrap justify-center gap-3 lg:justify-start">
                 <ButtonLink href="/veiculos" size="lg">
-                  Ver coleção
+                  Ver Estoque
                   <ArrowRight className="size-4" />
                 </ButtonLink>
                 <ButtonLink href="/contato" size="lg" variant="secondary">
-                  Falar com consultor
+                  Falar com a Equipe
                 </ButtonLink>
               </div>
             </div>
