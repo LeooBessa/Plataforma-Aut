@@ -3,7 +3,7 @@
 import type React from 'react';
 
 /**
- * Botão "shiny" — preto com borda dourada girando, brilho interno e um padrão
+ * Botão "shiny" — preto com borda azul girando, brilho interno e um padrão
  * de pontos que aparece no hover.
  *
  * A CSS mora em globals.css (classe `.shiny-cta`), e NÃO num `<style jsx>` como

@@ -3,24 +3,28 @@ import Link from 'next/link';
 
 import { cn } from '@/lib/utils';
 
-type Variant = 'primary' | 'gold' | 'success' | 'secondary' | 'ghost' | 'danger';
+type Variant = 'primary' | 'accent' | 'success' | 'secondary' | 'ghost' | 'danger';
 type Size = 'sm' | 'md' | 'lg';
 
 const VARIANTS: Record<Variant, string> = {
   // PRETO com texto branco.
   //
-  // O botão é o elemento mais repetido do site. Pintá-lo de dourado gastaria a
-  // cor da marca justamente onde ela deixa de ser "detalhe" — e o dourado vale
+  // O botão é o elemento mais repetido do site. Pintá-lo de azul gastaria a
+  // cor da marca justamente onde ela deixa de ser "detalhe" — e o azul vale
   // pelo que ele NÃO ocupa. Reservado ao preço, aos selos e aos filetes, ele
   // continua chamando atenção; espalhado por toda tela, vira só mais uma cor.
   //
   // O preto ainda ganha em contraste (17:1) e é a leitura clássica de luxo
   // discreto num fundo branco.
   primary: 'bg-inverse text-on-inverse font-semibold hover:bg-ink-800',
-  // DOURADO cheio, texto preto. Uso PONTUAL — para uma ação que precisa saltar
+  // AZUL cheio, texto branco. Uso PONTUAL — para uma ação que precisa saltar
   // ao lado do preto (ex.: "Fazer Test Drive" ao lado de "Agendar Visita").
-  // Justamente por ser raro, o dourado cheio não perde o valor de destaque.
-  gold: 'bg-gradient-to-b from-brand-400 to-brand-600 text-ink-950 font-semibold shadow-gold hover:from-brand-300 hover:to-brand-500',
+  // Justamente por ser raro, o azul cheio não perde o valor de destaque.
+  //
+  // Chapado no `brand-600`, e não em degradê: branco sobre o 600 dá 5,1:1 e
+  // passa AA, mas sobre o 400 (topo do degradê antigo) cai para 2,8:1 — o texto
+  // ficaria ilegível na metade de cima do botão.
+  accent: 'bg-brand-600 text-white font-semibold shadow-brand hover:bg-brand-700',
   // Verde: reservado ao que confirma — "Confirmar agendamento" no painel.
   success: 'bg-success-700 text-white hover:bg-success-800',
   // Contorno cinza: presente, secundário, sem pedir a vez.

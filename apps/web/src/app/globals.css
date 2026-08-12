@@ -1,9 +1,9 @@
 @import 'tailwindcss';
 
 /* ============================================================================
-   ÂUREON — SISTEMA DE CORES
+   Giro Auto — SISTEMA DE CORES
    ============================================================================
-   Fundo branco. Preto e cinza no texto. Dourado só nos detalhes.
+   Fundo branco. Preto e cinza no texto. Azul só nos detalhes.
 
    ----------------------------------------------------------------------------
    DUAS CAMADAS, E A SEGUNDA É A QUE OS COMPONENTES USAM
@@ -29,31 +29,33 @@
      CAMADA 1 — ESCALAS BRUTAS
      ========================================================================== */
 
-  /* --- DOURADO: a cor da marca. ------------------------------------------
-     Aviso que vale para sempre: dourado claro sobre branco NÃO passa em
-     contraste (brand-500 sobre branco dá ~1,9:1; o mínimo legível é 4,5:1).
-     Por isso os tons de texto são os escuros — 700 e 800. Os claros servem
-     para preencher, não para escrever. */
-  --color-brand-50: oklch(0.97 0.025 92);
-  --color-brand-100: oklch(0.94 0.05 91);
-  --color-brand-200: oklch(0.9 0.08 90);
-  --color-brand-300: oklch(0.86 0.1 89);
-  --color-brand-400: oklch(0.83 0.115 88);
-  --color-brand-500: oklch(0.77 0.125 86); /* DOURADO PRINCIPAL (preenchimento) */
-  --color-brand-600: oklch(0.71 0.13 84);
-  --color-brand-700: oklch(0.58 0.115 80); /* dourado de TEXTO — 4,8:1 no branco */
-  --color-brand-800: oklch(0.48 0.095 78);
-  --color-brand-900: oklch(0.38 0.075 76);
+  /* --- AZUL: a cor da marca, tirada da logo. -----------------------------
+     A logo usa #0158FD, que em OKLCH é `oklch(0.536 0.254 262)` — entre os
+     passos 500 e 600 desta escala. A escala inteira gira nesse matiz (262°),
+     variando só claridade e croma, para que os tons combinem entre si.
 
-  /* Alias legível: `gold-*` e `brand-*` são a mesma cor. */
-  --color-gold-300: oklch(0.86 0.1 89);
-  --color-gold-400: oklch(0.83 0.115 88);
-  --color-gold-500: oklch(0.77 0.125 86);
-  --color-gold-600: oklch(0.71 0.13 84);
-  --color-gold-700: oklch(0.58 0.115 80);
+     A regra de contraste continua valendo, e é o que decide onde cada passo
+     pode ser usado (medido contra branco puro):
 
-  /* --- NEUTROS: do branco ao preto. Sem viés de matiz, para o dourado não
-         puxar para o verde nem para o rosa em cima deles. */
+       500 (#387CFF) → 3,8:1  — só texto GRANDE; serve para preencher
+       600 (#1B62F5) → 5,1:1  — passa AA, é o azul de TEXTO no claro
+       700 (#1250CE) → 6,9:1  — ênfase
+
+     Sobre os painéis pretos a conta inverte: aí o 500 dá 4,7:1 e é ele quem
+     escreve. Tom claro escreve no escuro, tom escuro escreve no claro. */
+  --color-brand-50: oklch(0.97 0.02 262);
+  --color-brand-100: oklch(0.93 0.045 262);
+  --color-brand-200: oklch(0.87 0.085 262);
+  --color-brand-300: oklch(0.79 0.13 262);
+  --color-brand-400: oklch(0.7 0.175 262);
+  --color-brand-500: oklch(0.62 0.215 262); /* AZUL sobre ESCURO — 4,7:1 no preto */
+  --color-brand-600: oklch(0.55 0.23 262); /* AZUL de TEXTO — 5,1:1 no branco */
+  --color-brand-700: oklch(0.48 0.205 262);
+  --color-brand-800: oklch(0.4 0.17 262);
+  --color-brand-900: oklch(0.32 0.13 262);
+
+  /* --- NEUTROS: do branco ao preto. Sem viés de matiz, para o azul não
+         puxar para o roxo nem para o ciano em cima deles. */
   --color-ink-0: oklch(1 0 0); /* branco puro */
   --color-ink-50: oklch(0.985 0 0);
   --color-ink-100: oklch(0.96 0 0);
@@ -103,8 +105,8 @@
   --color-muted: var(--color-ink-600); /* texto secundário */
   --color-faint: var(--color-ink-500); /* rótulos, dicas, placeholders */
 
-  --color-accent: var(--color-brand-700); /* dourado LEGÍVEL: texto e ícones */
-  --color-accent-soft: var(--color-brand-50); /* fundo dourado bem diluído */
+  --color-accent: var(--color-brand-600); /* azul LEGÍVEL: texto e ícones */
+  --color-accent-soft: var(--color-brand-50); /* fundo azul bem diluído */
 
   /* O preto é um papel também: painéis, rodapé, botão principal. Num site
      branco ele é o que dá peso — e é onde o logo consegue viver. */
@@ -122,7 +124,7 @@
   --shadow-card-hover:
     0 2px 6px 0 oklch(0 0 0 / 0.07), 0 16px 32px -12px oklch(0 0 0 / 0.16);
   --shadow-nav: 0 1px 0 0 oklch(0 0 0 / 0.06);
-  --shadow-gold: 0 0 40px -8px oklch(0.71 0.13 84 / 0.45);
+  --shadow-brand: 0 0 40px -8px oklch(0.55 0.23 262 / 0.45);
 }
 
 /* ============================================================================
@@ -142,14 +144,15 @@
     @apply bg-canvas text-content antialiased;
   }
 
-  /* Marcar uma caixa acende o dourado da marca, não o azul do sistema. */
+  /* Marcar uma caixa acende o azul da marca, não o azul padrão do sistema. */
   input[type='checkbox'],
   input[type='radio'] {
     @apply accent-brand-600;
   }
 
   /* Remover o outline sem repor nada deixaria o site inutilizável no teclado.
-     Preto, e não dourado: sobre o branco o dourado claro quase não aparece. */
+     Preto, e não azul: o preto tem contraste máximo sobre o branco e não se
+     confunde com o azul da marca, que já marca estado ativo em outros lugares. */
   :focus-visible {
     @apply outline-content outline-2 outline-offset-2;
   }
@@ -173,29 +176,29 @@
 }
 
 @layer utilities {
-  /* Texto com acabamento metálico dourado. Só use sobre FUNDO ESCURO: o brilho
-     do meio do degradê é quase branco e some no papel. No claro, para o mesmo
+  /* Texto com acabamento acetinado azul. Só use sobre FUNDO ESCURO: o brilho do
+     meio do degradê é quase branco e some no papel. No claro, para o mesmo
      efeito de destaque, use `text-accent`. */
-  .text-gold-gradient {
+  .text-brand-gradient {
     background: linear-gradient(
       135deg,
-      oklch(0.62 0.12 82) 0%,
-      oklch(0.86 0.1 89) 35%,
-      oklch(0.95 0.06 90) 50%,
-      oklch(0.83 0.115 88) 65%,
-      oklch(0.62 0.12 82) 100%
+      oklch(0.55 0.23 262) 0%,
+      oklch(0.7 0.175 262) 35%,
+      oklch(0.87 0.085 262) 50%,
+      oklch(0.7 0.175 262) 65%,
+      oklch(0.55 0.23 262) 100%
     );
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
   }
 
-  /* Linha divisória que nasce e morre transparente, com ouro no meio. */
-  .rule-gold {
+  /* Linha divisória que nasce e morre transparente, com azul no meio. */
+  .rule-brand {
     background: linear-gradient(
       90deg,
       transparent,
-      oklch(0.71 0.13 84 / 0.6) 50%,
+      oklch(0.62 0.215 262 / 0.6) 50%,
       transparent
     );
   }
@@ -218,7 +221,7 @@
   initial-value: 0deg;
 }
 
-@keyframes aureon-rotate {
+@keyframes brand-rotate {
   to {
     --r: 360deg;
   }
@@ -226,20 +229,20 @@
 
 .rotatingGradient {
   /* Miolo e texto — as variáveis que o componente lê. Preto quase puro no
-     centro, texto em creme dourado (legível sobre o preto). */
+     centro, texto em azul bem claro (legível sobre o preto: 12:1). */
   --color-background: oklch(0.12 0 0);
-  --color-text: oklch(0.92 0.07 90);
+  --color-text: oklch(0.93 0.045 262);
 
-  /* O anel: um cônico dourado que gira a partir de `--r`. */
+  /* O anel: um cônico azul que gira a partir de `--r`. */
   background: conic-gradient(
     from var(--r),
-    oklch(0.55 0.11 80),
-    oklch(0.86 0.1 89),
-    oklch(0.97 0.04 92),
-    oklch(0.83 0.115 88),
-    oklch(0.55 0.11 80)
+    oklch(0.48 0.205 262),
+    oklch(0.7 0.175 262),
+    oklch(0.93 0.045 262),
+    oklch(0.7 0.175 262),
+    oklch(0.48 0.205 262)
   );
-  animation: aureon-rotate 4s linear infinite;
+  animation: brand-rotate 4s linear infinite;
 }
 
 /* Peso e espaçamento do rótulo do botão. */
@@ -260,9 +263,8 @@
 /* ============================================================================
    SHINY BUTTON  (src/components/ui/shiny-button.tsx)
    ============================================================================
-   Preto com borda dourada girando + brilho interno + padrão de pontos no hover.
-   Adaptado do componente original (que era azul) para o preto/dourado da marca,
-   e movido do `<style jsx>` para cá — no styled-jsx a referência ao @keyframes
+   Preto com borda azul girando + brilho interno + padrão de pontos no hover.
+   Movido do `<style jsx>` para cá — no styled-jsx a referência ao @keyframes
    dentro de uma variável não é reescrita, e a animação não roda. */
 
 @property --gradient-angle {
@@ -282,17 +284,17 @@
 }
 @property --gradient-shine {
   syntax: '<color>';
-  initial-value: #fff4d8;
+  initial-value: #d8e9ff;
   inherits: false;
 }
 
 .shiny-cta {
-  /* --- PRETO E DOURADO (era azul no original) --- */
+  /* --- PRETO E AZUL --- */
   --shiny-cta-bg: #0b0b0b; /* miolo preto */
-  --shiny-cta-bg-subtle: #1a1712;
-  --shiny-cta-fg: #f6e7c2; /* texto: creme dourado, legível no preto */
-  --shiny-cta-highlight: #d6a63c; /* dourado da marca (borda/brilho) */
-  --shiny-cta-highlight-subtle: #f2d488;
+  --shiny-cta-bg-subtle: #101725;
+  --shiny-cta-fg: #eef6ff; /* texto: azul quase branco, 16:1 sobre o preto */
+  --shiny-cta-highlight: #1b62f5; /* azul da marca (borda/brilho) */
+  --shiny-cta-highlight-subtle: #619aff;
   --animation: gradient-angle linear infinite;
   --duration: 3s;
   --shadow-size: 2px;
@@ -354,7 +356,7 @@
   translate: 0 1px;
 }
 
-/* Padrão de pontos (dourado, era branco). */
+/* Padrão de pontos (azul, era branco). */
 .shiny-cta::before {
   --size: calc(100% - var(--shadow-size) * 3);
   --position: 2px;

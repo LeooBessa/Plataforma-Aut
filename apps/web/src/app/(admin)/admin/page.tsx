@@ -69,10 +69,10 @@ export default function DashboardPage() {
         </ButtonLink>
       </header>
 
-      {/* O agendamento PENDENTE vem primeiro e destacado em dourado.
+      {/* O agendamento PENDENTE vem primeiro e destacado em azul.
           É o único número desta tela que exige ação humana hoje: cada um é um
           cliente esperando resposta. Os outros são informação; este é tarefa —
-          e o dourado é a cor que o painel inteiro reserva para o que importa. */}
+          e o azul é a cor que o painel inteiro reserva para o que importa. */}
       {stats && stats.pending_appointments > 0 && (
         <Link
           href="/admin/agendamentos"
@@ -92,7 +92,7 @@ export default function DashboardPage() {
               Cada uma é um cliente esperando seu retorno.
             </p>
           </div>
-          <Badge tone="gold">Ver agora</Badge>
+          <Badge tone="highlight">Ver agora</Badge>
         </Link>
       )}
 

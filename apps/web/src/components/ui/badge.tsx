@@ -2,12 +2,16 @@ import type { ReactNode } from 'react';
 
 import { cn } from '@/lib/utils';
 
-type Tone = 'gold' | 'brand' | 'success' | 'neutral' | 'warning' | 'danger' | 'dark';
+type Tone = 'highlight' | 'brand' | 'success' | 'neutral' | 'warning' | 'danger' | 'dark';
 
 const TONES: Record<Tone, string> = {
-  // Dourado: o selo de destaque. Contorno e brilho, não preenchimento — sobre
-  // foto, um bloco sólido de ouro brigaria com a imagem.
-  gold: 'border-brand-500/40 bg-canvas/80 text-accent backdrop-blur',
+  // O selo de destaque, usado SOBRE FOTO. Contorno e véu translúcido, não
+  // preenchimento: um bloco sólido de cor brigaria com a imagem embaixo.
+  //
+  // O nome diz o PAPEL, não a cor. Este tom já se chamou `gold`; quando a
+  // paleta virou azul, o nome passou a mentir — e um `tone="gold"` que pinta de
+  // azul é o tipo de coisa que sobrevive anos no código.
+  highlight: 'border-brand-500/40 bg-canvas/80 text-accent backdrop-blur',
   brand: 'border-brand-500/40 bg-brand-500/10 text-accent',
   success: 'border-success-500/30 bg-success-500/10 text-success-500',
   neutral: 'border-line-strong bg-canvas/80 text-muted backdrop-blur',

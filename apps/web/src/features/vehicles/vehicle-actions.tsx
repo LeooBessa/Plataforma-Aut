@@ -77,7 +77,7 @@ export function VehicleActions({ slug, title }: { slug: string; title: string })
           </Button>
         </div>
 
-        {/* Fazer Test Drive — o ShinyButton: preto com borda dourada girando e
+        {/* Fazer Test Drive — o ShinyButton: preto com borda azul girando e
             brilho no hover. É a segunda ação de conversão da página, e o efeito
             dá o destaque pedido. Abre o mesmo formulário, em modo test drive. */}
         <ShinyButton onClick={() => setModalMode('test_drive')} className="w-full">

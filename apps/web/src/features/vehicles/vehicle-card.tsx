@@ -34,7 +34,7 @@ export function VehicleCard({
         'border-line bg-surface border',
         'transition-all duration-500 ease-out',
         // Num site escuro, sombra não separa nada (preto sobre preto). A
-        // elevação vem da BORDA que acende em dourado.
+        // elevação vem da BORDA que acende em azul.
         'hover:border-brand-600/50 hover:shadow-card-hover hover:-translate-y-1',
         'motion-reduce:hover:translate-y-0',
       )}
@@ -63,7 +63,7 @@ export function VehicleCard({
         )}
 
         <div className="absolute top-3 left-3 flex gap-2">
-          {vehicle.is_featured && !isSold && <Badge tone="gold">Destaque</Badge>}
+          {vehicle.is_featured && !isSold && <Badge tone="highlight">Destaque</Badge>}
           {isReserved && <Badge tone="warning">Reservado</Badge>}
           {isSold && <Badge tone="neutral">Vendido</Badge>}
         </div>
