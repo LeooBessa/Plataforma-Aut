@@ -89,25 +89,31 @@ export function Hero() {
                 Esta distinção é o que estava errado. A caixa do h1 ocupa os 608px
                 da coluna, mas o texto só chega a ~404px — centrar na caixa jogava
                 o símbolo ~109px à direita da frase, e era visível.
-                A solução não é um deslocamento chutado: este contêiner recebe
-                `max-w-md`, a MESMA medida do parágrafo abaixo, e centra a imagem
-                dentro dela. Assim a marca acompanha a coluna de texto, e não a
-                largura sobrando ao lado dela.
-                `inset-y-0` + `items-center` cuidam do eixo vertical. */}
+                A solução não é um deslocamento chutado: este contêiner recebe a
+                largura MEDIDA do título (404px no navegador, arredondado para
+                `max-w-100` = 400px) e centra a imagem dentro dela. Assim a marca
+                acompanha a coluna de texto, e não a largura sobrando ao lado.
+                `inset-y-0` + `items-center` cuidam do eixo vertical.
+
+                Por que não `max-w-md` (448px), que é a medida do parágrafo:
+                sobravam 22px à direita, e dava para ver. O título é a âncora
+                visual aqui, não o parágrafo. */}
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-y-0 left-0 -z-0 hidden w-full max-w-md items-center justify-center lg:flex"
+              className="pointer-events-none absolute inset-y-0 left-0 -z-0 hidden w-full max-w-100 items-center justify-center lg:flex"
             >
-              {/* A marca anterior ocupava 34rem de largura. Esta é quase
-                  quadrada: na mesma largura ficaria alta demais e invadiria o
-                  título. 22rem mantém a ÁREA parecida com a de antes. */}
+              {/* 18rem (288px). A marca anterior era horizontal e ocupava 34rem;
+                  esta é quase quadrada, então a mesma largura viraria uma mancha
+                  muito maior e competiria com o título em vez de servir de
+                  textura. Marca d'água que se faz notar deixou de ser marca
+                  d'água. */}
               <Image
                 src="/giro-auto-logo.png"
                 alt=""
                 width={497}
                 height={512}
                 loading="eager"
-                className="w-88 max-w-none opacity-[0.08]"
+                className="w-72 max-w-none opacity-[0.08]"
               />
             </div>
 
