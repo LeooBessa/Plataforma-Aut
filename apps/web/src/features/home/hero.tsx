@@ -189,8 +189,8 @@ export function Hero() {
               </div>
 
               <p className="text-muted mx-auto mt-6 max-w-md text-base leading-relaxed text-pretty lg:mx-0">
-                Seleção criteriosa de seminovos premium. Cada veículo com histórico verificado,
-                revisão completa e a transparência que a compra de um carro merece.
+                Boas oportunidades, carros selecionados e preços que fazem sentido para você.
+                Confira nossos veículos e encontre uma opção que cabe no seu bolso.
               </p>
 
               <div className="mt-9 flex flex-wrap justify-center gap-3 lg:justify-start">
