@@ -85,7 +85,7 @@ export function Hero() {
         </div>
 
         {/* `items-center` centra o texto na vertical agora que a área é alta. */}
-        <div className="relative mx-auto flex w-full max-w-7xl items-center px-4 py-20 sm:px-6 lg:px-8">
+        <div className="relative mx-auto flex w-full max-w-7xl items-center px-4 py-10 sm:px-6 sm:py-20 lg:px-8">
           {/* Bloco de texto: no desktop ocupa a metade esquerda; a foto cuida
               da direita. */}
           <div className="relative w-full text-center lg:w-[50%] lg:text-left">
@@ -143,7 +143,7 @@ export function Hero() {
                   ouve a frase inteira, uma vez. */}
               <h1
                 aria-label="Carros para quem quer mais: preço acessível, economia, qualidade e conforto."
-                className="text-content text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-[3.4rem] lg:leading-[1.05]"
+                className="text-content text-[2rem] font-semibold tracking-tight text-balance sm:text-5xl lg:text-[3.4rem] lg:leading-[1.05]"
               >
                 Carros para quem quer mais
                 {/* `animateWidth={false}`: a palavra está sozinha na linha, não
@@ -155,6 +155,30 @@ export function Hero() {
                   <AnimatedTextCycle words={QUALIDADES} interval={3000} animateWidth={false} />
                 </span>
               </h1>
+
+              {/* FOTO no celular, LOGO APÓS O TÍTULO — e a ordem é o ponto.
+                  Antes ela vinha depois do parágrafo e dos botões, e o conjunto
+                  consumia ~500px numa tela de 664px: o carro caía abaixo da
+                  dobra e o visitante via título, texto, dois botões e uma faixa
+                  de azul vazio. Numa loja de carros, o carro não pode ser a
+                  última coisa a aparecer.
+                  Aqui a leitura vira promessa → carro → detalhes → ação.
+                  16:9 e não 4:3 porque o veículo é de perfil: quadro largo
+                  mostra mais carro ocupando menos altura, e altura é o recurso
+                  escasso no celular.
+                  No desktop nada muda — lá a foto é o painel diagonal à direita
+                  e este bloco fica oculto (`lg:hidden`). */}
+              <div className="rounded-card mt-8 overflow-hidden lg:hidden">
+                <Image
+                  src="/hero-car.jpg"
+                  alt="SUV em destaque na vitrine da Giro Auto"
+                  width={1700}
+                  height={2125}
+                  loading="eager"
+                  fetchPriority="high"
+                  className="aspect-video w-full object-cover object-center"
+                />
+              </div>
 
               <p className="text-muted mx-auto mt-6 max-w-md text-base leading-relaxed text-pretty lg:mx-0">
                 Seleção criteriosa de seminovos premium. Cada veículo com histórico verificado,
@@ -172,18 +196,6 @@ export function Hero() {
               </div>
             </div>
 
-            {/* FOTO no celular — bloco normal, cantos arredondados. */}
-            <div className="rounded-card mt-12 overflow-hidden lg:hidden">
-              <Image
-                src="/hero-car.jpg"
-                alt="SUV em destaque na vitrine da Giro Auto"
-                width={1700}
-                height={2125}
-                loading="eager"
-                fetchPriority="high"
-                className="aspect-[4/3] w-full object-cover object-[center_60%]"
-              />
-            </div>
           </div>
         </div>
       </div>
