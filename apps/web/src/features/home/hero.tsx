@@ -167,9 +167,16 @@ export function Hero() {
                   16:9 e não 4:3 porque o veículo é de perfil: quadro largo
                   mostra mais carro ocupando menos altura, e altura é o recurso
                   escasso no celular.
+                  SANGRA DE PONTA A PONTA: `-mx-4 sm:-mx-6` cancela exatamente o
+                  respiro lateral do contêiner (`px-4 sm:px-6`), levando a foto até
+                  as bordas da tela. Sem os cantos arredondados, porque cartão com
+                  margem lê como "elemento na página" e sangria lê como "a página
+                  é a foto" — que é o efeito que se quer num hero.
+                  O `overflow-hidden` da <section> impede que isso gere rolagem
+                  horizontal.
                   No desktop nada muda — lá a foto é o painel diagonal à direita
                   e este bloco fica oculto (`lg:hidden`). */}
-              <div className="rounded-card mt-8 overflow-hidden lg:hidden">
+              <div className="mt-8 -mx-4 overflow-hidden sm:-mx-6 lg:hidden">
                 <Image
                   src="/hero-car.jpg"
                   alt="SUV em destaque na vitrine da Giro Auto"
