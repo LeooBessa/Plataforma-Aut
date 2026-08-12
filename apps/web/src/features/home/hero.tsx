@@ -73,14 +73,15 @@ export function Hero() {
               fetchPriority="high"
               className="object-cover object-center"
             />
-            {/* Fade na base, curto de propósito.
-                Ele suaviza o encontro da foto com o branco da página. Era 56px
-                quando a foto tinha base clara (o Porsche em fundo âmbar) e o
-                degradê sumia dentro dela. Com a foto escura atual, 56px de
-                branco sobre preto viram uma névoa cinza visível — o degradê
-                passa a ser notado, que é o oposto do que ele deveria fazer.
-                24px basta para tirar o serrilhado sem aparecer. */}
-            <div className="from-canvas absolute inset-x-0 bottom-0 h-6 bg-gradient-to-t to-transparent" />
+            {/* SEM degradê na base, de propósito.
+                Havia um branco→transparente aqui para suavizar o encontro da
+                foto com a página. Ele fazia sentido quando a foto tinha base
+                clara; sobre foto colorida, qualquer degradê para branco vira uma
+                faixa leitosa — reduzir a altura só encolhe a névoa, não a
+                elimina.
+                O corte seco é coerente com a linguagem do bloco: a diagonal ao
+                lado também é borda dura, e é ela que faz o hero parecer
+                desenhado em vez de montado. */}
           </div>
         </div>
 
