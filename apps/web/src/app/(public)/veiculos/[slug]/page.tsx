@@ -130,9 +130,9 @@ export default async function VeiculoPage({ params }: Props) {
               {formatMileage(vehicle.mileage)}
             </p>
 
-            {/* O preço em dourado é o mesmo tratamento que ele recebe no card e
+            {/* O preço em azul é o mesmo tratamento que ele recebe no card e
                 no destaque da home: o olho aprende, num site inteiro, que o
-                dourado é o valor. */}
+                azul é o valor. */}
             <p className="text-accent mt-5 text-3xl font-bold tracking-tight">
               {formatPrice(vehicle.price)}
             </p>
@@ -193,7 +193,7 @@ export default async function VeiculoPage({ params }: Props) {
 function Perk({ children }: { children: React.ReactNode }) {
   return (
     <li className="text-muted flex items-center gap-2.5">
-      {/* Dourado, não verde: estes itens são ATRIBUTOS do anúncio, não uma
+      {/* Azul, não verde: estes itens são ATRIBUTOS do anúncio, não uma
           confirmação de que algo deu certo. O verde é reservado para feedback
           de sucesso — usá-lo aqui diluiria o significado dele. */}
       <Check className="text-brand-500 size-4 shrink-0" />

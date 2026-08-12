@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Calendar, Car, LayoutDashboard, LogOut } from 'lucide-react';
@@ -67,11 +68,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="bg-sunken flex min-h-dvh">
       <aside className="border-line hidden w-64 shrink-0 flex-col border-r bg-surface lg:flex">
         <div className="border-line flex h-16 items-center gap-2.5 border-b px-5">
-          <span className="rounded-btn border-accent/30 bg-accent-soft text-accent flex size-9 items-center justify-center border">
-            <Car className="size-5" />
-          </span>
-          {/* Preto, como no site: o degradê metálico só funciona sobre escuro. */}
-          <span className="text-content text-sm font-semibold tracking-[0.2em]">ÂUREON</span>
+          {/* A logo de verdade, não o ícone genérico de carro: o admin é a tela
+              que o cliente mais olha, e ver a própria marca ali é o que faz o
+              painel parecer dele. Versão de traço escuro — a barra é clara. */}
+          <Image
+            src="/giro-auto-logo.png"
+            alt=""
+            width={497}
+            height={512}
+            className="h-9 w-auto"
+          />
+          <span className="text-content text-sm font-semibold tracking-[0.2em]">Giro Auto</span>
         </div>
 
         <nav className="flex-1 space-y-1 p-3">

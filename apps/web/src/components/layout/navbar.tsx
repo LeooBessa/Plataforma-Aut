@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Menu, Search, X } from 'lucide-react';
@@ -30,18 +31,22 @@ export function Navbar() {
       {/* `relative` para o menu poder ser centralizado em relação à barra
           inteira, e não ao espaço que sobra entre logo e ações. */}
       <nav className="relative mx-auto flex h-16 max-w-7xl items-center px-4 sm:px-6 lg:px-8">
-        {/* Sem aria-label: o texto visível "ÂUREON" já nomeia o link. Um
+        {/* Sem aria-label: o texto visível "Giro Auto" já nomeia o link. Um
             aria-label diferente do texto quebraria o controle por voz. */}
         <Link href="/" className="flex shrink-0 items-center gap-2.5">
-          {/* Losango dourado + palavra preta.
-              O degradê metálico do rodapé não serve aqui: o brilho no meio dele
-              é quase branco e desapareceria no papel. O ouro entra como marca
-              pequena, do tamanho de um detalhe — que é o papel dele neste tema. */}
-          <span
-            aria-hidden
-            className="from-brand-400 to-brand-600 size-2 rotate-45 bg-gradient-to-br"
+          {/* Símbolo + palavra. A versão de traço PRETO, porque a barra é
+              branca; a clara existe para os fundos escuros (rodapé).
+              `alt=""` porque o texto ao lado já nomeia o link — descrever a
+              imagem faria o leitor de tela anunciar a marca duas vezes. */}
+          <Image
+            src="/giro-auto-logo.png"
+            alt=""
+            width={497}
+            height={512}
+            className="h-9 w-auto"
+            priority
           />
-          <span className="text-content text-lg font-semibold tracking-[0.2em]">ÂUREON</span>
+          <span className="text-content text-lg font-semibold tracking-[0.2em]">Giro Auto</span>
         </Link>
 
         {/* CENTRALIZADO na barra: posicionado no meio absoluto, não empurrado

@@ -60,7 +60,7 @@ function EstoqueSection({ params }: { params: Record<string, string | string[] |
         <h2 className="text-content text-2xl font-semibold tracking-tight sm:text-3xl">
           Nosso estoque
         </h2>
-        {/* Filete dourado sob o título — o detalhe que amarra a identidade. */}
+        {/* Filete azul sob o título — o detalhe que amarra a identidade. */}
         <div
           aria-hidden
           className="from-brand-500 mt-2 h-px w-16 bg-gradient-to-r to-transparent"

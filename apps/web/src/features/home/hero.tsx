@@ -17,8 +17,8 @@ import { ButtonLink } from '@/components/ui/button';
  * Recorte sempre deixa borda — e, por mais limpo que fosse, o carro pousado
  * sobre a página engolia a marca d'água e parecia adesivo colado.
  *
- * Aqui a foto entra INTEIRA. O fundo dourado dela é o próprio visual — e é a
- * cor da ÂUREON, então a imagem já pertence à página. O que a integra não é um
+ * Aqui a foto entra INTEIRA. O fundo azul dela é o próprio visual — e é a
+ * cor da Giro Auto, então a imagem já pertence à página. O que a integra não é um
  * recorte, é uma MÁSCARA: a borda esquerda da foto desvanece para transparente
  * (`mask-image`), revelando o branco da página por baixo. Sem linha dura, sem
  * serrilhado — a foto "derrete" na página em vez de ser uma caixa colada.
@@ -40,14 +40,14 @@ export function Hero() {
       {/* ------ HERO — ocupa a tela inteira (menos a navbar) ------ */}
       <div className="relative flex lg:min-h-[calc(100svh-4rem)]">
         {/* FOTO — painel à direita, sangrando até a borda da tela.
-            A transição branco→dourado é um CORTE DIAGONAL reto (clip-path), não
+            A transição branco→azul é um CORTE DIAGONAL reto (clip-path), não
             mais um desvanecer largo — era essa faixa borrada que incomodava. Um
-            fio dourado fino corre na diagonal, para o corte parecer proposital.
+            fio azul fino corre na diagonal, para o corte parecer proposital.
             Só no desktop; no celular a foto vira um bloco normal, mais abaixo.
 
             Como funciona o fio: dois planos com a MESMA diagonal, o da foto
-            deslocado 2,5px à direita do plano dourado de trás. O que sobra do
-            dourado nesses 2,5px, ao longo da diagonal, é a linha. Fica preso à
+            deslocado 2,5px à direita do plano azul de trás. O que sobra do
+            azul nesses 2,5px, ao longo da diagonal, é a linha. Fica preso à
             geometria, então acompanha qualquer tamanho de tela sozinho. */}
         <div aria-hidden className="absolute inset-y-0 right-0 hidden w-[58%] lg:block">
           <div
@@ -60,7 +60,7 @@ export function Hero() {
           >
             <Image
               src="/hero-car.jpg"
-              alt="Porsche 911 — vitrine ÂUREON"
+              alt="Porsche 911 — vitrine Giro Auto"
               fill
               sizes="58vw"
               // Maior elemento acima da dobra: quase certamente o LCP. No Next 16
@@ -89,13 +89,17 @@ export function Hero() {
               aria-hidden
               className="pointer-events-none absolute -top-10 left-1/2 -z-0 hidden -translate-x-1/2 lg:left-[42%] lg:block"
             >
+              {/* A marca anterior era horizontal (779×337) e ocupava 34rem de
+                  largura. Esta é quase quadrada (497×512): na mesma largura ela
+                  ficaria alta demais e invadiria o título. 22rem mantém a
+                  ÁREA parecida com a de antes. */}
               <Image
-                src="/aureon-marca.png"
+                src="/giro-auto-logo.png"
                 alt=""
-                width={779}
-                height={337}
+                width={497}
+                height={512}
                 loading="eager"
-                className="w-[34rem] max-w-none opacity-[0.08]"
+                className="w-88 max-w-none opacity-[0.08]"
               />
             </div>
 
@@ -125,7 +129,7 @@ export function Hero() {
             <div className="rounded-card mt-12 overflow-hidden lg:hidden">
               <Image
                 src="/hero-car.jpg"
-                alt="Porsche 911 — vitrine ÂUREON"
+                alt="Porsche 911 — vitrine Giro Auto"
                 width={1700}
                 height={2125}
                 loading="eager"

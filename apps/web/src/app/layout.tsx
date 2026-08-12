@@ -32,17 +32,17 @@ export const metadata: Metadata = {
   // nenhum. A página de veículo define o seu próprio, mais específico.
   alternates: { canonical: './' },
   title: {
-    default: 'ÂUREON — Seminovos selecionados',
+    default: 'Giro Auto — Seminovos selecionados',
     // Cada página preenche o %s. Assim o título nunca fica só "Corolla", sem
     // contexto, na aba do navegador e no resultado do Google.
-    template: '%s | ÂUREON',
+    template: '%s | Giro Auto',
   },
   description:
     'Seminovos selecionados com procedência verificada e revisão completa. Encontre seu próximo carro e agende uma visita.',
   openGraph: {
     type: 'website',
     locale: 'pt_BR',
-    siteName: 'ÂUREON',
+    siteName: 'Giro Auto',
   },
   robots: { index: true, follow: true },
 };

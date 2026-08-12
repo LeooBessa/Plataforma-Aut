@@ -6,14 +6,14 @@ import { ButtonLink } from '@/components/ui/button';
 export const metadata: Metadata = {
   title: 'Sobre nós',
   description:
-    'Conheça a ÂUREON: seminovos selecionados, com procedência verificada, revisão completa e histórico transparente.',
+    'Conheça a Giro Auto: seminovos selecionados, com procedência verificada, revisão completa e histórico transparente.',
 };
 
 export default function SobrePage() {
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
       <h1 className="text-content text-3xl font-bold tracking-tight sm:text-4xl">
-        Sobre a ÂUREON
+        Sobre a Giro Auto
       </h1>
 
       <p className="text-muted mt-6 text-lg leading-relaxed text-pretty">
