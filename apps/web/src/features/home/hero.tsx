@@ -97,10 +97,18 @@ export function Hero() {
 
                 Por que não `max-w-md` (448px), que é a medida do parágrafo:
                 sobravam 22px à direita, e dava para ver. O título é a âncora
-                visual aqui, não o parágrafo. */}
+                visual aqui, não o parágrafo.
+
+                O `-translate-x-10` (40px) é AJUSTE ÓPTICO, e está separado de
+                propósito. Centrado pela geometria a marca ainda lia como
+                deslocada à direita — o texto é alinhado à esquerda e as linhas
+                abaixo do título são mais curtas, então o peso visual do bloco
+                fica à esquerda do centro que a matemática indica. Deixar o
+                ajuste numa classe só, apartada da regra de centralização, é o
+                que permite mexer nele sem tocar na lógica. */}
             <div
               aria-hidden
-              className="pointer-events-none absolute inset-y-0 left-0 -z-0 hidden w-full max-w-100 items-center justify-center lg:flex"
+              className="pointer-events-none absolute inset-y-0 left-0 -z-0 hidden w-full max-w-100 -translate-x-10 items-center justify-center lg:flex"
             >
               {/* 18rem (288px). A marca anterior era horizontal e ocupava 34rem;
                   esta é quase quadrada, então a mesma largura viraria uma mancha
