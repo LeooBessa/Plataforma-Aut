@@ -1,5 +1,25 @@
 hero-car.jpg
-  Porsche 911 (fundo dourado, render de estúdio) — foto via Unsplash
-  (Unsplash License: uso comercial livre, atribuição não obrigatória).
-  Usada inteira (sem recorte), dissolvida na página por máscara CSS.
+  Porsche 911 (render de estúdio) — foto via Unsplash
+  (Unsplash License: uso comercial livre, modificação permitida, atribuição
+  não obrigatória).
   Origem: https://unsplash.com/photos/a-white-sports-car-with-detailed-rims-o6XyyJ9rOXE
+
+  MODIFICADA: o fundo original é âmbar/dourado, escolhido quando a marca do
+  site era outra. Foi retonalizado para o azul da Giro Auto (#0158FD) girando
+  o matiz apenas dos pixels saturados na faixa quente — o carro, branco e de
+  baixa saturação, ficou intacto, e a luz de contorno que ele recebe passou a
+  ler como azul. O original está em `apps/web/brand/hero-car-original-dourado.jpg`.
+
+giro-auto-logo.png  /  giro-auto-logo-clara.png
+  Logo da Giro Auto, fornecida pelo cliente.
+  `giro-auto-logo.png`       — traço escuro, para fundos CLAROS (navbar, admin)
+  `giro-auto-logo-clara.png` — traço claro,  para fundos ESCUROS (rodapé)
+
+  Os arquivos entregues eram JPEG com fundo chapado (um preto, um branco) e
+  nomes com espaços e parênteses. Foram convertidos para PNG com transparência
+  real, recortados da moldura vazia e reduzidos para 512px. Os originais estão
+  em `apps/web/brand/`.
+
+  Cuidado ao usar em tamanho pequeno: a marca tem traço fino e marcações de
+  velocímetro. Abaixo de ~48px de altura esses detalhes se desfazem e o símbolo
+  parece um contorno vazado. Use 36px como piso absoluto.
