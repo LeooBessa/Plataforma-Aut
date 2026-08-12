@@ -71,7 +71,7 @@ export function Hero() {
               // `priority` está depreciado; a forma atual é esta.
               loading="eager"
               fetchPriority="high"
-              className="object-cover object-[center_62%]"
+              className="object-cover object-center"
             />
             {/* Fade na base, curto de propósito.
                 Ele suaviza o encontro da foto com o branco da página. Era 56px
