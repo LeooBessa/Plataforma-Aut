@@ -1,27 +1,32 @@
 hero-car.jpg
-  SUV de família em estúdio, foto oficial da Hyundai Motor Group via Pexels
+  Hyundai Kona em estúdio, foto oficial da Hyundai Motor Group via Pexels
   (Pexels License: uso comercial livre, modificação permitida, atribuição não
   obrigatória).
-  Origem: https://www.pexels.com/photo/suv-with-turned-on-headlights-19067088/
-  Original: 4000×3229. O original sem tratamento está em
-  `apps/web/brand/hero-suv-original.jpg`.
+  Origem: https://www.pexels.com/photo/side-view-of-a-hyundai-kona-12163946/
+  Original: 10200×10200.
 
-  POR QUE ESTA FOTO. A anterior era um Porsche 911 — comunicava loja de
-  superesportivo, e o cliente vende para o público que compra picape e SUV.
-  Procurei Toro, Renegade e Hilux em estúdio no acervo livre: não existe.
-  Estúdio livre é quase todo esportivo e luxo, porque é o que se fotografa para
-  licenciar; carro comum aparece na rua e na montanha. Foto de estúdio de Toro
-  é material de imprensa da montadora, protegido — usar seria risco jurídico.
-  Este SUV resolve: segmento certo, produção de montadora, licença livre.
+  POR QUE ESTA FOTO. A anterior era um Porsche 911: bonita, mas comunicava loja
+  de superesportivo, e o cliente vende picape e SUV. Testei quatro substitutas
+  antes desta — um SUV preto (apagado: preto sobre fundo escuro não tem
+  contraste), um F-150 Raptor (marca e modelo certos, mas fundo de galpão com
+  teto metálico e listra amarela), uma Sonata de frente (carro pequeno no
+  quadro, branco sobre branco) e duas Genesis (marca de luxo, mesmo problema do
+  Porsche em outro sotaque).
 
-  MODIFICADA, em três passos:
-    1. Sombras levantadas (gamma 0.78). O carro é preto sobre fundo escuro e
-       saía como silhueta — sem rodas, sem linhas de lataria. Carro que não se
-       vê não vende.
-    2. Azul da marca (#1B62F5) misturado proporcionalmente à luminância. É como
-       um estúdio iluminado de azul se comporta: a luz pinta o que ela alcança
-       e o preto continua preto. O carro quase não recebe; o fundo recebe muito.
-    3. Contraste leve, para o veículo não empapar no fundo novo.
+  Esta ganha por ser a única que junta as três coisas: produção de estúdio de
+  montadora, modelo de marca popular, e contraste alto (carro branco sobre
+  fundo saturado — a mesma equação que fazia o Porsche funcionar).
+
+  MODIFICADA: o fundo já era azul, mas num tom mais claro e frio. O matiz dos
+  pixels azuis foi girado para 220,4° — o mesmo do #1B62F5 da logo — e a
+  saturação subiu 25%. O carro é branco e de baixa saturação, então não entrou
+  no ajuste.
+
+  LIÇÃO REGISTRADA: esta foto tinha sido DESCARTADA por ser perfil lateral, sem
+  mostrar a frente do carro. O descarte foi feito olhando a imagem solta. Vista
+  montada no hero, o perfil funciona melhor que o três-quartos, porque mostra o
+  veículo inteiro no painel quadrado. Julgar recorte fora do layout leva a
+  conclusão errada.
 
 giro-auto-logo.png  /  giro-auto-logo-clara.png
   Logo da Giro Auto, fornecida pelo cliente.
