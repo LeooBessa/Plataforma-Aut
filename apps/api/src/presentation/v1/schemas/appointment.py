@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import re
 from datetime import date, datetime, time
 from uuid import UUID
 
@@ -9,24 +8,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 from src.domain.catalog.value_objects import Page
 from src.domain.scheduling.entities import Appointment
 from src.domain.scheduling.enums import AppointmentStatus
-
-# Telefone brasileiro: 10 dígitos (fixo) ou 11 (celular, com o 9).
-_PHONE_DIGITS = re.compile(r"^\d{10,11}$")
-
-
-def _clean_phone(value: str) -> str:
-    """Guarda só os dígitos.
-
-    O usuário digita "(11) 99999-8888"; um vendedor busca por "11999998888".
-    Gravar a máscara faria as duas coisas não se encontrarem, e ainda impediria
-    montar um link de WhatsApp — que exige só números.
-    """
-    digits = re.sub(r"\D", "", value)
-
-    if not _PHONE_DIGITS.match(digits):
-        raise ValueError("Telefone inválido. Use DDD + número, ex: (11) 99999-8888.")
-
-    return digits
+from src.presentation.v1.schemas.common import clean_phone
 
 
 class AppointmentCreateIn(BaseModel):
@@ -52,12 +34,12 @@ class AppointmentCreateIn(BaseModel):
     @field_validator("phone")
     @classmethod
     def _validate_phone(cls, value: str) -> str:
-        return _clean_phone(value)
+        return clean_phone(value)
 
     @field_validator("whatsapp")
     @classmethod
     def _validate_whatsapp(cls, value: str | None) -> str | None:
-        return _clean_phone(value) if value else None
+        return clean_phone(value) if value else None
 
 
 class VehicleRefOut(BaseModel):

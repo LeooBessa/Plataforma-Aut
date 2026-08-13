@@ -21,6 +21,8 @@ from src.domain.catalog.value_objects import (
     VehicleFilters,
     VehicleSort,
 )
+from src.domain.consignment.enums import ConsignmentStatus
+from src.domain.consignment.value_objects import ConsignmentFilters
 from src.domain.scheduling.enums import AppointmentStatus
 from src.domain.scheduling.value_objects import AppointmentFilters
 from src.presentation.v1.deps import (
@@ -36,11 +38,13 @@ from src.presentation.v1.deps import (
     GetAdminVehicleDep,
     ListAdminVehiclesDep,
     ListAppointmentsDep,
+    ListConsignmentsDep,
     PrepareImageUploadDep,
     RegisterImageDep,
     ReorderImagesDep,
     SetCoverImageDep,
     UpdateAppointmentStatusDep,
+    UpdateConsignmentStatusDep,
     UpdateVehicleDep,
     require_admin,
 )
@@ -58,6 +62,11 @@ from src.presentation.v1.schemas.appointment import (
     AppointmentPageOut,
     AppointmentStatusIn,
     DashboardStatsOut,
+)
+from src.presentation.v1.schemas.consignment import (
+    ConsignmentOut,
+    ConsignmentPageOut,
+    ConsignmentStatusIn,
 )
 from src.presentation.v1.schemas.vehicle import (
     ImageOut,
@@ -324,3 +333,45 @@ async def admin_health(response: Response) -> dict[str, str]:
     """Serve para o frontend testar rapidamente se a sessão ainda é válida."""
     response.headers["Cache-Control"] = "no-store"
     return {"status": "ok"}
+
+
+# --------------------------------------------------------------- consignação
+
+
+@router.get(
+    "/consignments",
+    response_model=ConsignmentPageOut,
+    summary="Pedidos para anunciar o carro",
+)
+async def list_consignments(
+    use_case: ListConsignmentsDep,
+    q: Annotated[str | None, Query(max_length=120, description="Busca por dono ou carro")] = None,
+    status_filter: Annotated[list[ConsignmentStatus] | None, Query(alias="status")] = None,
+    page: Annotated[int, Query(ge=1)] = 1,
+    page_size: Annotated[int, Query(ge=1, le=MAX_PAGE_SIZE)] = 20,
+) -> ConsignmentPageOut:
+    """Os mais recentes primeiro.
+
+    Ao contrário dos agendamentos, ordenados pela visita mais próxima: quem quer
+    vender o carro está falando com outras lojas ao mesmo tempo, e o pedido que
+    acabou de chegar é o que ainda dá para ganhar.
+    """
+    result = await use_case.execute(
+        ConsignmentFilters(query=q, statuses=status_filter or []),
+        Pagination(page=page, page_size=page_size),
+    )
+    return ConsignmentPageOut.from_page(result)
+
+
+@router.patch(
+    "/consignments/{request_id}/status",
+    response_model=ConsignmentOut,
+    summary="Marcar como contatado, anunciado ou recusado",
+)
+async def update_consignment_status(
+    request_id: UUID,
+    payload: ConsignmentStatusIn,
+    use_case: UpdateConsignmentStatusDep,
+) -> ConsignmentOut:
+    pedido = await use_case.execute(request_id, payload.status)
+    return ConsignmentOut.model_validate(pedido)

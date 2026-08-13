@@ -38,6 +38,11 @@ from src.application.catalog.use_cases import (
     ListFeaturedVehiclesUseCase,
     ListVehiclesUseCase,
 )
+from src.application.consignment.use_cases import (
+    CreateConsignmentRequestUseCase,
+    ListConsignmentRequestsUseCase,
+    UpdateConsignmentStatusUseCase,
+)
 from src.application.identity.use_cases import (
     LoginUseCase,
     LogoutUseCase,
@@ -56,12 +61,16 @@ from src.core.exceptions import AuthenticationError, AuthorizationError
 from src.core.security import PasswordHasher, get_password_hasher
 from src.core.tokens import decode_access_token
 from src.domain.catalog.repositories import VehicleAdminRepository, VehicleRepository
+from src.domain.consignment.repositories import ConsignmentRepository
 from src.domain.identity.entities import AuthenticatedUser
 from src.domain.identity.repositories import RefreshTokenRepository, UserRepository
 from src.domain.scheduling.repositories import AppointmentRepository, StatsRepository
 from src.infrastructure.database.repositories.appointment_repository import (
     SqlAlchemyAppointmentRepository,
     SqlAlchemyStatsRepository,
+)
+from src.infrastructure.database.repositories.consignment_repository import (
+    SqlAlchemyConsignmentRepository,
 )
 from src.infrastructure.database.repositories.user_repository import (
     SqlAlchemyRefreshTokenRepository,
@@ -382,3 +391,42 @@ UpdateAppointmentStatusDep = Annotated[
     UpdateAppointmentStatusUseCase, Depends(get_update_appointment_status_use_case)
 ]
 DashboardStatsDep = Annotated[GetDashboardStatsUseCase, Depends(get_dashboard_stats_use_case)]
+
+
+# ---------------------------------------------------- casos de uso: consignação
+
+
+def get_consignment_repository(session: SessionDep) -> ConsignmentRepository:
+    return SqlAlchemyConsignmentRepository(session)
+
+
+ConsignmentRepositoryDep = Annotated[ConsignmentRepository, Depends(get_consignment_repository)]
+
+
+def get_create_consignment_use_case(
+    repo: ConsignmentRepositoryDep,
+) -> CreateConsignmentRequestUseCase:
+    return CreateConsignmentRequestUseCase(repo)
+
+
+def get_list_consignments_use_case(
+    repo: ConsignmentRepositoryDep,
+) -> ListConsignmentRequestsUseCase:
+    return ListConsignmentRequestsUseCase(repo)
+
+
+def get_update_consignment_status_use_case(
+    repo: ConsignmentRepositoryDep,
+) -> UpdateConsignmentStatusUseCase:
+    return UpdateConsignmentStatusUseCase(repo)
+
+
+CreateConsignmentDep = Annotated[
+    CreateConsignmentRequestUseCase, Depends(get_create_consignment_use_case)
+]
+ListConsignmentsDep = Annotated[
+    ListConsignmentRequestsUseCase, Depends(get_list_consignments_use_case)
+]
+UpdateConsignmentStatusDep = Annotated[
+    UpdateConsignmentStatusUseCase, Depends(get_update_consignment_status_use_case)
+]

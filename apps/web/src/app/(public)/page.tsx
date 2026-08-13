@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { SearchX } from 'lucide-react';
 
+import { ConsignmentSection } from '@/features/consignment/consignment-section';
 import { Hero } from '@/features/home/hero';
 import { SearchFilters } from '@/features/vehicles/search-filters';
 import { VehicleCard, VehicleCardSkeleton } from '@/features/vehicles/vehicle-card';
@@ -34,6 +35,10 @@ export default async function HomePage({ searchParams }: Props) {
       <Hero />
 
       <EstoqueSection params={params} />
+
+      {/* Entre o estoque e o rodapé: quem chega quer comprar, e só depois de
+          rolar a vitrine é que quem TEM um carro para vender se reconhece. */}
+      <ConsignmentSection />
     </>
   );
 }
