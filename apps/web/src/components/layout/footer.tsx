@@ -30,11 +30,11 @@ export function Footer() {
             Giro Auto
           </span>
           <p className="mt-1 text-[10px] text-white/40 font-medium tracking-[0.22em] uppercase">
-            Conecta você ao extraordinário
+            Bons carros, preço justo
           </p>
           <p className="mt-5 max-w-xs text-sm text-white/55 leading-relaxed">
-            Seminovos premium com procedência verificada, revisão completa e histórico
-            transparente.
+            Carros selecionados e preços que cabem no seu bolso. Escolha o seu e agende uma
+            visita — a gente confirma pelo WhatsApp.
           </p>
         </div>
 
