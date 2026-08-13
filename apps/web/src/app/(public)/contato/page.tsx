@@ -2,8 +2,16 @@ import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { CalendarCheck, MessageCircle } from 'lucide-react';
 
+import { IconInstagram } from '@/components/ui/icon-instagram';
+
 import { ButtonLink } from '@/components/ui/button';
-import { WHATSAPP, WHATSAPP_FORMATADO, WHATSAPP_MENSAGEM } from '@/lib/contato';
+import {
+  INSTAGRAM_ARROBA,
+  INSTAGRAM_URL,
+  WHATSAPP,
+  WHATSAPP_FORMATADO,
+  WHATSAPP_MENSAGEM,
+} from '@/lib/contato';
 import { whatsappLink } from '@/lib/format';
 
 export const metadata: Metadata = {
@@ -36,6 +44,12 @@ const CANAIS: {
     value: WHATSAPP_FORMATADO,
     href: whatsappLink(WHATSAPP, WHATSAPP_MENSAGEM),
     tone: 'success',
+  },
+  {
+    icon: <IconInstagram className="size-5" />,
+    title: 'Instagram',
+    value: INSTAGRAM_ARROBA,
+    href: INSTAGRAM_URL,
   },
 ];
 

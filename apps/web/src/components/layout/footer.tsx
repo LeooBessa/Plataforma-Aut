@@ -2,7 +2,15 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { CalendarCheck, MessageCircle } from 'lucide-react';
 
-import { WHATSAPP, WHATSAPP_FORMATADO, WHATSAPP_MENSAGEM } from '@/lib/contato';
+import { IconInstagram } from '@/components/ui/icon-instagram';
+
+import {
+  INSTAGRAM_ARROBA,
+  INSTAGRAM_URL,
+  WHATSAPP,
+  WHATSAPP_FORMATADO,
+  WHATSAPP_MENSAGEM,
+} from '@/lib/contato';
 import { whatsappLink } from '@/lib/format';
 
 export function Footer() {
@@ -77,6 +85,17 @@ export function Footer() {
               >
                 <MessageCircle className="size-4 shrink-0" />
                 {WHATSAPP_FORMATADO}
+              </a>
+            </li>
+            <li>
+              <a
+                href={INSTAGRAM_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2.5 text-white/70 transition-colors hover:text-white"
+              >
+                <IconInstagram className="size-4 shrink-0 text-white/35" />
+                {INSTAGRAM_ARROBA}
               </a>
             </li>
             <li className="flex items-start gap-2.5">

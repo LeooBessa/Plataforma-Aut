@@ -25,3 +25,11 @@ export const WHATSAPP_FORMATADO = '(84) 99987-7293';
  * o clique já vira conversa — e a loja sabe de onde o contato veio.
  */
 export const WHATSAPP_MENSAGEM = 'Olá! Vi o site da Giro Auto e gostaria de mais informações.';
+
+/** Perfil no Instagram, sem o @. */
+export const INSTAGRAM = 'giroautonatal';
+
+/** Como aparece escrito na tela. */
+export const INSTAGRAM_ARROBA = `@${INSTAGRAM}`;
+
+export const INSTAGRAM_URL = `https://instagram.com/${INSTAGRAM}`;
