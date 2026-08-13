@@ -34,7 +34,7 @@ export function Footer() {
           </p>
           <p className="mt-5 max-w-xs text-sm text-white/55 leading-relaxed">
             Carros selecionados e preços que cabem no seu bolso. Escolha o seu e agende uma
-            visita — a gente confirma pelo WhatsApp.
+            visita.
           </p>
         </div>
 
