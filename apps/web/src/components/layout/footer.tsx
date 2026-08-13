@@ -1,6 +1,9 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { CalendarCheck } from 'lucide-react';
+import { CalendarCheck, MessageCircle } from 'lucide-react';
+
+import { WHATSAPP, WHATSAPP_FORMATADO, WHATSAPP_MENSAGEM } from '@/lib/contato';
+import { whatsappLink } from '@/lib/format';
 
 export function Footer() {
   return (
@@ -57,18 +60,29 @@ export function Footer() {
           <h2 className="text-brand-400 text-xs font-semibold tracking-[0.18em] uppercase">
             Contato
           </h2>
-          {/* Sem telefone, e-mail ou endereço.
-              Não é loja física, e os dados reais de contato ainda não existem —
-              o que estava aqui era o placeholder do seed (um telefone de São
-              Paulo inventado). Contato falso é pior que contato ausente: o
-              visitante liga, não é atendido, e a conclusão dele é que a loja não
-              existe. Enquanto isso, o agendamento pelo site é o canal, e ele
-              funciona de verdade. */}
+          {/* WhatsApp em primeiro, e no rodapé de TODAS as páginas.
+              É o canal que a loja realmente atende, e no Brasil é por onde a
+              negociação de carro acontece. Deixá-lo só na página de Contato
+              obrigaria o visitante a procurar — e quem está com dúvida na página
+              de um veículo desiste antes de procurar.
+              Continua sem telefone fixo, e-mail e endereço: não existem. O que
+              havia aqui era placeholder do seed. */}
           <ul className="mt-5 space-y-3 text-sm">
+            <li>
+              <a
+                href={whatsappLink(WHATSAPP, WHATSAPP_MENSAGEM)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-success-500 hover:text-success-400 inline-flex items-center gap-2.5 transition-colors"
+              >
+                <MessageCircle className="size-4 shrink-0" />
+                {WHATSAPP_FORMATADO}
+              </a>
+            </li>
             <li className="flex items-start gap-2.5">
               <CalendarCheck className="mt-0.5 size-4 shrink-0 text-white/35" />
               <span className="text-white/70">
-                Agende uma visita pelo site e entramos em contato para confirmar.
+                Ou agende uma visita pelo site e entramos em contato para confirmar.
               </span>
             </li>
             <li>

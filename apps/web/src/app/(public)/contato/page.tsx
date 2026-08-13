@@ -1,31 +1,27 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import { CalendarCheck } from 'lucide-react';
+import { CalendarCheck, MessageCircle } from 'lucide-react';
 
 import { ButtonLink } from '@/components/ui/button';
+import { WHATSAPP, WHATSAPP_FORMATADO, WHATSAPP_MENSAGEM } from '@/lib/contato';
+import { whatsappLink } from '@/lib/format';
 
 export const metadata: Metadata = {
   title: 'Contato',
-  description:
-    'Fale com a Giro Auto. Escolha um veículo do estoque e agende sua visita pelo site.',
+  description: `Fale com a Giro Auto pelo WhatsApp ${WHATSAPP_FORMATADO} ou agende sua visita pelo site.`,
 };
 
 /**
- * CANAIS DE ATENDIMENTO — preencher quando os dados reais existirem.
+ * CANAIS DE ATENDIMENTO.
  *
- * Está vazio de propósito. O que havia aqui era o placeholder do seed: um
- * WhatsApp `(11) 99999-8888`, um telefone de São Paulo e `contato@aureon.com.br`
- * — nenhum deles atende. Contato falso é pior que contato ausente: o visitante
- * tenta, ninguém responde, e a conclusão é que a empresa não existe. Some ainda
- * o endereço, porque não há loja física.
+ * A lista é a fonte da seção: item que existe aqui aparece na tela, e a seção
+ * inteira some quando ela está vazia — foi assim que a página ficou enquanto não
+ * havia número real. O que havia antes era placeholder do seed (um WhatsApp de
+ * São Paulo que não atendia), e contato falso é pior que contato ausente: a
+ * pessoa tenta, ninguém responde, e a conclusão é que a empresa não existe.
  *
- * Para reativar a seção, basta acrescentar itens aqui — o restante da página já
- * sabe renderizá-los:
- *
- *   { icon: <MessageCircle className="size-5" />, title: 'WhatsApp',
- *     value: '(84) 90000-0000',
- *     href: whatsappLink('84900000000', 'Olá! Vi o site da Giro Auto…'),
- *     tone: 'success' }
+ * Telefone fixo e e-mail seguem de fora porque ainda não existem. Endereço
+ * também não entra: não há loja física.
  */
 const CANAIS: {
   icon: ReactNode;
@@ -33,7 +29,15 @@ const CANAIS: {
   value: string;
   href?: string;
   tone?: 'brand' | 'success';
-}[] = [];
+}[] = [
+  {
+    icon: <MessageCircle className="size-5" />,
+    title: 'WhatsApp',
+    value: WHATSAPP_FORMATADO,
+    href: whatsappLink(WHATSAPP, WHATSAPP_MENSAGEM),
+    tone: 'success',
+  },
+];
 
 export default function ContatoPage() {
   return (
