@@ -1,10 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { CalendarCheck, MessageCircle } from 'lucide-react';
+import { CalendarCheck, Mail, MessageCircle } from 'lucide-react';
 
 import { IconInstagram } from '@/components/ui/icon-instagram';
 
 import {
+  EMAIL,
+  EMAIL_LINK,
   INSTAGRAM_ARROBA,
   INSTAGRAM_URL,
   WHATSAPP,
@@ -90,8 +92,8 @@ export function Footer() {
               negociação de carro acontece. Deixá-lo só na página de Contato
               obrigaria o visitante a procurar — e quem está com dúvida na página
               de um veículo desiste antes de procurar.
-              Continua sem telefone fixo, e-mail e endereço: não existem. O que
-              havia aqui era placeholder do seed. */}
+              Continua sem telefone fixo e sem endereço: não existem. O que havia
+              aqui era placeholder do seed. */}
           <ul className="mt-5 space-y-3 text-sm">
             <li>
               {/* O verde escurece de 500 para 700: sobre preto o 500 brilhava,
@@ -115,6 +117,18 @@ export function Footer() {
               >
                 <IconInstagram className="text-faint size-4 shrink-0" />
                 {INSTAGRAM_ARROBA}
+              </a>
+            </li>
+            <li>
+              {/* `break-all` porque o e-mail é uma palavra só de 23 caracteres:
+                  na coluna estreita do mobile ele estouraria a largura e
+                  empurraria o rodapé para a rolagem lateral. */}
+              <a
+                href={EMAIL_LINK}
+                className="text-muted hover:text-content inline-flex items-start gap-2.5 transition-colors"
+              >
+                <Mail className="text-faint mt-0.5 size-4 shrink-0" />
+                <span className="break-all">{EMAIL}</span>
               </a>
             </li>
             <li className="flex items-start gap-2.5">

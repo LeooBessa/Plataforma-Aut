@@ -1,11 +1,13 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
-import { CalendarCheck, MessageCircle } from 'lucide-react';
+import { CalendarCheck, Mail, MessageCircle } from 'lucide-react';
 
 import { IconInstagram } from '@/components/ui/icon-instagram';
 
 import { ButtonLink } from '@/components/ui/button';
 import {
+  EMAIL,
+  EMAIL_LINK,
   INSTAGRAM_ARROBA,
   INSTAGRAM_URL,
   WHATSAPP,
@@ -28,8 +30,14 @@ export const metadata: Metadata = {
  * São Paulo que não atendia), e contato falso é pior que contato ausente: a
  * pessoa tenta, ninguém responde, e a conclusão é que a empresa não existe.
  *
- * Telefone fixo e e-mail seguem de fora porque ainda não existem. Endereço
- * também não entra: não há loja física.
+ * Telefone fixo segue de fora porque não existe. Endereço também não entra: não
+ * há loja física.
+ *
+ * A ORDEM é por uso real, não por formalidade. WhatsApp primeiro porque é o
+ * canal que a loja atende e onde a negociação de carro acontece no Brasil;
+ * Instagram depois, que é onde o estoque aparece; e-mail por último, que é o que
+ * quase ninguém usa para comprar carro — mas precisa existir para quem prefere
+ * escrever, e para o que é documento.
  */
 const CANAIS: {
   icon: ReactNode;
@@ -50,6 +58,12 @@ const CANAIS: {
     title: 'Instagram',
     value: INSTAGRAM_ARROBA,
     href: INSTAGRAM_URL,
+  },
+  {
+    icon: <Mail className="size-5" />,
+    title: 'E-mail',
+    value: EMAIL,
+    href: EMAIL_LINK,
   },
 ];
 

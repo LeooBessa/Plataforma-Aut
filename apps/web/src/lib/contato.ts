@@ -33,3 +33,16 @@ export const INSTAGRAM = 'giroautonatal';
 export const INSTAGRAM_ARROBA = `@${INSTAGRAM}`;
 
 export const INSTAGRAM_URL = `https://instagram.com/${INSTAGRAM}`;
+
+/** E-mail da loja. */
+export const EMAIL = 'giroautonatal@gmail.com';
+
+/**
+ * `mailto:` com assunto pronto.
+ *
+ * Mesma ideia da mensagem do WhatsApp: chega identificado como vindo do site, e
+ * a loja não abre a caixa de entrada sem saber do que se trata. O `encodeURI` é
+ * obrigatório — o assunto tem acento e espaço, e sem escapar alguns clientes de
+ * e-mail cortam o assunto no primeiro espaço.
+ */
+export const EMAIL_LINK = `mailto:${EMAIL}?subject=${encodeURIComponent('Contato pelo site')}`;
