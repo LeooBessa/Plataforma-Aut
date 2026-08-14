@@ -1,12 +1,14 @@
 import { Suspense } from 'react';
 import type { Metadata, Route } from 'next';
 import Link from 'next/link';
-import { ChevronLeft, ChevronRight, SearchX } from 'lucide-react';
+import { CarFront, ChevronLeft, ChevronRight, MessageCircle, SearchX } from 'lucide-react';
 
 import { ButtonLink } from '@/components/ui/button';
 import { SearchFilters } from '@/features/vehicles/search-filters';
 import { VehicleCard, VehicleCardSkeleton } from '@/features/vehicles/vehicle-card';
 import { getFilterOptions, listVehicles, type VehicleSearchParams } from '@/lib/api';
+import { WHATSAPP } from '@/lib/contato';
+import { whatsappLink } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
@@ -112,10 +114,17 @@ function parseParams(raw: Record<string, string | string[] | undefined>): Vehicl
 }
 
 async function Results({ params }: { params: Record<string, string | string[] | undefined> }) {
-  const page = await listVehicles(parseParams(params));
+  const filtros = parseParams(params);
+  const page = await listVehicles(filtros);
 
   if (page.items.length === 0) {
-    return <EmptyState />;
+    // "Sem resultado" e "sem estoque" são situações diferentes, e mandar a mesma
+    // frase nas duas faz o site mentir: quem abre /veiculos sem filtro nenhum
+    // lia "tente remover algum filtro" e ia procurar o filtro que não existia.
+    const semFiltro = Object.entries(filtros).every(
+      ([chave, valor]) => chave === 'page' || chave === 'page_size' || valor === undefined,
+    );
+    return <EmptyState semFiltro={semFiltro} />;
   }
 
   return (
@@ -228,20 +237,39 @@ function Pagination({
   );
 }
 
-function EmptyState() {
+function EmptyState({ semFiltro }: { semFiltro: boolean }) {
   return (
     <div className="rounded-card border-line-strong mt-16 flex flex-col items-center border border-dashed py-20 text-center">
       <span className="bg-sunken text-faint flex size-14 items-center justify-center rounded-full">
-        <SearchX className="size-6" />
+        {semFiltro ? <CarFront className="size-6" /> : <SearchX className="size-6" />}
       </span>
-      <h2 className="text-content mt-5 text-lg font-semibold">Nenhum veículo encontrado</h2>
+      <h2 className="text-content mt-5 text-lg font-semibold">
+        {semFiltro ? 'Estamos renovando o estoque' : 'Nenhum veículo encontrado'}
+      </h2>
       <p className="text-faint mt-1.5 max-w-sm text-sm">
-        Tente remover algum filtro ou buscar por outro termo.
+        {semFiltro
+          ? 'Os próximos carros entram em breve. Chame no WhatsApp e diga o que procura — a gente avisa assim que chegar.'
+          : 'Tente remover algum filtro ou buscar por outro termo.'}
       </p>
-      {/* Um beco sem saída é onde o usuário abandona o site. Sempre há uma porta. */}
-      <ButtonLink href="/veiculos" variant="secondary" className="mt-6">
-        Ver todos os veículos
-      </ButtonLink>
+      {/* Um beco sem saída é onde o usuário abandona o site. Sempre há uma porta —
+          mas ela muda: sem estoque, "ver todos os veículos" devolveria a pessoa
+          para a mesma tela vazia. A porta passa a ser a conversa, que é onde a
+          loja consegue atender quem chegou. */}
+      {semFiltro ? (
+        <a
+          href={whatsappLink(WHATSAPP, 'Olá! Vi o site da Giro Auto e queria saber o que vai entrar no estoque.')}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="rounded-btn bg-success-700 hover:bg-success-800 mt-6 inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white transition-colors"
+        >
+          <MessageCircle className="size-4" />
+          Falar no WhatsApp
+        </a>
+      ) : (
+        <ButtonLink href="/veiculos" variant="secondary" className="mt-6">
+          Ver todos os veículos
+        </ButtonLink>
+      )}
     </div>
   );
 }
