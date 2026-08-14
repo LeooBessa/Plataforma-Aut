@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -8,6 +8,7 @@ import { AlertCircle, CalendarCheck, CheckCircle2, Loader2, X } from 'lucide-rea
 
 import { Button } from '@/components/ui/button';
 import { Field, Input, Textarea } from '@/components/ui/field';
+import { maskPhone } from '@/lib/format';
 import { errorMessage, http } from '@/lib/http';
 
 /**
@@ -107,6 +108,18 @@ export function AppointmentModal({
       notes: isTestDrive ? 'Tenho interesse em fazer um Test Drive.' : '',
     },
   });
+
+  // Máscara aplicada a cada tecla: reescreve `e.target.value` antes de repassar
+  // ao react-hook-form, que lê o valor direto do evento. Assim o que está na
+  // tela e o que está no formulário são sempre a mesma coisa.
+  const telefone = register('phone');
+  const registerTelefone = {
+    ...telefone,
+    onChange: (e: ChangeEvent<HTMLInputElement>) => {
+      e.target.value = maskPhone(e.target.value);
+      return telefone.onChange(e);
+    },
+  };
 
   // Esc fecha, e a rolagem do fundo trava. Sem a trava, rolar dentro do modal
   // move a página atrás — e ao fechar, o usuário está noutro ponto da tela.
@@ -227,6 +240,11 @@ export function AppointmentModal({
                   error={errors.phone?.message}
                   required
                 >
+                  {/* A máscara é a mesma de "anuncie seu carro", vinda de
+                      `lib/format`. O exemplo saiu de (11) — DDD de São Paulo,
+                      herdado do seed — para o DDD daqui, e continua sendo só
+                      exemplo: quem está de fora digita o próprio e a máscara
+                      acompanha. */}
                   <Input
                     id="phone"
                     type="tel"
@@ -235,9 +253,9 @@ export function AppointmentModal({
                     // Fazer o usuário procurar os números num teclado alfabético
                     // é fricção pura.
                     inputMode="numeric"
-                    placeholder="(11) 99999-8888"
+                    placeholder="(84) 99999-9999"
                     aria-invalid={!!errors.phone}
-                    {...register('phone')}
+                    {...registerTelefone}
                   />
                 </Field>
 

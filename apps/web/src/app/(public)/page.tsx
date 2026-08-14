@@ -1,11 +1,13 @@
 import { Suspense } from 'react';
-import { SearchX } from 'lucide-react';
+import { CarFront, MessageCircle, SearchX } from 'lucide-react';
 
 import { ConsignmentSection } from '@/features/consignment/consignment-section';
 import { Hero } from '@/features/home/hero';
 import { SearchFilters } from '@/features/vehicles/search-filters';
 import { VehicleCard, VehicleCardSkeleton } from '@/features/vehicles/vehicle-card';
 import { getFilterOptions, listVehicles, safely, type VehicleSearchParams } from '@/lib/api';
+import { WHATSAPP } from '@/lib/contato';
+import { whatsappLink } from '@/lib/format';
 
 /**
  * Home.
@@ -56,9 +58,9 @@ export default async function HomePage({ searchParams }: Props) {
  * muda — sem ela, o React reusaria a árvore e o esqueleto nunca apareceria.
  */
 function EstoqueSection({ params }: { params: Record<string, string | string[] | undefined> }) {
-  // Padding de baixo pequeno (`pb-4`): esta é a última seção antes do rodapé (o
-  // bloco de confiança saiu). O respiro até o rodapé vem do `mt` do próprio
-  // rodapé — assim o estoque "encosta" nele, sem uma faixa branca no meio.
+  // Padding de baixo pequeno (`pb-4`): quem dá o respiro daqui para a frente é
+  // o `mt` da seção "anuncie seu carro", que vem logo abaixo. Somar os dois
+  // abriria um vão grande demais entre o fim da vitrine e o bloco escuro.
   return (
     <section id="estoque" className="mx-auto max-w-7xl px-4 pt-16 pb-4 sm:px-6 lg:px-8 lg:pt-20">
       <div>
@@ -132,7 +134,8 @@ function parseParams(raw: Record<string, string | string[] | undefined>): Vehicl
 }
 
 async function Results({ params }: { params: Record<string, string | string[] | undefined> }) {
-  const page = await safely(listVehicles(parseParams(params)));
+  const filtros = parseParams(params);
+  const page = await safely(listVehicles(filtros));
 
   // Falha da API e catálogo vazio são coisas DIFERENTES, e a mensagem precisa
   // ser diferente. Dizer "nenhum resultado" quando a API caiu esconde a falha
@@ -149,15 +152,41 @@ async function Results({ params }: { params: Record<string, string | string[] | 
   }
 
   if (page.items.length === 0) {
+    // Mesma distinção que a página /veiculos faz: "não achei com esse filtro" e
+    // "não tem carro nenhum" são situações diferentes, e mandar a frase do
+    // filtro em quem não filtrou nada faz o site pedir para remover um filtro
+    // que não existe.
+    const semFiltro = Object.entries(filtros).every(
+      ([chave, valor]) => chave === 'page' || chave === 'page_size' || valor === undefined,
+    );
+
     return (
       <div className="rounded-card border-line-strong mt-8 flex flex-col items-center border border-dashed py-16 text-center">
         <span className="bg-sunken text-faint flex size-14 items-center justify-center rounded-full">
-          <SearchX className="size-6" />
+          {semFiltro ? <CarFront className="size-6" /> : <SearchX className="size-6" />}
         </span>
-        <h3 className="text-content mt-5 text-lg font-semibold">Nenhum veículo para esse filtro</h3>
+        <h3 className="text-content mt-5 text-lg font-semibold">
+          {semFiltro ? 'Estamos renovando o estoque' : 'Nenhum veículo para esse filtro'}
+        </h3>
         <p className="text-faint mt-1.5 max-w-sm text-sm">
-          Tente remover algum filtro ou buscar por outro termo.
+          {semFiltro
+            ? 'Os próximos carros entram em breve. Chame no WhatsApp e diga o que procura — a gente avisa assim que chegar.'
+            : 'Tente remover algum filtro ou buscar por outro termo.'}
         </p>
+        {semFiltro && (
+          <a
+            href={whatsappLink(
+              WHATSAPP,
+              'Olá! Vi o site da Giro Auto e queria saber o que vai entrar no estoque.',
+            )}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-btn bg-success-700 hover:bg-success-800 mt-6 inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white transition-colors"
+          >
+            <MessageCircle className="size-4" />
+            Falar no WhatsApp
+          </a>
+        )}
       </div>
     );
   }

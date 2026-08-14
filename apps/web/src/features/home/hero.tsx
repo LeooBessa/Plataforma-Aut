@@ -28,7 +28,7 @@ const QUALIDADES = ['Preço acessível.', 'Economia.', 'Qualidade.', 'Conforto.'
  * serrilhado — a foto "derrete" na página em vez de ser uma caixa colada.
  *
  * O carro é ESTÁTICO (é uma foto de vitrine, não um veículo do estoque). Os
- * destaques do banco continuam logo abaixo, na "Seleção da casa".
+ * carros do banco continuam logo abaixo, em "Nosso estoque".
  *
  * ----------------------------------------------------------------------------
  * A DOBRA: só o hero na primeira tela
