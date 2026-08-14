@@ -1,5 +1,6 @@
 import { BadgeCheck, HandCoins, Timer } from 'lucide-react';
 
+import { GradientBackdrop } from '@/components/ui/gradient-backdrop';
 import { ConsignmentForm } from '@/features/consignment/consignment-form';
 
 /**
@@ -13,6 +14,11 @@ import { ConsignmentForm } from '@/features/consignment/consignment-form';
  * Fundo escuro para separar do estoque sem precisar de linha divisória — e
  * porque o preto é um dos três papéis da paleta, então a seção lê como parte da
  * marca, não como um bloco colado.
+ *
+ * O preto não é chapado: o `GradientBackdrop` acende um azul da marca nas quinas
+ * de baixo. Além de tirar a monotonia do bloco, ele faz a passagem para o rodapé
+ * branco acontecer por uma cor da paleta, e não por um corte seco de preto para
+ * branco.
  */
 
 const ARGUMENTOS = [
@@ -35,7 +41,8 @@ const ARGUMENTOS = [
 
 export function ConsignmentSection() {
   return (
-    <section id="anuncie" className="bg-inverse mt-16">
+    <section id="anuncie" className="bg-inverse relative isolate mt-16">
+      <GradientBackdrop />
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
           <div>
