@@ -60,3 +60,54 @@ export function formatPhone(digits: string): string {
   }
   return digits;
 }
+
+// ============================================================================
+// MÁSCARAS DE ENTRADA
+// ============================================================================
+// Diferentes das funções acima: aquelas formatam para EXIBIR, estas formatam
+// enquanto a pessoa DIGITA. Todas descartam o que não é dígito, e é isso que
+// resolve o problema do `type="number"` do HTML — ele aceita `e`, `+` e `-`,
+// então dá para digitar "1e5" ou "-2000" num campo de quilometragem.
+//
+// A troca é `type="text"` + `inputMode="numeric"`: o teclado do celular continua
+// numérico, mas o campo passa a aceitar só o que a máscara deixar entrar.
+
+/** Só os dígitos, opcionalmente limitados a um máximo. */
+export function onlyDigits(value: string, max?: number): string {
+  const digits = value.replace(/\D/g, '');
+  return max ? digits.slice(0, max) : digits;
+}
+
+/**
+ * Telefone brasileiro, com a máscara aparecendo conforme se digita.
+ *
+ * Vai montando: "84" → "(84)", "849998" → "(84) 9998", e o hífen entra quando
+ * há dígitos suficientes para saber onde ele cai. Fixo (10 dígitos) quebra em
+ * 4+4; celular (11) em 5+4.
+ *
+ * O DDD NÃO é predefinido de propósito: a loja é de Natal, mas quem anuncia
+ * pode estar em qualquer lugar, e um "84" já preenchido faria alguém de outro
+ * estado enviar o número errado sem perceber.
+ */
+export function maskPhone(value: string): string {
+  const d = onlyDigits(value, 11);
+  if (d.length <= 2) return d;
+  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+}
+
+/**
+ * Separador de milhar enquanto digita: "48000" vira "48.000".
+ *
+ * Serve a quilometragem e preço. Sem ele, "92000" e "920000" são fáceis de
+ * confundir de relance — e a diferença entre os dois é o carro inteiro.
+ *
+ * Não aceita centavos, de propósito: ninguém vende carro por R$ 92.000,50, e
+ * deixar a vírgula entrar traria o problema oposto — quem digitasse "92,000"
+ * pedindo noventa e dois mil enviaria noventa e dois.
+ */
+export function maskThousands(value: string): string {
+  const d = onlyDigits(value);
+  return d ? Number(d).toLocaleString('pt-BR') : '';
+}
