@@ -345,7 +345,7 @@ export function VehicleForm({ vehicle }: { vehicle?: VehicleDetail }) {
         </Field>
 
         <Field label="Estado (UF)" htmlFor="state" error={errors.state?.message} required>
-          <Input id="state" maxLength={2} placeholder="SP" {...register('state')} />
+          <Input id="state" maxLength={2} placeholder="RN" {...register('state')} />
         </Field>
       </Section>
 
@@ -520,8 +520,12 @@ function toDefaults(vehicle?: VehicleDetail): FormValues {
       transmission: '',
       body_type: '',
       color: '',
-      city: 'São Paulo',
-      state: 'SP',
+      // A loja é de Natal. O padrão anterior era São Paulo, herdado do seed de
+      // demonstração — e como o campo já vem preenchido, ninguém para para
+      // conferir: o carro nascia em São Paulo e o filtro de cidade do site
+      // passava a oferecer uma cidade onde a loja não tem carro nenhum.
+      city: 'Natal',
+      state: 'RN',
       doors: '',
       engine: '',
       horsepower: '',
