@@ -8,7 +8,11 @@ import { Search, SlidersHorizontal, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input, Select } from '@/components/ui/field';
 import type { FilterOptions } from '@/lib/api';
-import { BODY_LABELS, FUEL_LABELS, SORT_OPTIONS, TRANSMISSION_LABELS } from '@/lib/labels';
+// Categoria (`body`) e câmbio (`transmission`) saíram da tela a pedido da loja:
+// eram ruído numa vitrine pequena, onde quem quer um automático já vê isso no
+// cartão do carro. A API continua aceitando os dois parâmetros, então link
+// antigo com `?body=suv` na URL segue funcionando.
+import { FUEL_LABELS, SORT_OPTIONS } from '@/lib/labels';
 import { cn } from '@/lib/utils';
 
 /**
@@ -35,6 +39,40 @@ import { cn } from '@/lib/utils';
  */
 
 const DEBOUNCE_MS = 400;
+
+/**
+ * A escada de "até quanto" é construída a partir dos preços que EXISTEM.
+ *
+ * Antes era uma lista fixa de R$ 50 mil a R$ 200 mil, e isso é uma armadilha
+ * silenciosa: enquanto o pátio esteve com carros de R$ 239 mil para cima,
+ * TODAS as opções devolviam zero resultado. O filtro não parecia quebrado — só
+ * parecia que a loja não tinha nada, o que é bem pior.
+ *
+ * Derivar dos limites reais resolve isso para qualquer estoque: pátio de
+ * populares gera degraus de R$ 40 mil, pátio de importados gera degraus de
+ * R$ 300 mil, e nenhum dos dois precisa de alguém lembrar de vir editar aqui.
+ */
+function faixasDePreco(min: number, max: number): number[] {
+  if (!(max > min)) return [];
+
+  // Degraus "redondos": R$ 43.750 é matematicamente correto e horrível de ler.
+  //
+  // Divide por 6, não por 5, e a diferença é maior do que parece: o passo é o
+  // primeiro valor redondo ACIMA do bruto, então dividir por menos empurra o
+  // passo para o degrau redondo seguinte e a escada fica grossa. Num pátio de
+  // R$ 18 mil a R$ 300 mil, por 5 sobravam duas opções — R$ 100 mil e R$ 200
+  // mil — e quem procurava carro de R$ 40 mil não tinha onde clicar.
+  const bruto = (max - min) / 6;
+  const passo =
+    [5_000, 10_000, 20_000, 25_000, 50_000, 100_000, 250_000, 500_000].find((c) => c >= bruto) ??
+    1_000_000;
+
+  const faixas: number[] = [];
+  for (let v = Math.ceil((min + 1) / passo) * passo; v < max && faixas.length < 6; v += passo) {
+    faixas.push(v);
+  }
+  return faixas;
+}
 
 export function SearchFilters({
   options,
@@ -99,16 +137,22 @@ export function SearchFilters({
   const selectedBrand = searchParams.get('brand') ?? '';
   const brandModels = options.brands.find((b) => b.slug === selectedBrand)?.models ?? [];
 
-  const activeCount = [
-    'brand',
-    'model',
-    'city',
-    'fuel',
-    'transmission',
-    'body',
-    'price_max',
-    'year_min',
-  ].filter((key) => searchParams.has(key)).length;
+  // As marcas vêm de quem TEM carro à venda, então lista vazia aqui significa
+  // pátio vazio — e um painel de filtros sobre nada é só ruído. Volta inteiro
+  // sozinho no instante em que o primeiro anúncio entra.
+  const temEstoque = options.brands.length > 0;
+
+  // Filtro com uma opção só não filtra nada — apenas ocupa espaço e sugere uma
+  // escolha que não existe. A loja tem um endereço só, então "cidade" cai neste
+  // caso quase sempre; a regra fica genérica porque, se um dia houver uma
+  // segunda unidade, o filtro reaparece sozinho.
+  const mostrarCidade = options.cities.length > 1;
+
+  const faixas = faixasDePreco(Number(options.price_min ?? 0), Number(options.price_max ?? 0));
+
+  const activeCount = ['brand', 'model', 'city', 'fuel', 'price_max', 'year_min'].filter((key) =>
+    searchParams.has(key),
+  ).length;
 
   const clearAll = () => {
     setQuery('');
@@ -169,7 +213,7 @@ export function SearchFilters({
         )}
       </div>
 
-      {(!compact || showAdvanced) && (
+      {temEstoque && (!compact || showAdvanced) && (
         <div className="border-line mt-4 grid grid-cols-1 gap-3 border-t pt-4 sm:grid-cols-2 lg:grid-cols-4">
           <Select
             value={selectedBrand}
@@ -204,36 +248,40 @@ export function SearchFilters({
             ))}
           </Select>
 
-          <Select
-            value={searchParams.get('city') ?? ''}
-            onChange={(e) => updateParams({ city: e.target.value || undefined })}
-            aria-label="Cidade"
-          >
-            <option value="">Todas as cidades</option>
-            {options.cities.map((city) => (
-              <option key={city} value={city}>
-                {city}
-              </option>
-            ))}
-          </Select>
+          {mostrarCidade && (
+            <Select
+              value={searchParams.get('city') ?? ''}
+              onChange={(e) => updateParams({ city: e.target.value || undefined })}
+              aria-label="Cidade"
+            >
+              <option value="">Todas as cidades</option>
+              {options.cities.map((city) => (
+                <option key={city} value={city}>
+                  {city}
+                </option>
+              ))}
+            </Select>
+          )}
 
-          <Select
-            value={searchParams.get('price_max') ?? ''}
-            onChange={(e) => updateParams({ price_max: e.target.value || undefined })}
-            aria-label="Preço máximo"
-          >
-            <option value="">Qualquer preço</option>
-            {[50_000, 80_000, 100_000, 130_000, 160_000, 200_000].map((price) => (
-              <option key={price} value={price}>
-                Até{' '}
-                {price.toLocaleString('pt-BR', {
-                  style: 'currency',
-                  currency: 'BRL',
-                  maximumFractionDigits: 0,
-                })}
-              </option>
-            ))}
-          </Select>
+          {faixas.length > 0 && (
+            <Select
+              value={searchParams.get('price_max') ?? ''}
+              onChange={(e) => updateParams({ price_max: e.target.value || undefined })}
+              aria-label="Preço máximo"
+            >
+              <option value="">Qualquer preço</option>
+              {faixas.map((price) => (
+                <option key={price} value={price}>
+                  Até{' '}
+                  {price.toLocaleString('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                    maximumFractionDigits: 0,
+                  })}
+                </option>
+              ))}
+            </Select>
+          )}
 
           <Select
             value={searchParams.get('fuel') ?? ''}
@@ -242,32 +290,6 @@ export function SearchFilters({
           >
             <option value="">Qualquer combustível</option>
             {Object.entries(FUEL_LABELS).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </Select>
-
-          <Select
-            value={searchParams.get('transmission') ?? ''}
-            onChange={(e) => updateParams({ transmission: e.target.value || undefined })}
-            aria-label="Câmbio"
-          >
-            <option value="">Qualquer câmbio</option>
-            {Object.entries(TRANSMISSION_LABELS).map(([value, label]) => (
-              <option key={value} value={value}>
-                {label}
-              </option>
-            ))}
-          </Select>
-
-          <Select
-            value={searchParams.get('body') ?? ''}
-            onChange={(e) => updateParams({ body: e.target.value || undefined })}
-            aria-label="Categoria"
-          >
-            <option value="">Qualquer categoria</option>
-            {Object.entries(BODY_LABELS).map(([value, label]) => (
               <option key={value} value={value}>
                 {label}
               </option>

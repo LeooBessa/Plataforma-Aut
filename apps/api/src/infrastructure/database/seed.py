@@ -49,18 +49,107 @@ logger = logging.getLogger("seed")
 
 DEALERSHIP_SLUG = "auto-premium"
 
-# Recorte do mercado brasileiro real.
+# ============================================================================
+# CATÁLOGO DE MARCAS E MODELOS
+# ============================================================================
+# Esta lista NÃO é o filtro do site. O filtro é montado por consulta ao banco e
+# só mostra marca e modelo que TÊM carro à venda — está no `get_filter_options`
+# do repositório. Ou seja: uma marca aqui sem nenhum carro cadastrado é
+# invisível para o visitante.
+#
+# É por isso que a lista pode (e deve) ser generosa. Ela não polui a tela; ela
+# só decide o que o vendedor CONSEGUE cadastrar. E o custo de faltar é alto: a
+# marca e o modelo são um <select> no painel, sem campo livre e sem rota para
+# criar — se o carro que chegou na loja não está aqui, o anúncio simplesmente
+# não pode ser criado.
+#
+# O recorte é de REVENDA DE USADO, não de concessionária. A diferença importa e
+# é onde a lista anterior falhava: ela só tinha linha atual, e loja de usado
+# vende Palio 2012, Prisma 2014, Fox 2011 e Corsa 2009 — carros fora de linha há
+# uma década, que eram justamente os que não dava para cadastrar.
+#
+# A ordem é por presença no mercado brasileiro: populares primeiro, importadas e
+# premium no fim.
 BRANDS: dict[str, list[str]] = {
-    "Toyota": ["Corolla", "Corolla Cross", "Hilux", "Yaris", "SW4", "RAV4"],
-    "Volkswagen": ["Gol", "Polo", "Virtus", "T-Cross", "Nivus", "Saveiro", "Amarok"],
-    "Chevrolet": ["Onix", "Onix Plus", "Tracker", "S10", "Spin", "Montana"],
-    "Honda": ["Civic", "City", "Fit", "HR-V", "WR-V", "CR-V"],
-    "Hyundai": ["HB20", "HB20S", "Creta", "Tucson"],
-    "Fiat": ["Argo", "Cronos", "Mobi", "Pulse", "Toro", "Strada", "Fastback"],
-    "Jeep": ["Renegade", "Compass", "Commander"],
-    "Renault": ["Kwid", "Sandero", "Duster", "Oroch"],
-    "Ford": ["Ka", "EcoSport", "Ranger", "Bronco Sport"],
-    "Nissan": ["Kicks", "Versa", "Frontier"],
+    "Fiat": [
+        "500", "Argo", "Bravo", "Cronos", "Doblò", "Ducato", "Fastback", "Fiorino",
+        "Freemont", "Grand Siena", "Idea", "Linea", "Mobi", "Palio", "Palio Weekend",
+        "Pulse", "Punto", "Siena", "Stilo", "Strada", "Titano", "Toro", "Uno",
+    ],
+    "Volkswagen": [
+        "Amarok", "Bora", "CrossFox", "Fox", "Gol", "Golf", "Jetta", "Kombi", "Nivus",
+        "Passat", "Polo", "Saveiro", "SpaceFox", "T-Cross", "Taos", "Tiguan", "Up",
+        "Virtus", "Voyage",
+    ],
+    "Chevrolet": [
+        "Agile", "Astra", "Blazer", "Camaro", "Captiva", "Celta", "Classic", "Cobalt",
+        "Corsa", "Cruze", "Equinox", "Joy", "Meriva", "Montana", "Onix", "Onix Plus",
+        "Prisma", "S10", "Spin", "Tracker", "Trailblazer", "Vectra", "Zafira",
+    ],
+    "Hyundai": [
+        "Azera", "Creta", "Elantra", "HB20", "HB20S", "HB20X", "i30", "ix35",
+        "Santa Fe", "Tucson", "Veloster",
+    ],
+    "Toyota": [
+        "Camry", "Corolla", "Corolla Cross", "Etios", "Hilux", "Prius", "RAV4", "SW4",
+        "Yaris",
+    ],
+    "Renault": [
+        "Captur", "Clio", "Duster", "Fluence", "Kangoo", "Kwid", "Logan", "Master",
+        "Mégane", "Oroch", "Sandero", "Stepway", "Symbol",
+    ],
+    "Ford": [
+        "Bronco Sport", "Courier", "EcoSport", "Edge", "F-150", "Fiesta", "Focus",
+        "Fusion", "Ka", "Ka Sedan", "Maverick", "Ranger", "Territory", "Transit",
+    ],
+    "Honda": ["Accord", "City", "Civic", "CR-V", "Fit", "HR-V", "WR-V", "ZR-V"],
+    "Nissan": [
+        "Frontier", "Grand Livina", "Kicks", "Livina", "March", "Sentra", "Tiida",
+        "Versa", "X-Trail",
+    ],
+    "Jeep": ["Cherokee", "Commander", "Compass", "Grand Cherokee", "Renegade", "Wrangler"],
+    "Peugeot": [
+        "206", "207", "208", "2008", "307", "308", "3008", "408", "5008", "Hoggar",
+        "Partner",
+    ],
+    "Citroën": [
+        "Aircross", "Basalt", "Berlingo", "C3", "C4", "C4 Cactus", "C4 Lounge",
+        "C4 Pallas", "Jumper", "Xsara Picasso",
+    ],
+    "Mitsubishi": [
+        "ASX", "Eclipse Cross", "L200", "L200 Triton", "Lancer", "Outlander",
+        "Pajero Full", "Pajero Sport", "Pajero TR4",
+    ],
+    "Kia": [
+        "Bongo", "Carnival", "Cerato", "Picanto", "Seltos", "Sorento", "Soul",
+        "Sportage", "Stonic",
+    ],
+    "Caoa Chery": [
+        "Arrizo 5", "Arrizo 6", "Celer", "QQ", "Tiggo 2", "Tiggo 3x", "Tiggo 5x",
+        "Tiggo 7", "Tiggo 8",
+    ],
+    "RAM": ["1500", "2500", "3500", "Rampage"],
+    "Suzuki": ["Grand Vitara", "Jimny", "S-Cross", "SX4", "Vitara"],
+    "GWM": ["Haval H6", "Ora 03", "Poer"],
+    "BYD": ["Dolphin", "Dolphin Mini", "King", "Seal", "Song Plus", "Yuan Plus"],
+    # ---------------------------------------------------------------- premium
+    # Aparecem menos numa revenda de bairro, mas aparecem — e quando aparece é o
+    # carro mais caro do pátio, o pior momento para descobrir que não dá para
+    # cadastrar.
+    "Audi": ["A1", "A3", "A4", "A5", "A6", "Q3", "Q5", "Q7", "Q8", "RS6", "TT"],
+    "BMW": [
+        "M2", "M3", "M4", "Série 1", "Série 3", "Série 5", "X1", "X3", "X4", "X5",
+        "X6", "Z4",
+    ],
+    "Mercedes-Benz": [
+        "Classe A", "Classe B", "Classe C", "Classe E", "GLA", "GLB", "GLC", "GLE",
+        "Sprinter",
+    ],
+    "Land Rover": [
+        "Defender", "Discovery", "Discovery Sport", "Freelander", "Range Rover Evoque",
+        "Range Rover Sport", "Range Rover Velar",
+    ],
+    "Volvo": ["S60", "V40", "XC40", "XC60", "XC90"],
 }
 
 FEATURES: list[tuple[str, FeatureCategory]] = [
