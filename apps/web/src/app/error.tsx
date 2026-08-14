@@ -20,7 +20,7 @@ export default function ErrorPage({
 }) {
   return (
     <div className="mx-auto flex min-h-[60dvh] max-w-md flex-col items-center justify-center px-4 text-center">
-      <span className="bg-danger-500/10 text-danger-400 flex size-14 items-center justify-center rounded-full">
+      <span className="bg-danger-500/10 text-danger-700 flex size-14 items-center justify-center rounded-full">
         <AlertTriangle className="size-7" />
       </span>
 

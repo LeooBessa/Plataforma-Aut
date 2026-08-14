@@ -110,7 +110,7 @@ export default function AdminAgendamentosPage() {
       {error && (
         <div
           role="alert"
-          className="rounded-card bg-danger-500/10 text-danger-400 ring-danger-500/20 flex items-start gap-3 p-4 text-sm ring-1 ring-inset"
+          className="rounded-card bg-danger-500/10 text-danger-700 ring-danger-500/20 flex items-start gap-3 p-4 text-sm ring-1 ring-inset"
         >
           <AlertCircle className="mt-0.5 size-4 shrink-0" />
           {error}
@@ -186,7 +186,7 @@ export default function AdminAgendamentosPage() {
                             )}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="rounded-btn bg-success-500/10 text-success-400 hover:bg-success-500/20 inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium transition-colors"
+                            className="rounded-btn bg-success-500/10 text-success-700 hover:bg-success-500/20 inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium transition-colors"
                           >
                             <MessageCircle className="size-3.5" />
                             WhatsApp

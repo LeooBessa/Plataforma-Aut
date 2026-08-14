@@ -56,7 +56,7 @@ export default function AdminVeiculosPage() {
     <div className="space-y-6">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-content text-2xl font-bold tracking-tight">Anúncios</h1>
+          <h1 className="text-content text-2xl font-bold tracking-tight">Estoque</h1>
           <p className="text-faint mt-1 text-sm">
             {/* Diferente do site público, aqui aparecem TAMBÉM rascunhos e
                 arquivados — é a visão de quem opera o estoque. */}
@@ -99,7 +99,7 @@ export default function AdminVeiculosPage() {
       {error && (
         <div
           role="alert"
-          className="rounded-card bg-danger-500/10 text-danger-400 ring-danger-500/20 flex items-start gap-3 p-4 text-sm ring-1 ring-inset"
+          className="rounded-card bg-danger-500/10 text-danger-700 ring-danger-500/20 flex items-start gap-3 p-4 text-sm ring-1 ring-inset"
         >
           <AlertCircle className="mt-0.5 size-4 shrink-0" />
           {error}

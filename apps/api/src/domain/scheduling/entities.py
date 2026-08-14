@@ -55,6 +55,26 @@ class Appointment:
 
 
 @dataclass(frozen=True, slots=True)
+class TopVehicle:
+    """Um carro na lista dos mais vistos."""
+
+    slug: str
+    title: str
+    price: float
+    views: int
+    appointments: int
+
+
+@dataclass(frozen=True, slots=True)
+class WeekLeads:
+    """Contatos recebidos numa semana — a série do gráfico."""
+
+    week_start: date
+    appointments: int
+    consignments: int
+
+
+@dataclass(frozen=True, slots=True)
 class DashboardStats:
     """Números do painel."""
 
@@ -68,3 +88,25 @@ class DashboardStats:
     appointments_this_week: int
     total_views: int
     inventory_value: float
+
+    # ------------------------------------------------------------------ novos
+    # Os três abaixo existem porque o painel antigo só sabia contar. Contagem
+    # informa; estes apontam o que fazer hoje.
+
+    #: Pedidos de "anuncie seu carro" ainda em aberto. Faltava no painel: era um
+    #: canal inteiro de entrada que só aparecia se alguém abrisse a página dele.
+    pending_consignments: int
+
+    #: À venda e sem foto nenhuma. Anúncio sem foto praticamente não é clicado —
+    #: é o carro que está no site sem estar de verdade.
+    vehicles_without_photo: int
+
+    #: À venda há mais de 60 dias. É o número que dói numa revenda: capital
+    #: parado, e quanto mais tempo passa, menos o carro vale.
+    stale_vehicles: int
+
+    #: Os mais vistos, para saber o que atrai — e o que atrai mas não converte.
+    top_viewed: list[TopVehicle]
+
+    #: Últimas 8 semanas de contatos recebidos.
+    leads_by_week: list[WeekLeads]

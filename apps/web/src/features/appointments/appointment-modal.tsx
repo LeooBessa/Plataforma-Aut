@@ -211,7 +211,7 @@ export function AppointmentModal({
               {serverError && (
                 <div
                   role="alert"
-                  className="rounded-btn bg-danger-500/10 text-danger-400 ring-danger-500/20 flex items-start gap-2.5 p-3.5 text-sm ring-1 ring-inset"
+                  className="rounded-btn bg-danger-500/10 text-danger-700 ring-danger-500/20 flex items-start gap-2.5 p-3.5 text-sm ring-1 ring-inset"
                 >
                   <AlertCircle className="mt-0.5 size-4 shrink-0" />
                   <p>{serverError}</p>

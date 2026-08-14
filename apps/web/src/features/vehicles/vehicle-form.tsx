@@ -195,7 +195,7 @@ export function VehicleForm({ vehicle }: { vehicle?: VehicleDetail }) {
       {serverError && (
         <div
           role="alert"
-          className="rounded-card bg-danger-500/10 text-danger-400 ring-danger-500/20 flex items-start gap-2.5 p-4 text-sm ring-1 ring-inset"
+          className="rounded-card bg-danger-500/10 text-danger-700 ring-danger-500/20 flex items-start gap-2.5 p-4 text-sm ring-1 ring-inset"
         >
           <AlertCircle className="mt-0.5 size-4 shrink-0" />
           {serverError}

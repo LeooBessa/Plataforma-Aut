@@ -202,6 +202,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/consignments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Quero anunciar meu carro */
+    post: operations['create_consignment_api_v1_consignments_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/admin/stats': {
     parameters: {
       query?: never;
@@ -485,6 +502,47 @@ export interface paths {
     patch: operations['update_appointment_status_api_v1_admin_appointments__appointment_id__status_patch'];
     trace?: never;
   };
+  '/api/v1/admin/consignments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Pedidos para anunciar o carro
+     * @description Os mais recentes primeiro.
+     *
+     *     Ao contrário dos agendamentos, ordenados pela visita mais próxima: quem quer
+     *     vender o carro está falando com outras lojas ao mesmo tempo, e o pedido que
+     *     acabou de chegar é o que ainda dá para ganhar.
+     */
+    get: operations['list_consignments_api_v1_admin_consignments_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/consignments/{request_id}/status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Marcar como contatado, anunciado ou recusado */
+    patch: operations['update_consignment_status_api_v1_admin_consignments__request_id__status_patch'];
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -658,6 +716,105 @@ export interface components {
       /** Models */
       models: components['schemas']['ModelOptionOut'][];
     };
+    /**
+     * ConsignmentCreateIn
+     * @description O que o site envia quando alguém quer anunciar o carro.
+     *
+     *     CURTO DE PROPÓSITO. Cada campo a mais derruba o número de envios, e este
+     *     formulário existe para começar uma conversa, não para cadastrar o anúncio.
+     *     Versão, câmbio, cor e fotos vêm depois, no WhatsApp, onde a loja pergunta o
+     *     que precisa saber sobre aquele carro específico.
+     */
+    ConsignmentCreateIn: {
+      /** Owner Name */
+      owner_name: string;
+      /** Phone */
+      phone: string;
+      /** Vehicle */
+      vehicle: string;
+      /** Year */
+      year: number;
+      /** Mileage */
+      mileage: number;
+      /** Asking Price */
+      asking_price: number | string;
+      /** City */
+      city?: string | null;
+      /** Notes */
+      notes?: string | null;
+      /** Website */
+      website?: string | null;
+    };
+    /**
+     * ConsignmentCreatedOut
+     * @description Resposta a quem enviou.
+     *
+     *     Devolve o mínimo. Ecoar de volta telefone e dados do carro transformaria o
+     *     endpoint — que é público e sem autenticação — num verificador de dados
+     *     alheios.
+     */
+    ConsignmentCreatedOut: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /**
+       * Message
+       * @default Recebemos seu carro! Vamos te chamar no WhatsApp.
+       */
+      message: string;
+    };
+    /** ConsignmentOut */
+    ConsignmentOut: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Owner Name */
+      owner_name: string;
+      /** Phone */
+      phone: string;
+      /** Vehicle */
+      vehicle: string;
+      /** Year */
+      year: number;
+      /** Mileage */
+      mileage: number;
+      /** Asking Price */
+      asking_price: string;
+      /** City */
+      city: string | null;
+      /** Notes */
+      notes: string | null;
+      status: components['schemas']['ConsignmentStatus'];
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+    };
+    /** ConsignmentPageOut */
+    ConsignmentPageOut: {
+      /** Items */
+      items: components['schemas']['ConsignmentOut'][];
+      meta: components['schemas']['PageMeta'];
+    };
+    /**
+     * ConsignmentStatus
+     * @description Estágios de um pedido para anunciar o carro.
+     *
+     *     O ciclo é o da consignação, não o de uma compra: a loja não adquire o
+     *     veículo, ela o coloca à venda. Por isso `PUBLISHED` (foi anunciado) e não
+     *     "comprado".
+     * @enum {string}
+     */
+    ConsignmentStatus: 'new' | 'contacted' | 'published' | 'declined';
+    /** ConsignmentStatusIn */
+    ConsignmentStatusIn: {
+      status: components['schemas']['ConsignmentStatus'];
+    };
     /** DashboardStatsOut */
     DashboardStatsOut: {
       /** Total Vehicles */
@@ -680,6 +837,16 @@ export interface components {
       total_views: number;
       /** Inventory Value */
       inventory_value: number;
+      /** Pending Consignments */
+      pending_consignments: number;
+      /** Vehicles Without Photo */
+      vehicles_without_photo: number;
+      /** Stale Vehicles */
+      stale_vehicles: number;
+      /** Top Viewed */
+      top_viewed: components['schemas']['TopVehicleOut'][];
+      /** Leads By Week */
+      leads_by_week: components['schemas']['WeekLeadsOut'][];
     };
     /**
      * Environment
@@ -770,12 +937,20 @@ export interface components {
       /** Is Cover */
       is_cover: boolean;
     };
-    /** ImageRegisterIn */
+    /**
+     * ImageRegisterIn
+     * @description Confirmação de que a foto subiu.
+     *
+     *     Repare que NÃO existe campo `url`. A URL pública é derivada do
+     *     `storage_path` pelo `RegisterImageUseCase` — aceitá-la do cliente permitiria
+     *     registrar uma foto hospedada em outro domínio e exibi-la na vitrine.
+     *
+     *     O `storage_path` também não é aceito de olhos fechados: o caso de uso exige
+     *     que ele esteja dentro da pasta deste veículo.
+     */
     ImageRegisterIn: {
       /** Storage Path */
       storage_path: string;
-      /** Url */
-      url: string;
       /** Alt Text */
       alt_text?: string | null;
       /** Width */
@@ -840,6 +1015,19 @@ export interface components {
       /** Expires In */
       expires_in: number;
       user: components['schemas']['UserOut'];
+    };
+    /** TopVehicleOut */
+    TopVehicleOut: {
+      /** Slug */
+      slug: string;
+      /** Title */
+      title: string;
+      /** Price */
+      price: number;
+      /** Views */
+      views: number;
+      /** Appointments */
+      appointments: number;
     };
     /**
      * TransmissionType
@@ -1171,6 +1359,18 @@ export interface components {
       status: components['schemas']['VehicleStatus'];
       cover_image: components['schemas']['ImageOut'] | null;
     };
+    /** WeekLeadsOut */
+    WeekLeadsOut: {
+      /**
+       * Week Start
+       * Format: date
+       */
+      week_start: string;
+      /** Appointments */
+      appointments: number;
+      /** Consignments */
+      consignments: number;
+    };
   };
   responses: never;
   parameters: never;
@@ -1448,6 +1648,39 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['AppointmentCreatedOut'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  create_consignment_api_v1_consignments_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ConsignmentCreateIn'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ConsignmentCreatedOut'];
         };
       };
       /** @description Validation Error */
@@ -2206,6 +2439,104 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['AppointmentOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  list_consignments_api_v1_admin_consignments_get: {
+    parameters: {
+      query?: {
+        /** @description Busca por dono ou carro */
+        q?: string | null;
+        status?: components['schemas']['ConsignmentStatus'][] | null;
+        page?: number;
+        page_size?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ConsignmentPageOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  update_consignment_status_api_v1_admin_consignments__request_id__status_patch: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        request_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ConsignmentStatusIn'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ConsignmentOut'];
         };
       };
       /** @description Não autenticado */

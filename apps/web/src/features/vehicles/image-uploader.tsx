@@ -173,7 +173,7 @@ export function ImageUploader({
       {error && (
         <div
           role="alert"
-          className="rounded-btn bg-danger-500/10 text-danger-400 ring-danger-500/20 flex items-start gap-2.5 p-3.5 text-sm ring-1 ring-inset"
+          className="rounded-btn bg-danger-500/10 text-danger-700 ring-danger-500/20 flex items-start gap-2.5 p-3.5 text-sm ring-1 ring-inset"
         >
           <AlertCircle className="mt-0.5 size-4 shrink-0" />
           {error}
@@ -262,7 +262,7 @@ export function ImageUploader({
                   <button
                     type="button"
                     onClick={() => void remove(image.id)}
-                    className="rounded-btn text-danger-400 flex size-9 items-center justify-center bg-surface/90 transition-colors hover:bg-sunken"
+                    className="rounded-btn text-danger-700 flex size-9 items-center justify-center bg-surface/90 transition-colors hover:bg-sunken"
                     aria-label="Remover foto"
                     title="Remover foto"
                   >

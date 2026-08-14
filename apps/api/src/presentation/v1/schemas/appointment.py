@@ -113,6 +113,24 @@ class AppointmentPageOut(BaseModel):
         )
 
 
+class TopVehicleOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    slug: str
+    title: str
+    price: float
+    views: int
+    appointments: int
+
+
+class WeekLeadsOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    week_start: date
+    appointments: int
+    consignments: int
+
+
 class DashboardStatsOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
@@ -126,3 +144,8 @@ class DashboardStatsOut(BaseModel):
     appointments_this_week: int
     total_views: int
     inventory_value: float
+    pending_consignments: int
+    vehicles_without_photo: int
+    stale_vehicles: int
+    top_viewed: list[TopVehicleOut]
+    leads_by_week: list[WeekLeadsOut]

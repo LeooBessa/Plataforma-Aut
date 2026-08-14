@@ -2,26 +2,35 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from uuid import UUID
 
 from sqlalchemy import ColumnElement, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import DeclarativeBase, InstrumentedAttribute, selectinload
 
 from src.core.exceptions import NotFoundError
 from src.domain.catalog.enums import VehicleStatus
 from src.domain.catalog.value_objects import Page, Pagination
+from src.domain.consignment.enums import ConsignmentStatus
 from src.domain.scheduling.entities import (
     Appointment,
     AppointmentDraft,
     DashboardStats,
+    TopVehicle,
     VehicleRef,
+    WeekLeads,
 )
 from src.domain.scheduling.enums import AppointmentStatus
 from src.domain.scheduling.value_objects import AppointmentFilters
 from src.infrastructure.database.models import Appointment as AppointmentModel
+from src.infrastructure.database.models import ConsignmentRequest as ConsignmentModel
 from src.infrastructure.database.models import Vehicle, VehicleImage
+
+#: Dias à venda a partir dos quais o carro conta como encalhado. Sessenta é a
+#: régua usual da revenda de usado: passou disso, o giro parou e o preço precisa
+#: de conversa.
+_DIAS_PARA_ENCALHE = 60
 
 
 def _vehicle_title(vehicle: Vehicle) -> str:
@@ -171,13 +180,27 @@ class SqlAlchemyStatsRepository:
         self._session = session
 
     async def get_dashboard_stats(self) -> DashboardStats:
-        """Todos os números em DUAS consultas, não em dez.
+        """Todos os números em CINCO consultas, não em vinte.
 
         Cada contador vira um `count(*) FILTER (WHERE ...)` dentro da mesma
         varredura, em vez de uma consulta por métrica. O dashboard é a primeira
-        tela que o admin abre — dez viagens ao banco (com a latência de rede até
-        o Supabase somando em cada uma) apareceriam como lentidão logo no login.
+        tela que o admin abre — vinte viagens ao banco (com a latência de rede
+        até o Supabase somando em cada uma) apareceriam como lentidão logo no
+        login.
+
+        As cinco são: os contadores de veículo, os de agendamento, os de
+        consignação, os mais vistos e a série semanal. As duas últimas devolvem
+        LINHAS, não números, e por isso não cabem nas outras.
         """
+        agora = datetime.now(UTC)
+        week_ago = agora - timedelta(days=7)
+        parado_desde = agora - timedelta(days=_DIAS_PARA_ENCALHE)
+        a_venda = Vehicle.status.in_([VehicleStatus.ACTIVE, VehicleStatus.RESERVED])
+
+        # "Sem foto" é um NOT EXISTS, não um LEFT JOIN com count: basta saber se
+        # existe UMA imagem, e o Postgres para de procurar na primeira que achar.
+        sem_foto = ~select(VehicleImage.id).where(VehicleImage.vehicle_id == Vehicle.id).exists()
+
         vehicle_row = (
             await self._session.execute(
                 select(
@@ -187,19 +210,21 @@ class SqlAlchemyStatsRepository:
                     func.count().filter(Vehicle.status == VehicleStatus.DRAFT).label("draft"),
                     func.count().filter(Vehicle.is_featured.is_(True)).label("featured"),
                     func.coalesce(func.sum(Vehicle.views_count), 0).label("views"),
+                    func.count().filter(a_venda, sem_foto).label("sem_foto"),
+                    # `published_at` e não `created_at`: o relógio do encalhe
+                    # começa quando o carro entra no site, não quando alguém
+                    # começou a escrever o rascunho.
+                    func.count()
+                    .filter(a_venda, Vehicle.published_at < parado_desde)
+                    .label("parados"),
                     # Valor do estoque = só o que está à venda. Somar os vendidos
                     # inflaria o número e ele deixaria de significar qualquer coisa.
-                    func.coalesce(
-                        func.sum(Vehicle.price).filter(
-                            Vehicle.status.in_([VehicleStatus.ACTIVE, VehicleStatus.RESERVED])
-                        ),
-                        0,
-                    ).label("inventory_value"),
+                    func.coalesce(func.sum(Vehicle.price).filter(a_venda), 0).label(
+                        "inventory_value"
+                    ),
                 ).select_from(Vehicle)
             )
         ).one()
-
-        week_ago = datetime.now(UTC) - timedelta(days=7)
 
         appointment_row = (
             await self._session.execute(
@@ -213,6 +238,21 @@ class SqlAlchemyStatsRepository:
             )
         ).one()
 
+        pendentes_consignacao = (
+            await self._session.scalar(
+                select(func.count())
+                .select_from(ConsignmentModel)
+                .where(
+                    ConsignmentModel.status.in_(
+                        [ConsignmentStatus.NEW, ConsignmentStatus.CONTACTED]
+                    )
+                )
+            )
+        ) or 0
+
+        top_viewed = await self._top_viewed()
+        leads_by_week = await self._leads_by_week(agora)
+
         return DashboardStats(
             total_vehicles=vehicle_row.total,
             active_vehicles=vehicle_row.active,
@@ -224,4 +264,91 @@ class SqlAlchemyStatsRepository:
             total_appointments=appointment_row.total,
             pending_appointments=appointment_row.pending,
             appointments_this_week=appointment_row.this_week,
+            pending_consignments=pendentes_consignacao,
+            vehicles_without_photo=vehicle_row.sem_foto,
+            stale_vehicles=vehicle_row.parados,
+            top_viewed=top_viewed,
+            leads_by_week=leads_by_week,
         )
+
+    async def _top_viewed(self) -> list[TopVehicle]:
+        """Os cinco mais vistos, com quantas visitas cada um gerou.
+
+        As duas colunas juntas é que dizem alguma coisa: muita visualização e
+        nenhum agendamento é anúncio que atrai e decepciona — foto ruim, preço
+        fora ou descrição que não responde o que a pessoa queria saber.
+        """
+        agendamentos = (
+            select(func.count())
+            .select_from(AppointmentModel)
+            .where(AppointmentModel.vehicle_id == Vehicle.id)
+            .scalar_subquery()
+        )
+
+        rows = (
+            await self._session.execute(
+                select(
+                    Vehicle.slug,
+                    Vehicle.brand_name,
+                    Vehicle.model_name,
+                    Vehicle.version,
+                    Vehicle.price,
+                    Vehicle.views_count,
+                    agendamentos.label("agendamentos"),
+                )
+                .where(Vehicle.status.in_([VehicleStatus.ACTIVE, VehicleStatus.RESERVED]))
+                .order_by(Vehicle.views_count.desc())
+                .limit(5)
+            )
+        ).all()
+
+        return [
+            TopVehicle(
+                slug=r.slug,
+                title=" ".join(p for p in (r.brand_name, r.model_name, r.version) if p),
+                price=float(r.price),
+                views=r.views_count,
+                appointments=r.agendamentos,
+            )
+            for r in rows
+        ]
+
+    async def _leads_by_week(self, agora: datetime) -> list[WeekLeads]:
+        """Oito semanas de contatos, agendamento e consignação lado a lado.
+
+        As semanas SEM contato precisam aparecer no gráfico, e o banco não
+        devolve linha para o que não existe — um `GROUP BY` puro entregaria só
+        as semanas movimentadas e o gráfico mostraria uma sequência falsa de
+        barras cheias. Por isso as oito são criadas aqui e preenchidas depois.
+        """
+        # Segunda-feira da semana corrente, à meia-noite UTC.
+        inicio_semana = (agora - timedelta(days=agora.weekday())).replace(
+            hour=0, minute=0, second=0, microsecond=0
+        )
+        primeira = inicio_semana - timedelta(weeks=7)
+
+        async def por_semana(
+            coluna: InstrumentedAttribute[datetime], modelo: type[DeclarativeBase]
+        ) -> dict[date, int]:
+            semana = func.date_trunc("week", coluna).label("semana")
+            rows = (
+                await self._session.execute(
+                    select(semana, func.count())
+                    .select_from(modelo)
+                    .where(coluna >= primeira)
+                    .group_by(semana)
+                )
+            ).all()
+            return {r[0].date(): r[1] for r in rows}
+
+        visitas = await por_semana(AppointmentModel.created_at, AppointmentModel)
+        ofertas = await por_semana(ConsignmentModel.created_at, ConsignmentModel)
+
+        return [
+            WeekLeads(
+                week_start=(dia := (primeira + timedelta(weeks=i)).date()),
+                appointments=visitas.get(dia, 0),
+                consignments=ofertas.get(dia, 0),
+            )
+            for i in range(8)
+        ]

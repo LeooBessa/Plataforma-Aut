@@ -198,7 +198,7 @@ export default function EditarVeiculoPage({ params }: { params: Promise<{ id: st
               </Button>
             )}
             <Button variant="ghost" disabled={busy} onClick={() => void destroy()}>
-              <Trash2 className="text-danger-400 size-4" />
+              <Trash2 className="text-danger-700 size-4" />
             </Button>
           </div>
         </div>
@@ -207,7 +207,7 @@ export default function EditarVeiculoPage({ params }: { params: Promise<{ id: st
       {error && (
         <div
           role="alert"
-          className="rounded-card bg-danger-500/10 text-danger-400 ring-danger-500/20 flex items-start gap-2.5 p-4 text-sm ring-1 ring-inset"
+          className="rounded-card bg-danger-500/10 text-danger-700 ring-danger-500/20 flex items-start gap-2.5 p-4 text-sm ring-1 ring-inset"
         >
           <AlertCircle className="mt-0.5 size-4 shrink-0" />
           {error}
@@ -225,7 +225,7 @@ export default function EditarVeiculoPage({ params }: { params: Promise<{ id: st
         </div>
 
         {vehicle.images.length === 0 && (
-          <p className="rounded-btn bg-warning-500/10 text-warning-400 ring-warning-600/20 mt-2 p-3 text-xs ring-1 ring-inset">
+          <p className="rounded-btn bg-warning-600/10 text-warning-700 ring-warning-600/20 mt-2 p-3 text-xs ring-1 ring-inset">
             Este anúncio ainda não tem fotos e por isso <strong>não pode ser publicado</strong>.
           </p>
         )}

@@ -25,11 +25,15 @@ import { cn } from '@/lib/utils';
  * está sempre sob controle do atacante.
  */
 
+// "Anúncios" e "Anuncie" dividiam a mesma raiz e viviam a um item de distância
+// no menu — quem lê de relance não distingue, e os dois abrem listas opostas:
+// uma é o carro que a loja VENDE, a outra é o carro que alguém quer VENDER PARA
+// ela. Os nomes agora não compartilham palavra nenhuma.
 const NAV = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/admin/veiculos', label: 'Anúncios', icon: Car },
+  { href: '/admin/veiculos', label: 'Estoque', icon: Car },
   { href: '/admin/agendamentos', label: 'Agendamentos', icon: Calendar },
-  { href: '/admin/anuncie', label: 'Anuncie', icon: HandCoins },
+  { href: '/admin/anuncie', label: 'Carros oferecidos', icon: HandCoins },
 ] as const;
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -112,7 +116,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <button
             type="button"
             onClick={() => void logout()}
-            className="rounded-btn text-muted hover:bg-danger-500/10 hover:text-danger-400 mt-1 flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors"
+            className="rounded-btn text-muted hover:bg-danger-500/10 hover:text-danger-700 mt-1 flex w-full items-center gap-3 px-3 py-2.5 text-sm font-medium transition-colors"
           >
             <LogOut className="size-4.5" />
             Sair
@@ -142,7 +146,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           <button
             type="button"
             onClick={() => void logout()}
-            className="rounded-btn text-faint hover:bg-danger-500/10 hover:text-danger-400 ml-auto flex size-10 items-center justify-center transition-colors"
+            className="rounded-btn text-faint hover:bg-danger-500/10 hover:text-danger-700 ml-auto flex size-10 items-center justify-center transition-colors"
             aria-label="Sair"
           >
             <LogOut className="size-5" />
