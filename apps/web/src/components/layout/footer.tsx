@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { CalendarCheck, Mail, MessageCircle } from 'lucide-react';
+import { Mail, MessageCircle } from 'lucide-react';
 
 import { IconInstagram } from '@/components/ui/icon-instagram';
 
@@ -130,12 +130,6 @@ export function Footer() {
                 <Mail className="text-faint mt-0.5 size-4 shrink-0" />
                 <span className="break-all">{EMAIL}</span>
               </a>
-            </li>
-            <li className="flex items-start gap-2.5">
-              <CalendarCheck className="text-faint mt-0.5 size-4 shrink-0" />
-              <span className="text-muted">
-                Ou agende uma visita pelo site e entramos em contato para confirmar.
-              </span>
             </li>
             <li>
               <Link href="/contato" className="text-accent transition-colors hover:underline">
