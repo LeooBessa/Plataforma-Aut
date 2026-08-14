@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { BadgeCheck, ShieldCheck, Users, Wrench } from 'lucide-react';
 
 import { ButtonLink } from '@/components/ui/button';
+import { ShinyButtonLink } from '@/components/ui/shiny-button';
 
 export const metadata: Metadata = {
   title: 'Sobre nós',
@@ -55,9 +56,7 @@ export default function SobrePage() {
       </div>
 
       <div className="mt-12 flex flex-wrap gap-3">
-        <ButtonLink href="/veiculos" size="lg">
-          Ver veículos disponíveis
-        </ButtonLink>
+        <ShinyButtonLink href="/veiculos">Ver veículos disponíveis</ShinyButtonLink>
         <ButtonLink href="/contato" size="lg" variant="secondary">
           Falar com a gente
         </ButtonLink>

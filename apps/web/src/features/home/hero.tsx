@@ -3,6 +3,7 @@ import { ArrowRight } from 'lucide-react';
 
 import AnimatedTextCycle from '@/components/ui/animated-text-cycle';
 import { ButtonLink } from '@/components/ui/button';
+import { ShinyButtonLink } from '@/components/ui/shiny-button';
 
 /** As palavras que giram no título. A ordem é a que aparece na tela. */
 const QUALIDADES = ['Preço acessível.', 'Economia.', 'Qualidade.', 'Conforto.'];
@@ -194,10 +195,10 @@ export function Hero() {
               </p>
 
               <div className="mt-9 flex flex-wrap justify-center gap-3 lg:justify-start">
-                <ButtonLink href="/veiculos" size="lg">
+                <ShinyButtonLink href="/veiculos">
                   Ver Estoque
                   <ArrowRight className="size-4" />
-                </ButtonLink>
+                </ShinyButtonLink>
                 <ButtonLink href="/contato" size="lg" variant="secondary">
                   Falar com a Equipe
                 </ButtonLink>

@@ -293,8 +293,11 @@
   --shiny-cta-bg: #0b0b0b; /* miolo preto */
   --shiny-cta-bg-subtle: #101725;
   --shiny-cta-fg: #eef6ff; /* texto: azul quase branco, 16:1 sobre o preto */
-  --shiny-cta-highlight: #1b62f5; /* azul da marca (borda/brilho) */
-  --shiny-cta-highlight-subtle: #619aff;
+  /* O azul sai da PALETA, não de um hexadecimal solto: era #1b62f5, escrito à
+     mão, que ficava perto do tom da logo mas não era ele. Preso ao token, um
+     ajuste de marca chega aqui sozinho — e o botão nunca desafina do resto. */
+  --shiny-cta-highlight: var(--color-brand-500); /* azul da logo */
+  --shiny-cta-highlight-subtle: var(--color-brand-300);
   --animation: gradient-angle linear infinite;
   --duration: 3s;
   --shadow-size: 2px;
@@ -310,8 +313,11 @@
   font-size: 1rem;
   line-height: 1.2;
   font-weight: 600;
-  /* Centraliza o conteúdo quando o botão é `w-full`. */
-  display: flex;
+  /* `inline-flex`, não `flex`: como link ou dentro de um formulário, `flex`
+     torna o elemento nível de bloco e ele estica pela linha inteira, ignorando
+     um `sm:w-auto`. Com `inline-flex` ele mede pelo conteúdo, e quem quiser a
+     largura toda usa `w-full` — que continua funcionando. */
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   border: 1px solid transparent;
@@ -354,6 +360,18 @@
 
 .shiny-cta:active {
   translate: 0 1px;
+}
+
+/* Enquanto o formulário envia, o botão fica desligado. Sem isto ele continuaria
+   com cursor de mão e reagindo ao hover, convidando ao segundo clique — que
+   criaria o anúncio duas vezes. */
+.shiny-cta:disabled {
+  cursor: not-allowed;
+  opacity: 0.65;
+}
+
+.shiny-cta:disabled:active {
+  translate: none;
 }
 
 /* Padrão de pontos (azul, era branco). */

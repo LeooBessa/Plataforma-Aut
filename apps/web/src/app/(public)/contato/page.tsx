@@ -4,7 +4,7 @@ import { CalendarCheck, Mail, MessageCircle } from 'lucide-react';
 
 import { IconInstagram } from '@/components/ui/icon-instagram';
 
-import { ButtonLink } from '@/components/ui/button';
+import { ShinyButtonLink } from '@/components/ui/shiny-button';
 import {
   EMAIL,
   EMAIL_LINK,
@@ -119,9 +119,9 @@ export default function ContatoPage() {
         <p className="text-muted mt-2 text-sm">
           Escolha um veículo e agende sua visita direto pelo site.
         </p>
-        <ButtonLink href="/veiculos" size="lg" className="mt-6">
+        <ShinyButtonLink href="/veiculos" className="mt-6">
           Ver veículos e agendar visita
-        </ButtonLink>
+        </ShinyButtonLink>
       </div>
     </div>
   );

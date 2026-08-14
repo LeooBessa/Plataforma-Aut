@@ -7,6 +7,7 @@ import { z } from 'zod';
 import { AlertCircle, CheckCircle2, Loader2, MessageCircle, Plus } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { ShinyButton } from '@/components/ui/shiny-button';
 import { Field, Input, Textarea } from '@/components/ui/field';
 import { WHATSAPP } from '@/lib/contato';
 import { maskPhone, maskThousands, onlyDigits, whatsappLink } from '@/lib/format';
@@ -333,7 +334,7 @@ export function ConsignmentForm() {
         <input tabIndex={-1} autoComplete="off" {...register('website')} />
       </div>
 
-      <Button type="submit" size="lg" disabled={isSubmitting} className="w-full sm:w-auto">
+      <ShinyButton type="submit" disabled={isSubmitting} className="w-full sm:w-auto">
         {isSubmitting ? (
           <>
             <Loader2 className="size-4 animate-spin" />
@@ -342,7 +343,7 @@ export function ConsignmentForm() {
         ) : (
           'Quero anunciar meu carro'
         )}
-      </Button>
+      </ShinyButton>
     </form>
   );
 }
