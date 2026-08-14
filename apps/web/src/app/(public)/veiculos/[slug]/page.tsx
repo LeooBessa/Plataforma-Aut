@@ -89,10 +89,23 @@ export default async function VeiculoPage({ params }: Props) {
 
       <Breadcrumbs title={vehicle.title} />
 
-      <div className="mt-6 grid gap-8 lg:grid-cols-[1.5fr_1fr] lg:gap-12">
-        <div className="min-w-0">
-          <Gallery images={vehicle.images} title={vehicle.title} />
+      {/* ORDEM NO CELULAR: foto → preço e botão → ficha.
+          Antes o cartão de preço vinha depois da ficha técnica inteira, porque
+          é a segunda coluna da grade e no empilhamento cai por último. Quem
+          abria o anúncio pelo celular rolava trinta linhas de especificação
+          antes de ver quanto custa e como agendar — justo os dois motivos de
+          ter aberto a página.
 
+          A correção é só de posicionamento: as três peças viram filhas diretas
+          da grade e recebem linha e coluna explícitas no desktop, onde o layout
+          de duas colunas continua idêntico. No celular não há `lg:`, então vale
+          a ordem do DOM, que agora é a certa. */}
+      <div className="mt-6 grid gap-8 lg:grid-cols-[1.5fr_1fr] lg:gap-12">
+        <div className="order-1 min-w-0 lg:col-start-1 lg:row-start-1">
+          <Gallery images={vehicle.images} title={vehicle.title} />
+        </div>
+
+        <div className="order-3 min-w-0 lg:col-start-1 lg:row-start-2">
           {vehicle.description && (
             <section className="mt-10">
               <h2 className="text-content text-lg font-bold">Descrição</h2>
@@ -113,7 +126,7 @@ export default async function VeiculoPage({ params }: Props) {
 
         {/* `sticky` mantém o preço e o botão de agendar sempre à vista enquanto
             o usuário lê a ficha. O botão que converte não pode sumir da tela. */}
-        <aside className="lg:sticky lg:top-24 lg:self-start">
+        <aside className="order-2 lg:sticky lg:top-24 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:self-start">
           <div className="rounded-card shadow-card ring-line bg-surface p-6 ring-1">
             <div className="flex flex-wrap items-center gap-2">
               {vehicle.is_featured && !isSold && <Badge tone="dark">Destaque</Badge>}

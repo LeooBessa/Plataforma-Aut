@@ -15,6 +15,7 @@ import {
   WHATSAPP_MENSAGEM,
 } from '@/lib/contato';
 import { whatsappLink } from '@/lib/format';
+import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
   title: 'Contato',
@@ -81,8 +82,20 @@ export default function ContatoPage() {
 
       {CANAIS.length > 0 && (
         <div className="mt-10 grid gap-4 sm:grid-cols-2">
-          {CANAIS.map((canal) => (
-            <Card key={canal.title} {...canal} />
+          {CANAIS.map((canal, i) => (
+            <Card
+              key={canal.title}
+              {...canal}
+              // Sobrando um canal na última linha, ele fica CENTRADO em vez de
+              // encostado à esquerda: ocupa as duas colunas e volta à largura de
+              // uma (metade, menos meia calha de `gap-4`). Alinhado à esquerda,
+              // a linha solta parecia um cartão faltando ao lado.
+              className={
+                CANAIS.length % 2 === 1 && i === CANAIS.length - 1
+                  ? 'sm:col-span-2 sm:mx-auto sm:w-[calc(50%-0.5rem)]'
+                  : undefined
+              }
+            />
           ))}
         </div>
       )}
@@ -120,12 +133,14 @@ function Card({
   value,
   href,
   tone = 'brand',
+  className: extra,
 }: {
   icon: React.ReactNode;
   title: string;
   value: string;
   href?: string;
   tone?: 'brand' | 'success';
+  className?: string;
 }) {
   const content = (
     <>
@@ -145,8 +160,10 @@ function Card({
     </>
   );
 
-  const className =
-    'flex items-center gap-4 rounded-card bg-surface p-5 shadow-card ring-1 ring-line transition-shadow hover:shadow-card-hover';
+  const className = cn(
+    'flex items-center gap-4 rounded-card bg-surface p-5 shadow-card ring-1 ring-line transition-shadow hover:shadow-card-hover',
+    extra,
+  );
 
   if (!href) {
     return <div className={className}>{content}</div>;

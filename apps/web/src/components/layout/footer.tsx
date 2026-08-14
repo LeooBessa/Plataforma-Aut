@@ -61,7 +61,13 @@ export function Footer() {
           <h2 className="text-accent text-xs font-semibold tracking-[0.18em] uppercase">
             Navegação
           </h2>
-          <ul className="mt-5 space-y-3 text-sm">
+          {/* NO CELULAR os links crescem para 44px de altura — texto de 20px
+              mais `py-3`. Eram 17px, e errar o link acertando o vizinho era
+              rotina. Encostados, a distância entre um texto e outro fica em
+              44px, que num rodapé lê como espaçamento generoso.
+              A partir do `sm` o ponteiro do mouse é preciso e os alvos voltam ao
+              tamanho compacto, senão o rodapé do desktop esticaria à toa. */}
+          <ul className="mt-3 text-sm sm:mt-5 sm:space-y-2">
             {/* `as const` preserva os literais das rotas — sem ele o typedRoutes
                 recusa, que é a proteção contra link quebrado funcionando. */}
             {(
@@ -74,7 +80,7 @@ export function Footer() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-muted hover:text-accent transition-colors"
+                  className="text-muted hover:text-accent block py-3 transition-colors sm:py-1.5"
                 >
                   {link.label}
                 </Link>
@@ -94,7 +100,7 @@ export function Footer() {
               de um veículo desiste antes de procurar.
               Continua sem telefone fixo e sem endereço: não existem. O que havia
               aqui era placeholder do seed. */}
-          <ul className="mt-5 space-y-3 text-sm">
+          <ul className="mt-3 text-sm sm:mt-5 sm:space-y-2">
             <li>
               {/* O verde escurece de 500 para 700: sobre preto o 500 brilhava,
                   sobre papel ele fica lavado e ilegível. */}
@@ -102,7 +108,7 @@ export function Footer() {
                 href={whatsappLink(WHATSAPP, WHATSAPP_MENSAGEM)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-success-700 hover:text-success-800 inline-flex items-center gap-2.5 font-medium transition-colors"
+                className="text-success-700 hover:text-success-800 inline-flex items-center gap-2.5 py-3 font-medium transition-colors sm:py-1.5"
               >
                 <MessageCircle className="size-4 shrink-0" />
                 {WHATSAPP_FORMATADO}
@@ -113,7 +119,7 @@ export function Footer() {
                 href={INSTAGRAM_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted hover:text-content inline-flex items-center gap-2.5 transition-colors"
+                className="text-muted hover:text-content inline-flex items-center gap-2.5 py-3 transition-colors sm:py-1.5"
               >
                 <IconInstagram className="text-faint size-4 shrink-0" />
                 {INSTAGRAM_ARROBA}
@@ -125,14 +131,14 @@ export function Footer() {
                   empurraria o rodapé para a rolagem lateral. */}
               <a
                 href={EMAIL_LINK}
-                className="text-muted hover:text-content inline-flex items-start gap-2.5 transition-colors"
+                className="text-muted hover:text-content inline-flex items-start gap-2.5 py-3 transition-colors sm:py-1.5"
               >
                 <Mail className="text-faint mt-0.5 size-4 shrink-0" />
                 <span className="break-all">{EMAIL}</span>
               </a>
             </li>
             <li>
-              <Link href="/contato" className="text-accent transition-colors hover:underline">
+              <Link href="/contato" className="text-accent block py-3 transition-colors hover:underline sm:py-1.5">
                 Falar com a gente
               </Link>
             </li>

@@ -195,12 +195,18 @@ export function SearchFilters({
           ))}
         </Select>
 
-        {compact && (
+        {/* O botão aparece SEMPRE no celular, mesmo na página de estoque, e não
+            só no modo compacto da home. Empilhados, os filtros viram seis linhas
+            de altura inteira e empurram o primeiro carro para fora da primeira
+            tela — quem chegou para ver carro rola meia tela de formulário antes
+            de ver um. No desktop eles cabem em quatro colunas e continuam
+            abertos por padrão. */}
+        {temEstoque && (
           <Button
             type="button"
             variant="secondary"
             onClick={() => setShowAdvanced((v) => !v)}
-            className="sm:w-auto"
+            className={cn('sm:w-auto', !compact && 'sm:hidden')}
           >
             <SlidersHorizontal className="size-4" />
             Filtros
@@ -213,8 +219,17 @@ export function SearchFilters({
         )}
       </div>
 
-      {temEstoque && (!compact || showAdvanced) && (
-        <div className="border-line mt-4 grid grid-cols-1 gap-3 border-t pt-4 sm:grid-cols-2 lg:grid-cols-4">
+      {temEstoque && (
+        <div
+          className={cn(
+            'border-line mt-4 grid-cols-1 gap-3 border-t pt-4 sm:grid-cols-2 lg:grid-cols-4',
+            // Aberto por escolha do usuário: mostra em qualquer largura.
+            // Fechado: some no celular e, fora do modo compacto, reaparece no
+            // desktop. Tudo por CSS — detectar a largura em JS traria diferença
+            // entre servidor e cliente na primeira renderização.
+            showAdvanced ? 'grid' : compact ? 'hidden' : 'hidden sm:grid',
+          )}
+        >
           <Select
             value={selectedBrand}
             onChange={(e) =>

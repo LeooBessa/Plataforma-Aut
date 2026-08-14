@@ -200,7 +200,7 @@ export function AppointmentModal({
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-btn text-faint hover:bg-sunken hover:text-muted -mt-1 -mr-2 flex size-9 shrink-0 items-center justify-center transition-colors"
+                className="rounded-btn text-faint hover:bg-sunken hover:text-muted -mt-1.5 -mr-2.5 flex size-11 shrink-0 items-center justify-center transition-colors"
                 aria-label="Fechar"
               >
                 <X className="size-5" />

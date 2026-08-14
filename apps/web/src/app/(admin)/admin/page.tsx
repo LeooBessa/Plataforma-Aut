@@ -107,7 +107,7 @@ export default function DashboardPage() {
 
       <section>
         <h2 className="text-content text-sm font-semibold">Estoque</h2>
-        <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-3 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           <Stat
             label="Total de veículos"
             value={stats?.total_vehicles}
@@ -132,7 +132,7 @@ export default function DashboardPage() {
 
       <section>
         <h2 className="text-content text-sm font-semibold">Movimento</h2>
-        <div className="mt-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mt-3 grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           <Stat
             label="Valor do estoque"
             value={stats ? formatPrice(stats.inventory_value) : undefined}
