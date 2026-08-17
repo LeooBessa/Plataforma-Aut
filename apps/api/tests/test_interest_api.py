@@ -360,3 +360,112 @@ async def test_modelo_escolhido_descarta_a_categoria(
 
     assert item["body_type"] is None, "a categoria contraditória devia ter sido descartada"
     assert len(item["matches"]) == 1, "com ela mantida, o cruzamento não acharia nada"
+
+
+# ------------------------------------------------ catálogo escrito pelo painel
+
+
+async def test_admin_cadastra_marca_que_faltava(
+    client: AsyncClient, admin: User, dealership: Dealership
+) -> None:
+    """O catálogo nunca estará completo — sem esta porta, faltando uma marca o
+    vendedor trava no select e depende de um programador."""
+    headers = await _auth(client, admin)
+
+    response = await client.post(
+        "/api/v1/admin/catalog/brands", json={"name": "Chery"}, headers=headers
+    )
+
+    assert response.status_code == 201
+    assert response.json()["name"] == "Chery"
+    assert (await client.get(CATALOGO)).json(), "a marca nova já aparece no catálogo público"
+
+
+async def test_marca_repetida_e_recusada_mesmo_escrita_diferente(
+    client: AsyncClient, session: AsyncSession, admin: User, dealership: Dealership
+) -> None:
+    """Comparar por SLUG, e não pelo nome cru, é o que impede "Caoa Chery",
+    "caoa chery" e "Caoa  Chery" de virarem três marcas no filtro do site."""
+    await _marca(session, "Peugeot")
+    headers = await _auth(client, admin)
+
+    response = await client.post(
+        "/api/v1/admin/catalog/brands", json={"name": "  peugeot  "}, headers=headers
+    )
+
+    assert response.status_code == 409
+
+
+async def test_admin_cadastra_modelo_na_marca(
+    client: AsyncClient, session: AsyncSession, admin: User, dealership: Dealership
+) -> None:
+    marca = await _marca(session, "Chevrolet")
+    headers = await _auth(client, admin)
+
+    response = await client.post(
+        "/api/v1/admin/catalog/models",
+        json={"brand_id": str(marca.id), "name": "Monza"},
+        headers=headers,
+    )
+
+    assert response.status_code == 201
+    assert response.json()["name"] == "Monza"
+
+
+async def test_modelo_repetido_na_mesma_marca_e_recusado(
+    client: AsyncClient, session: AsyncSession, admin: User, dealership: Dealership
+) -> None:
+    """A unicidade é por (marca, modelo), não global: "Ka" da Ford e um "Ka" de
+    outra marca podem coexistir."""
+    marca = await _marca(session, "Chevrolet")
+    headers = await _auth(client, admin)
+    corpo = {"brand_id": str(marca.id), "name": "Monza"}
+
+    await client.post("/api/v1/admin/catalog/models", json=corpo, headers=headers)
+    repetido = await client.post("/api/v1/admin/catalog/models", json=corpo, headers=headers)
+
+    assert repetido.status_code == 409
+
+
+async def test_cadastrar_catalogo_exige_autenticacao(client: AsyncClient) -> None:
+    assert (
+        await client.post("/api/v1/admin/catalog/brands", json={"name": "Xpto"})
+    ).status_code == 401
+
+
+# ------------------------------------------------------- aviso no painel
+
+
+async def test_painel_conta_quem_tem_carro_esperando(
+    client: AsyncClient, session: AsyncSession, admin: User, vehicles  # type: ignore[no-untyped-def]
+) -> None:
+    """A pendência mais fácil de resolver do painel: o carro está lá, a pessoa
+    pediu para ser avisada, e falta só alguém mandar a mensagem."""
+    await vehicles.create(brand="Fiat", model="Argo", price="45000.00")
+    fiat = await _marca(session, "Fiat")
+    honda = await _marca(session, "Honda")
+
+    await client.post(PUBLICO, json=_payload(str(fiat.id), max_price="60000.00"))
+    await client.post(PUBLICO, json=_payload(str(honda.id), max_price="60000.00"))
+
+    headers = await _auth(client, admin)
+    stats = (await client.get("/api/v1/admin/stats", headers=headers)).json()
+
+    assert stats["interests_with_match"] == 1, "só o pedido de Fiat tem carro no pátio"
+
+
+async def test_pedido_encerrado_nao_conta_no_painel(
+    client: AsyncClient, session: AsyncSession, admin: User, vehicles  # type: ignore[no-untyped-def]
+) -> None:
+    """Quem já comprou ou desistiu não é pendência."""
+    await vehicles.create(brand="Fiat", model="Argo", price="45000.00")
+    fiat = await _marca(session, "Fiat")
+    criado = (await client.post(PUBLICO, json=_payload(str(fiat.id), max_price="60000.00"))).json()
+
+    headers = await _auth(client, admin)
+    await client.patch(
+        f"{ADMIN}/{criado['id']}/status", json={"status": "closed"}, headers=headers
+    )
+    stats = (await client.get("/api/v1/admin/stats", headers=headers)).json()
+
+    assert stats["interests_with_match"] == 0

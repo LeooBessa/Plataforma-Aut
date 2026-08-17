@@ -147,5 +147,6 @@ class DashboardStatsOut(BaseModel):
     pending_consignments: int
     vehicles_without_photo: int
     stale_vehicles: int
+    interests_with_match: int
     top_viewed: list[TopVehicleOut]
     leads_by_week: list[WeekLeadsOut]

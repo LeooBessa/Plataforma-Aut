@@ -126,6 +126,15 @@ class AdminBrandOut(BaseModel):
     models: list[AdminModelOut]
 
 
+class BrandCreateIn(BaseModel):
+    name: str = Field(min_length=2, max_length=80)
+
+
+class ModelCreateIn(BaseModel):
+    brand_id: UUID
+    name: str = Field(min_length=1, max_length=80)
+
+
 class AdminCatalogOut(BaseModel):
     """Marcas, modelos e opcionais do formulário de cadastro.
 

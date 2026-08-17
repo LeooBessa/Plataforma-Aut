@@ -13,6 +13,7 @@ from src.core.exceptions import NotFoundError
 from src.domain.catalog.enums import VehicleStatus
 from src.domain.catalog.value_objects import Page, Pagination
 from src.domain.consignment.enums import ConsignmentStatus
+from src.domain.interest.enums import InterestStatus
 from src.domain.scheduling.entities import (
     Appointment,
     AppointmentDraft,
@@ -26,6 +27,10 @@ from src.domain.scheduling.value_objects import AppointmentFilters
 from src.infrastructure.database.models import Appointment as AppointmentModel
 from src.infrastructure.database.models import ConsignmentRequest as ConsignmentModel
 from src.infrastructure.database.models import Vehicle, VehicleImage
+from src.infrastructure.database.models import VehicleInterest as InterestModel
+from src.infrastructure.database.repositories.interest_repository import (
+    _casa_com as _interesse_casa_com,
+)
 
 #: Dias à venda a partir dos quais o carro conta como encalhado. Sessenta é a
 #: régua usual da revenda de usado: passou disso, o giro parou e o preço precisa
@@ -180,7 +185,7 @@ class SqlAlchemyStatsRepository:
         self._session = session
 
     async def get_dashboard_stats(self) -> DashboardStats:
-        """Todos os números em CINCO consultas, não em vinte.
+        """Todos os números em SEIS consultas, não em vinte.
 
         Cada contador vira um `count(*) FILTER (WHERE ...)` dentro da mesma
         varredura, em vez de uma consulta por métrica. O dashboard é a primeira
@@ -188,9 +193,10 @@ class SqlAlchemyStatsRepository:
         até o Supabase somando em cada uma) apareceriam como lentidão logo no
         login.
 
-        As cinco são: os contadores de veículo, os de agendamento, os de
-        consignação, os mais vistos e a série semanal. As duas últimas devolvem
-        LINHAS, não números, e por isso não cabem nas outras.
+        As seis são: os contadores de veículo, os de agendamento, os de
+        consignação, os da lista de espera com carro compatível, os mais vistos e
+        a série semanal. As duas últimas devolvem LINHAS, não números, e por isso
+        não cabem nas outras.
         """
         agora = datetime.now(UTC)
         week_ago = agora - timedelta(days=7)
@@ -250,6 +256,21 @@ class SqlAlchemyStatsRepository:
             )
         ) or 0
 
+        # A regra do cruzamento vem do repositório de interesse, importada, e não
+        # copiada: é a MESMA que o painel de lista de espera usa. Duas cópias
+        # divergiriam, e aí o número aqui apontaria para uma tela que mostra
+        # outra coisa.
+        esperando_com_carro = (
+            await self._session.scalar(
+                select(func.count())
+                .select_from(InterestModel)
+                .where(
+                    InterestModel.status.in_([InterestStatus.NEW, InterestStatus.NOTIFIED]),
+                    select(Vehicle.id).where(_interesse_casa_com()).exists(),
+                )
+            )
+        ) or 0
+
         top_viewed = await self._top_viewed()
         leads_by_week = await self._leads_by_week(agora)
 
@@ -265,6 +286,7 @@ class SqlAlchemyStatsRepository:
             pending_appointments=appointment_row.pending,
             appointments_this_week=appointment_row.this_week,
             pending_consignments=pendentes_consignacao,
+            interests_with_match=esperando_com_carro,
             vehicles_without_photo=vehicle_row.sem_foto,
             stale_vehicles=vehicle_row.parados,
             top_viewed=top_viewed,

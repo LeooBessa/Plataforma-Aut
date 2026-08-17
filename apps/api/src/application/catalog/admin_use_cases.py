@@ -7,7 +7,14 @@ from uuid import UUID
 
 from src.application.ports import RevalidationService, SignedUpload, StorageService
 from src.core.exceptions import AuthorizationError, ConflictError, NotFoundError, ValidationError
-from src.domain.catalog.entities import AdminCatalog, Image, VehicleDetail, VehicleSummary
+from src.domain.catalog.entities import (
+    AdminBrandOption,
+    AdminCatalog,
+    AdminModelOption,
+    Image,
+    VehicleDetail,
+    VehicleSummary,
+)
 from src.domain.catalog.enums import VehicleStatus
 from src.domain.catalog.repositories import VehicleAdminRepository
 from src.domain.catalog.value_objects import Page, Pagination, VehicleFilters
@@ -53,6 +60,36 @@ class GetAdminVehicleUseCase:
         if vehicle is None:
             raise NotFoundError("Veículo não encontrado.")
         return vehicle
+
+
+@dataclass(frozen=True, slots=True)
+class CreateBrandUseCase:
+    """Cadastra marca nova. Restrito ao painel.
+
+    Existe porque o catálogo NUNCA vai estar completo: são milhares de modelos
+    no mercado brasileiro, e uma lista curada por mim sempre terá buraco. Sem
+    esta porta, faltando uma marca o vendedor trava no select e a única saída é
+    pedir para um programador — o que na prática significa não cadastrar o carro.
+    """
+
+    repository: VehicleAdminRepository
+
+    async def execute(self, name: str) -> AdminBrandOption:
+        limpo = name.strip()
+        if len(limpo) < 2:
+            raise ValidationError("Informe o nome da marca.")
+        return await self.repository.create_brand(limpo)
+
+
+@dataclass(frozen=True, slots=True)
+class CreateModelUseCase:
+    repository: VehicleAdminRepository
+
+    async def execute(self, brand_id: UUID, name: str) -> AdminModelOption:
+        limpo = name.strip()
+        if len(limpo) < 1:
+            raise ValidationError("Informe o nome do modelo.")
+        return await self.repository.create_model(brand_id, limpo)
 
 
 @dataclass(frozen=True, slots=True)

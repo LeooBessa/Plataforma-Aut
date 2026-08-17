@@ -105,6 +105,11 @@ class DashboardStats:
     #: parado, e quanto mais tempo passa, menos o carro vale.
     stale_vehicles: int
 
+    #: Gente na lista de espera que JÁ TEM carro compatível no pátio. É a
+    #: pendência mais fácil de resolver do painel: o carro está lá, a pessoa
+    #: pediu para ser avisada, e falta só alguém mandar a mensagem.
+    interests_with_match: int
+
     #: Os mais vistos, para saber o que atrai — e o que atrai mas não converte.
     top_viewed: list[TopVehicle]
 

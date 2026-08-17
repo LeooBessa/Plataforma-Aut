@@ -11,7 +11,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from src.core.exceptions import NotFoundError, ValidationError
+from src.core.exceptions import ConflictError, NotFoundError, ValidationError
 from src.domain.catalog.entities import (
     AdminBrandOption,
     AdminCatalog,
@@ -56,6 +56,50 @@ class SqlAlchemyVehicleAdminRepository:
             select(Vehicle).where(Vehicle.id == vehicle_id).options(*_FULL_LOAD)
         )
         return _to_detail(vehicle) if vehicle else None
+
+    async def create_brand(self, name: str) -> AdminBrandOption:
+        """Cadastra a marca. O slug sai do nome, e é o que garante a unicidade.
+
+        Comparar por SLUG, e não pelo nome cru, é o que impede "Caoa Chery",
+        "caoa chery" e "Caoa  Chery" de virarem três marcas distintas no filtro
+        do site. O `slugify` normaliza acento, caixa e espaço repetido, então as
+        três colidem no mesmo `caoa-chery` e a segunda é recusada.
+        """
+        slug = slugify(name)
+        existente = await self._session.scalar(select(Brand).where(Brand.slug == slug))
+        if existente is not None:
+            raise ConflictError(f"A marca “{existente.name}” já existe.")
+
+        marca = Brand(name=name, slug=slug)
+        self._session.add(marca)
+        await self._session.flush()
+        return AdminBrandOption(id=marca.id, name=marca.name, models=[])
+
+    async def create_model(self, brand_id: uuid.UUID, name: str) -> AdminModelOption:
+        """Cadastra o modelo DENTRO da marca.
+
+        A unicidade é por (marca, slug), não global: "Ka" da Ford e um eventual
+        "Ka" de outra marca são modelos diferentes e podem coexistir. É a mesma
+        regra que a tabela já declara em `uq_vehicle_models_brand_slug` — aqui
+        ela vira uma mensagem legível em vez de um erro de integridade cru.
+        """
+        marca = await self._session.get(Brand, brand_id)
+        if marca is None:
+            raise NotFoundError("Marca não encontrada.")
+
+        slug = slugify(name)
+        existente = await self._session.scalar(
+            select(VehicleModel).where(
+                VehicleModel.brand_id == brand_id, VehicleModel.slug == slug
+            )
+        )
+        if existente is not None:
+            raise ConflictError(f"“{marca.name} {existente.name}” já existe.")
+
+        modelo = VehicleModel(brand_id=brand_id, name=name, slug=slug)
+        self._session.add(modelo)
+        await self._session.flush()
+        return AdminModelOption(id=modelo.id, name=modelo.name)
 
     async def get_catalog(self) -> AdminCatalog:
         """Todas as marcas, modelos e opcionais — inclusive os nunca usados."""

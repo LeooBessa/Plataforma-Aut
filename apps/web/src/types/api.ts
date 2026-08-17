@@ -629,6 +629,47 @@ export interface paths {
     patch: operations['update_interest_status_api_v1_admin_interests__interest_id__status_patch'];
     trace?: never;
   };
+  '/api/v1/admin/catalog/brands': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Cadastrar marca
+     * @description O catálogo NUNCA vai estar completo.
+     *
+     *     São milhares de modelos no mercado brasileiro, e qualquer lista curada terá
+     *     buraco. Sem esta rota, faltando uma marca o vendedor trava no select e
+     *     depende de um programador — o que na prática significa não cadastrar o carro.
+     */
+    post: operations['create_brand_api_v1_admin_catalog_brands_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/catalog/models': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Cadastrar modelo */
+    post: operations['create_model_api_v1_admin_catalog_models_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -793,6 +834,11 @@ export interface components {
       | 'wagon'
       | 'minivan'
       | 'van';
+    /** BrandCreateIn */
+    BrandCreateIn: {
+      /** Name */
+      name: string;
+    };
     /** BrandOptionOut */
     BrandOptionOut: {
       /** Slug */
@@ -929,6 +975,8 @@ export interface components {
       vehicles_without_photo: number;
       /** Stale Vehicles */
       stale_vehicles: number;
+      /** Interests With Match */
+      interests_with_match: number;
       /** Top Viewed */
       top_viewed: components['schemas']['TopVehicleOut'][];
       /** Leads By Week */
@@ -1167,6 +1215,16 @@ export interface components {
       title: string;
       /** Price */
       price: string;
+    };
+    /** ModelCreateIn */
+    ModelCreateIn: {
+      /**
+       * Brand Id
+       * Format: uuid
+       */
+      brand_id: string;
+      /** Name */
+      name: string;
     };
     /** ModelOptionOut */
     ModelOptionOut: {
@@ -2885,6 +2943,100 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['InterestOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  create_brand_api_v1_admin_catalog_brands_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BrandCreateIn'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminBrandOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  create_model_api_v1_admin_catalog_models_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ModelCreateIn'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminModelOut'];
         };
       };
       /** @description Não autenticado */

@@ -13,6 +13,7 @@ import {
   Eye,
   FileEdit,
   HandCoins,
+  Sparkles,
   Star,
   Wallet,
 } from 'lucide-react';
@@ -191,6 +192,17 @@ function Pendencias({ stats }: { stats: DashboardStats | null }) {
           ? '1 carro oferecido sem resposta'
           : `${stats.pending_consignments} carros oferecidos sem resposta`,
       apoio: 'Quem quer vender está falando com outras lojas ao mesmo tempo.',
+      tom: 'brand' as const,
+    },
+    {
+      quando: stats.interests_with_match > 0,
+      href: '/admin/interesses' as const,
+      icon: Sparkles,
+      texto:
+        stats.interests_with_match === 1
+          ? '1 pessoa esperando por um carro que já está no pátio'
+          : `${stats.interests_with_match} pessoas esperando por um carro que já está no pátio`,
+      apoio: 'O carro está lá e ela pediu para ser avisada. Falta mandar a mensagem.',
       tom: 'brand' as const,
     },
     {

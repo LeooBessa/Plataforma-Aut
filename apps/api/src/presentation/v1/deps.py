@@ -19,6 +19,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from src.application.catalog.admin_use_cases import (
     ArchiveVehicleUseCase,
     ChangeVehicleStatusUseCase,
+    CreateBrandUseCase,
+    CreateModelUseCase,
     CreateVehicleUseCase,
     DeleteImageUseCase,
     DeleteVehicleUseCase,
@@ -475,3 +477,18 @@ UpdateInterestStatusDep = Annotated[
 # painel — a diferença entre as duas portas é a autenticação, não o dado: marca
 # e modelo são catálogo público, sem nada sensível.
 PublicCatalogDep = AdminCatalogDep
+
+
+# ------------------------------------------------------- escrita no catálogo
+
+
+def get_create_brand_use_case(repo: VehicleAdminRepositoryDep) -> CreateBrandUseCase:
+    return CreateBrandUseCase(repo)
+
+
+def get_create_model_use_case(repo: VehicleAdminRepositoryDep) -> CreateModelUseCase:
+    return CreateModelUseCase(repo)
+
+
+CreateBrandDep = Annotated[CreateBrandUseCase, Depends(get_create_brand_use_case)]
+CreateModelDep = Annotated[CreateModelUseCase, Depends(get_create_model_use_case)]

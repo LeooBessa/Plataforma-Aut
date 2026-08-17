@@ -32,6 +32,8 @@ from src.presentation.v1.deps import (
     AdminUser,
     ArchiveVehicleDep,
     ChangeVehicleStatusDep,
+    CreateBrandDep,
+    CreateModelDep,
     CreateVehicleDep,
     DashboardStatsDep,
     DeleteImageDep,
@@ -53,9 +55,13 @@ from src.presentation.v1.deps import (
     require_admin,
 )
 from src.presentation.v1.schemas.admin_vehicle import (
+    AdminBrandOut,
     AdminCatalogOut,
+    AdminModelOut,
+    BrandCreateIn,
     ImageRegisterIn,
     ImageReorderIn,
+    ModelCreateIn,
     UploadUrlIn,
     UploadUrlOut,
     VehicleIn,
@@ -431,3 +437,34 @@ async def update_interest_status(
 ) -> InterestOut:
     pedido = await use_case.execute(interest_id, payload.status)
     return InterestOut.model_validate(pedido)
+
+
+# ------------------------------------------------------- escrita no catálogo
+
+
+@router.post(
+    "/catalog/brands",
+    response_model=AdminBrandOut,
+    status_code=status.HTTP_201_CREATED,
+    summary="Cadastrar marca",
+)
+async def create_brand(payload: BrandCreateIn, use_case: CreateBrandDep) -> AdminBrandOut:
+    """O catálogo NUNCA vai estar completo.
+
+    São milhares de modelos no mercado brasileiro, e qualquer lista curada terá
+    buraco. Sem esta rota, faltando uma marca o vendedor trava no select e
+    depende de um programador — o que na prática significa não cadastrar o carro.
+    """
+    marca = await use_case.execute(payload.name)
+    return AdminBrandOut.model_validate(marca)
+
+
+@router.post(
+    "/catalog/models",
+    response_model=AdminModelOut,
+    status_code=status.HTTP_201_CREATED,
+    summary="Cadastrar modelo",
+)
+async def create_model(payload: ModelCreateIn, use_case: CreateModelDep) -> AdminModelOut:
+    modelo = await use_case.execute(payload.brand_id, payload.name)
+    return AdminModelOut.model_validate(modelo)

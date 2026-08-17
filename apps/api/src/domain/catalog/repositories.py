@@ -16,7 +16,9 @@ from typing import Protocol
 from uuid import UUID
 
 from src.domain.catalog.entities import (
+    AdminBrandOption,
     AdminCatalog,
+    AdminModelOption,
     FilterOptions,
     Image,
     VehicleDetail,
@@ -70,6 +72,14 @@ class VehicleAdminRepository(Protocol):
 
     async def get_by_id(self, vehicle_id: UUID) -> VehicleDetail | None:
         """Qualquer status — é a visão do admin."""
+        ...
+
+    async def create_brand(self, name: str) -> AdminBrandOption:
+        """Cadastra uma marca nova no catálogo."""
+        ...
+
+    async def create_model(self, brand_id: UUID, name: str) -> AdminModelOption:
+        """Cadastra um modelo dentro de uma marca."""
         ...
 
     async def get_catalog(self) -> AdminCatalog:
