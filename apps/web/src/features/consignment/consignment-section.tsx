@@ -19,6 +19,12 @@ import { ConsignmentForm } from '@/features/consignment/consignment-form';
  * de baixo. Além de tirar a monotonia do bloco, ele faz a passagem para o rodapé
  * branco acontecer por uma cor da paleta, e não por um corte seco de preto para
  * branco.
+ *
+ * SEM `mt`, e isso é obrigatório agora. A margem existia quando a seção vinha
+ * logo depois do estoque, que é branco — o vão ficava branco sobre branco e
+ * ninguém via. Com a lista de espera (cinza) no meio, a mesma margem passou a
+ * desenhar uma faixa BRANCA entre o cinza e o preto, exatamente o defeito que o
+ * rodapé já teve. O respiro daqui para cima é dado pelo `py` da seção anterior.
  */
 
 const ARGUMENTOS = [
@@ -41,7 +47,7 @@ const ARGUMENTOS = [
 
 export function ConsignmentSection() {
   return (
-    <section id="anuncie" className="bg-inverse relative isolate mt-16">
+    <section id="anuncie" className="bg-inverse relative isolate">
       <GradientBackdrop />
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
