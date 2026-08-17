@@ -88,6 +88,7 @@ export function InterestForm({ brands }: { brands: CatalogBrand[] }) {
   } = useForm<FormValues>({ resolver: zodResolver(schema), defaultValues: VAZIO });
 
   const marcaEscolhida = watch('brand_id');
+  const modeloEscolhido = watch('model_id');
   const modelos = brands.find((b) => b.id === marcaEscolhida)?.models ?? [];
 
   const comMascara = (campo: 'phone' | 'max_price', mascara: (v: string) => string) => {
@@ -182,7 +183,20 @@ export function InterestForm({ brands }: { brands: CatalogBrand[] }) {
         </Field>
 
         <Field label="Modelo" htmlFor="model_id" error={errors.model_id?.message}>
-          <Select id="model_id" disabled={!marcaEscolhida} {...register('model_id')}>
+          <Select
+            id="model_id"
+            disabled={!marcaEscolhida}
+            {...register('model_id')}
+            onChange={(e) => {
+              setValue('model_id', e.target.value);
+              // Escolher o modelo LIMPA a categoria — e é o que impede pedidos
+              // impossíveis. O catálogo não guarda a categoria de cada modelo,
+              // então nada impediria "RAM Rampage + Conversível": a Rampage é
+              // picape, o cruzamento nunca acharia nada, e o pedido ficaria
+              // parado para sempre sem ninguém entender por quê.
+              if (e.target.value) setValue('body_type', '');
+            }}
+          >
             <option value="">
               {marcaEscolhida ? 'Tanto faz o modelo' : 'Escolha a marca primeiro'}
             </option>
@@ -196,16 +210,21 @@ export function InterestForm({ brands }: { brands: CatalogBrand[] }) {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Categoria" htmlFor="body_type" error={errors.body_type?.message}>
-          <Select id="body_type" {...register('body_type')}>
-            <option value="">Tanto faz</option>
-            {Object.entries(BODY_LABELS).map(([valor, rotulo]) => (
-              <option key={valor} value={valor}>
-                {rotulo}
-              </option>
-            ))}
-          </Select>
-        </Field>
+        {/* A categoria só existe para quem NÃO sabe o modelo — "qualquer SUV da
+            Fiat até 80 mil". Nomeado o modelo, ela não acrescenta informação
+            nenhuma e só pode contradizer, então some da tela. */}
+        {!modeloEscolhido && (
+          <Field label="Categoria" htmlFor="body_type" error={errors.body_type?.message}>
+            <Select id="body_type" {...register('body_type')}>
+              <option value="">Tanto faz</option>
+              {Object.entries(BODY_LABELS).map(([valor, rotulo]) => (
+                <option key={valor} value={valor}>
+                  {rotulo}
+                </option>
+              ))}
+            </Select>
+          </Field>
+        )}
 
         <Field
           label="Até quanto quer gastar?"

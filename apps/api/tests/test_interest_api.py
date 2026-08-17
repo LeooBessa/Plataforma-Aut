@@ -320,3 +320,43 @@ async def test_status_de_pedido_inexistente_da_404(
     )
 
     assert response.status_code == 404
+
+
+async def test_modelo_escolhido_descarta_a_categoria(
+    client: AsyncClient, session: AsyncSession, admin: User, vehicles  # type: ignore[no-untyped-def]
+) -> None:
+    """O par impossível não pode virar lead morto.
+
+    O catálogo não guarda a categoria de cada modelo, então "RAM Rampage +
+    Conversível" chega até aqui. A Rampage é picape: mantido o par, o cruzamento
+    nunca acharia nada e o pedido ficaria parado para sempre.
+
+    A categoria é descartada e o modelo prevalece — e o teste prova pelo efeito
+    que importa: o carro certo ainda é encontrado.
+    """
+    await vehicles.create(
+        brand="Fiat", model="Toro", price="90000.00", body=BodyType.PICKUP
+    )
+    fiat = await _marca(session, "Fiat")
+    toro = await session.scalar(
+        select(VehicleModel).where(
+            VehicleModel.brand_id == fiat.id, VehicleModel.name == "Toro"
+        )
+    )
+    assert toro is not None
+
+    await client.post(
+        PUBLICO,
+        json=_payload(
+            str(fiat.id),
+            model_id=str(toro.id),
+            body_type="convertible",  # contradiz o modelo
+            max_price="100000.00",
+        ),
+    )
+
+    headers = await _auth(client, admin)
+    item = (await client.get(ADMIN, headers=headers)).json()["items"][0]
+
+    assert item["body_type"] is None, "a categoria contraditória devia ter sido descartada"
+    assert len(item["matches"]) == 1, "com ela mantida, o cruzamento não acharia nada"

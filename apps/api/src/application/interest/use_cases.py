@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from decimal import Decimal
 from uuid import UUID
 
@@ -33,7 +33,7 @@ class CreateInterestUseCase:
 
     async def execute(self, draft: InterestDraft) -> VehicleInterest:
         await _validar(draft, self.repository)
-        return await self.repository.create(draft)
+        return await self.repository.create(_sem_contradicao(draft))
 
 
 @dataclass(frozen=True, slots=True)
@@ -55,6 +55,28 @@ class UpdateInterestStatusUseCase:
         if atualizado is None:
             raise NotFoundError("Pedido não encontrado.")
         return atualizado
+
+
+def _sem_contradicao(draft: InterestDraft) -> InterestDraft:
+    """Modelo escolhido descarta a categoria.
+
+    O catálogo guarda marca e modelo, mas NÃO a categoria de cada modelo — então
+    nada impede o par "RAM Rampage + Conversível" de chegar aqui. A Rampage é
+    picape: o cruzamento não acharia nada, e o pedido ficaria parado para sempre
+    sem ninguém entender por quê. Nem o cliente, que se acha na fila, nem a loja,
+    que vê um nome que nunca casa.
+
+    A tela já esconde o campo quando há modelo, mas a regra vive aqui também
+    porque a borda HTTP é pública: um cliente que não seja o nosso formulário
+    mandaria os dois e criaria o mesmo lead morto.
+
+    Descartar em silêncio, e não recusar: o modelo é a informação MAIS
+    específica das duas, então ele manda. Devolver 422 para algo que a interface
+    nem oferece só produziria um erro que ninguém consegue interpretar.
+    """
+    if draft.model_id is not None and draft.body_type is not None:
+        return replace(draft, body_type=None)
+    return draft
 
 
 async def _validar(draft: InterestDraft, repository: InterestRepository) -> None:
