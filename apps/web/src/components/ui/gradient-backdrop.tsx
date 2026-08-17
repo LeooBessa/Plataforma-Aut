@@ -42,20 +42,37 @@ import { cn } from '@/lib/utils';
  * texto branco esmaecido perderia contraste em cima dele. O 800 mantém o azul
  * reconhecível e deixa o texto legível — foi medido, não chutado.
  *
- * SÓ EXISTE A VERSÃO ESCURA. Houve uma clara (branco → `brand-100`) para a seção
- * da lista de espera, e foi removida: sobre fundo branco o azul precisa ser
- * pálido para o texto escuro sobreviver, e pálido demais ele deixa de somar. O
- * efeito depende do contraste com o preto — não é um tema que se inverte.
+ * A VERSÃO CLARA parte do CINZA (`ink-100`), não do branco. A primeira tentativa
+ * saiu do branco e o azul pálido ficava entre duas cadeiras: não era branco nem
+ * azul, lia como sujeira. Do cinza funciona porque a base já não é branca, então
+ * o azul soma como segunda cor de propósito.
+ *
+ * O azul do claro é o `brand-200`, e a escolha entre ele e o `brand-100` foi
+ * comparada na tela: no 100 o azul quase volta ao problema do branco, discreto
+ * até o ponto de parecer acidente. O 200 lê como intenção e ainda faz ponte para
+ * a seção preta abaixo.
+ *
+ * Mais forte que isso não dá: o degradê fica atrás de texto ESCURO. No escuro é o
+ * contrário — texto branco exige azul fundo (`brand-800`). Trocar um pelo outro
+ * deixa ilegível a metade de baixo da seção.
  */
-export function GradientBackdrop({ className }: { className?: string }) {
+const TONS = {
+  dark: '[background:radial-gradient(125%_125%_at_50%_10%,var(--color-ink-950)_40%,var(--color-brand-800)_100%)]',
+  light:
+    '[background:radial-gradient(125%_125%_at_50%_10%,var(--color-ink-100)_40%,var(--color-brand-200)_100%)]',
+} as const;
+
+export function GradientBackdrop({
+  tone = 'dark',
+  className,
+}: {
+  tone?: keyof typeof TONS;
+  className?: string;
+}) {
   return (
     <div
       aria-hidden
-      className={cn(
-        'pointer-events-none absolute inset-0 -z-10',
-        '[background:radial-gradient(125%_125%_at_50%_10%,var(--color-ink-950)_40%,var(--color-brand-800)_100%)]',
-        className,
-      )}
+      className={cn('pointer-events-none absolute inset-0 -z-10', TONS[tone], className)}
     />
   );
 }

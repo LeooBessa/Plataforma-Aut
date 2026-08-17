@@ -1,5 +1,6 @@
 import { BellRing, Search, Sparkles } from 'lucide-react';
 
+import { GradientBackdrop } from '@/components/ui/gradient-backdrop';
 import { InterestForm } from '@/features/interest/interest-form';
 import { getCatalog, safely } from '@/lib/api';
 
@@ -51,7 +52,8 @@ export async function InterestSection() {
   if (!brands || brands.length === 0) return null;
 
   return (
-    <section id="avise-me" className="bg-sunken mt-16">
+    <section id="avise-me" className="bg-sunken relative isolate mt-16">
+      <GradientBackdrop tone="light" />
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
           <div>
