@@ -1,8 +1,8 @@
 import { cn } from '@/lib/utils';
 
 /**
- * Fundo de brilho radial: base no alto, azul da marca escapando pelas quinas de
- * baixo. Vem em duas versões — fundo preto e fundo branco.
+ * Fundo de brilho radial: preto no alto, azul da marca escapando pelas quinas
+ * de baixo.
  *
  * ----------------------------------------------------------------------------
  * POR QUE É UMA CAMADA, E NÃO UM "HERO"
@@ -17,8 +17,8 @@ import { cn } from '@/lib/utils';
  * ----------------------------------------------------------------------------
  * A seção que recebe precisa de `relative isolate`:
  *
- *   <section className="bg-inverse relative isolate">   ← ou bg-canvas, no claro
- *     <GradientBackdrop />                              ← ou tone="light"
+ *   <section className="bg-inverse relative isolate">
+ *     <GradientBackdrop />
  *     …conteúdo…
  *   </section>
  *
@@ -31,40 +31,31 @@ import { cn } from '@/lib/utils';
  * legível mesmo no instante antes de o degradê pintar.
  *
  * ----------------------------------------------------------------------------
- * AS CORES — E POR QUE OS DOIS AZUIS SÃO DIFERENTES
+ * AS CORES
  * ----------------------------------------------------------------------------
- * O original ia de preto a `#63e`, um violeta. Aqui as pontas saem da paleta, em
- * variáveis e não em hex, para que um ajuste de marca chegue sozinho.
+ * O original ia de preto a `#63e`, um violeta. Aqui as duas pontas saem da
+ * paleta: o mesmo preto do rodapé e o azul da logo — variáveis, não hex, para
+ * que um ajuste de marca chegue aqui sozinho.
  *
- * Mesmo MATIZ nas duas versões (262, o azul da logo), luminosidades opostas — e
- * isso é obrigatório, não gosto. O degradê fica exatamente atrás do texto:
+ * O azul é o `brand-800`, não o `brand-600` do texto. O 600 tem luminosidade
+ * 0.55 e as quinas de baixo ficam justamente atrás da lista de argumentos: o
+ * texto branco esmaecido perderia contraste em cima dele. O 800 mantém o azul
+ * reconhecível e deixa o texto legível — foi medido, não chutado.
  *
- *   • no ESCURO o texto é branco, então o azul tem de ser fundo (`brand-800`).
- *     Com o `brand-600` do texto, o branco esmaecido sobre ele perderia
- *     contraste.
- *   • no CLARO o texto é escuro, então o azul tem de ser PÁLIDO (`brand-100`).
- *     O mesmo `brand-800` do escuro apagaria o texto preto por cima.
- *
- * Trocar um pelo outro não deixa "mais bonito": deixa ilegível na metade de
- * baixo da seção.
+ * SÓ EXISTE A VERSÃO ESCURA. Houve uma clara (branco → `brand-100`) para a seção
+ * da lista de espera, e foi removida: sobre fundo branco o azul precisa ser
+ * pálido para o texto escuro sobreviver, e pálido demais ele deixa de somar. O
+ * efeito depende do contraste com o preto — não é um tema que se inverte.
  */
-const TONS = {
-  dark: '[background:radial-gradient(125%_125%_at_50%_10%,var(--color-ink-950)_40%,var(--color-brand-800)_100%)]',
-  light:
-    '[background:radial-gradient(125%_125%_at_50%_10%,var(--color-ink-0)_40%,var(--color-brand-100)_100%)]',
-} as const;
-
-export function GradientBackdrop({
-  tone = 'dark',
-  className,
-}: {
-  tone?: keyof typeof TONS;
-  className?: string;
-}) {
+export function GradientBackdrop({ className }: { className?: string }) {
   return (
     <div
       aria-hidden
-      className={cn('pointer-events-none absolute inset-0 -z-10', TONS[tone], className)}
+      className={cn(
+        'pointer-events-none absolute inset-0 -z-10',
+        '[background:radial-gradient(125%_125%_at_50%_10%,var(--color-ink-950)_40%,var(--color-brand-800)_100%)]',
+        className,
+      )}
     />
   );
 }

@@ -1,6 +1,5 @@
 import { BellRing, Search, Sparkles } from 'lucide-react';
 
-import { GradientBackdrop } from '@/components/ui/gradient-backdrop';
 import { InterestForm } from '@/features/interest/interest-form';
 import { getCatalog, safely } from '@/lib/api';
 
@@ -14,14 +13,15 @@ import { getCatalog, safely } from '@/lib/api';
  * seção fala com quem VENDE e o visitante já teria entendido que a página
  * acabou para ele.
  *
- * Fundo BRANCO com o mesmo brilho azul da seção de baixo, na versão clara. Era
- * cinza (`bg-sunken`), e o cinza fazia o cartão branco do formulário quase
- * desaparecer — a diferença entre os dois é pequena demais para delimitar um do
- * outro. Com o fundo branco, quem delimita o cartão é a borda e a sombra, que é
- * o papel delas.
+ * Fundo cinza claro, e o cartão do formulário branco por cima: é o que separa um
+ * do outro sem precisar de moldura pesada.
  *
- * As duas seções passam a compartilhar a mesma linguagem — brilho radial azul,
- * mesmo matiz — e se distinguem pela luminosidade: clara aqui, escura abaixo. A
+ * Tentei aqui o mesmo brilho radial azul da seção de baixo, numa versão clara.
+ * Foi descartado — sobre fundo branco o azul precisa ser pálido para o texto
+ * escuro sobreviver, e pálido demais ele deixa de somar: virou uma mancha azulada
+ * sem intenção. O efeito depende do contraste com o preto para funcionar.
+ *
+ * A seção seguinte é preta, e duas escuras seguidas viram um bloco só. A
  * alternância clara → escura → rodapé claro é o que dá ritmo ao fim da página.
  */
 
@@ -51,8 +51,7 @@ export async function InterestSection() {
   if (!brands || brands.length === 0) return null;
 
   return (
-    <section id="avise-me" className="bg-canvas relative isolate mt-16">
-      <GradientBackdrop tone="light" />
+    <section id="avise-me" className="bg-sunken mt-16">
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
           <div>
@@ -79,10 +78,9 @@ export async function InterestSection() {
             </ul>
           </div>
 
-          {/* `ring-line-strong` e não `ring-line`: sobre o cinza que havia antes
-              a borda fraca bastava para separar o cartão do fundo. Sobre o
-              branco ela some, e passa a ser a borda que faz o cartão existir. */}
-          <div className="rounded-card bg-canvas shadow-card ring-line-strong p-6 ring-1 sm:p-8">
+          {/* O cartão branco sobre o cinza da seção: é o que separa o formulário
+              do texto sem precisar de moldura. */}
+          <div className="rounded-card bg-canvas shadow-card ring-line p-6 ring-1 sm:p-8">
             <InterestForm brands={brands} />
           </div>
         </div>
