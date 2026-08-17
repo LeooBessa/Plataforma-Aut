@@ -50,8 +50,18 @@ export function ConsignmentSection() {
     <section id="anuncie" className="bg-inverse relative isolate">
       <GradientBackdrop />
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
+        {/* COLUNAS INVERTIDAS em relação à seção de cima (lista de espera), que
+            tem texto à esquerda e formulário à direita. Duas seções seguidas com
+            o mesmo esqueleto fazem a segunda parecer repetição da primeira;
+            alternando, cada uma volta a ler como bloco próprio.
+
+            A inversão é só do `lg` para cima, e por CSS (`order`), não mexendo na
+            ordem do HTML. No celular as colunas empilham, e ali a sequência certa
+            é argumento ANTES do formulário — ninguém preenche um formulário antes
+            de saber para quê. Manter o HTML nessa ordem também preserva a leitura
+            de quem usa leitor de tela, que segue o documento e não o CSS. */}
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
-          <div>
+          <div className="lg:order-2">
             <h2 className="text-on-inverse text-2xl font-semibold tracking-tight sm:text-3xl">
               Quer vender seu carro?
             </h2>
@@ -80,7 +90,7 @@ export function ConsignmentSection() {
               um tema de input inteiro só para ele — e o site tem um só, feito
               para fundo branco. Um cartão claro aqui resolve sem duplicar
               sistema, e de quebra destaca a ação. */}
-          <div className="rounded-card bg-canvas p-6 sm:p-8">
+          <div className="rounded-card bg-canvas p-6 sm:p-8 lg:order-1">
             <ConsignmentForm />
           </div>
         </div>
