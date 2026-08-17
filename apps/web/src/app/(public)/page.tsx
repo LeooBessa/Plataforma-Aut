@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { CarFront, MessageCircle, SearchX } from 'lucide-react';
 
 import { ConsignmentSection } from '@/features/consignment/consignment-section';
+import { InterestSection } from '@/features/interest/interest-section';
 import { Hero } from '@/features/home/hero';
 import { SearchFilters } from '@/features/vehicles/search-filters';
 import { VehicleCard, VehicleCardSkeleton } from '@/features/vehicles/vehicle-card';
@@ -38,8 +39,16 @@ export default async function HomePage({ searchParams }: Props) {
 
       <EstoqueSection params={params} />
 
-      {/* Entre o estoque e o rodapé: quem chega quer comprar, e só depois de
-          rolar a vitrine é que quem TEM um carro para vender se reconhece. */}
+      {/* Logo DEPOIS da vitrine, e é aí que está o argumento: quem rolou a grade
+          inteira sem achar nada com a cara dele é exatamente quem esta seção
+          atende. Antes do estoque não faria sentido — ninguém pede o que ainda
+          não procurou. */}
+      <Suspense fallback={null}>
+        <InterestSection />
+      </Suspense>
+
+      {/* Por último: quem chega quer comprar, e só depois de rolar a vitrine é
+          que quem TEM um carro para vender se reconhece. */}
       <ConsignmentSection />
     </>
   );

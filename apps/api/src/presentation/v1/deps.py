@@ -48,6 +48,11 @@ from src.application.identity.use_cases import (
     LogoutUseCase,
     RefreshSessionUseCase,
 )
+from src.application.interest.use_cases import (
+    CreateInterestUseCase,
+    ListInterestsUseCase,
+    UpdateInterestStatusUseCase,
+)
 from src.application.ports import EmailSender, RevalidationService, StorageService
 from src.application.scheduling.use_cases import (
     CreateAppointmentUseCase,
@@ -64,6 +69,7 @@ from src.domain.catalog.repositories import VehicleAdminRepository, VehicleRepos
 from src.domain.consignment.repositories import ConsignmentRepository
 from src.domain.identity.entities import AuthenticatedUser
 from src.domain.identity.repositories import RefreshTokenRepository, UserRepository
+from src.domain.interest.repositories import InterestRepository
 from src.domain.scheduling.repositories import AppointmentRepository, StatsRepository
 from src.infrastructure.database.repositories.appointment_repository import (
     SqlAlchemyAppointmentRepository,
@@ -71,6 +77,9 @@ from src.infrastructure.database.repositories.appointment_repository import (
 )
 from src.infrastructure.database.repositories.consignment_repository import (
     SqlAlchemyConsignmentRepository,
+)
+from src.infrastructure.database.repositories.interest_repository import (
+    SqlAlchemyInterestRepository,
 )
 from src.infrastructure.database.repositories.user_repository import (
     SqlAlchemyRefreshTokenRepository,
@@ -430,3 +439,39 @@ ListConsignmentsDep = Annotated[
 UpdateConsignmentStatusDep = Annotated[
     UpdateConsignmentStatusUseCase, Depends(get_update_consignment_status_use_case)
 ]
+
+
+# ---------------------------------------------------------------- interesse
+
+
+def get_interest_repository(session: SessionDep) -> InterestRepository:
+    return SqlAlchemyInterestRepository(session)
+
+
+InterestRepositoryDep = Annotated[InterestRepository, Depends(get_interest_repository)]
+
+
+def get_create_interest_use_case(repo: InterestRepositoryDep) -> CreateInterestUseCase:
+    return CreateInterestUseCase(repo)
+
+
+def get_list_interests_use_case(repo: InterestRepositoryDep) -> ListInterestsUseCase:
+    return ListInterestsUseCase(repo)
+
+
+def get_update_interest_status_use_case(
+    repo: InterestRepositoryDep,
+) -> UpdateInterestStatusUseCase:
+    return UpdateInterestStatusUseCase(repo)
+
+
+CreateInterestDep = Annotated[CreateInterestUseCase, Depends(get_create_interest_use_case)]
+ListInterestsDep = Annotated[ListInterestsUseCase, Depends(get_list_interests_use_case)]
+UpdateInterestStatusDep = Annotated[
+    UpdateInterestStatusUseCase, Depends(get_update_interest_status_use_case)
+]
+
+# O catálogo COMPLETO servindo uma rota pública. O caso de uso é o mesmo do
+# painel — a diferença entre as duas portas é a autenticação, não o dado: marca
+# e modelo são catálogo público, sem nada sensível.
+PublicCatalogDep = AdminCatalogDep

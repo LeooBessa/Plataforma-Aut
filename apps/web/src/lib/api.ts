@@ -23,6 +23,9 @@ export type VehicleSummary = Schemas['VehicleSummaryOut'];
 export type VehicleDetail = Schemas['VehicleDetailOut'];
 export type VehiclePage = Schemas['VehiclePageOut'];
 export type FilterOptions = Schemas['FilterOptionsOut'];
+export type Interest = Schemas['InterestOut'];
+export type InterestPage = Schemas['InterestPageOut'];
+export type CatalogBrand = Schemas['AdminBrandOut'];
 export type Appointment = Schemas['AppointmentOut'];
 export type DashboardStats = Schemas['DashboardStatsOut'];
 export type Image = Schemas['ImageOut'];
@@ -140,6 +143,20 @@ export function getFilterOptions(): Promise<FilterOptions> {
   return request<FilterOptions>('/vehicles/filters', {
     revalidate: 900,
     tags: ['filters'],
+  });
+}
+
+export function getCatalog(): Promise<CatalogBrand[]> {
+  // O catálogo COMPLETO, não só o que tem carro à venda — é a diferença para
+  // `getFilterOptions`. Quem procura uma Hilux justamente quando não há nenhuma
+  // é exatamente quem vale cadastrar.
+  //
+  // Muda só quando a loja ganha marca ou modelo novo no catálogo, o que é raro:
+  // uma hora de cache é folgado e tira essa consulta do caminho de quem abre a
+  // home.
+  return request<CatalogBrand[]>('/catalog', {
+    revalidate: 3600,
+    tags: ['catalog'],
   });
 }
 

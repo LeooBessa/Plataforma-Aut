@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Calendar, Car, HandCoins, LayoutDashboard, LogOut } from 'lucide-react';
+import { BellRing, Calendar, Car, HandCoins, LayoutDashboard, LogOut } from 'lucide-react';
 
 import { useAuth } from '@/features/auth/auth-provider';
 import { cn } from '@/lib/utils';
@@ -34,6 +34,7 @@ const NAV = [
   { href: '/admin/veiculos', label: 'Estoque', icon: Car },
   { href: '/admin/agendamentos', label: 'Agendamentos', icon: Calendar },
   { href: '/admin/anuncie', label: 'Carros oferecidos', icon: HandCoins },
+  { href: '/admin/interesses', label: 'Lista de espera', icon: BellRing },
 ] as const;
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {

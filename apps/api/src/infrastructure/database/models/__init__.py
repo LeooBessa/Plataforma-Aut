@@ -18,6 +18,7 @@ from src.infrastructure.database.models.catalog import (
 from src.infrastructure.database.models.consignment import ConsignmentRequest
 from src.infrastructure.database.models.dealership import Dealership
 from src.infrastructure.database.models.identity import RefreshToken, User
+from src.infrastructure.database.models.interest import VehicleInterest
 from src.infrastructure.database.models.scheduling import Appointment
 
 __all__ = [
@@ -30,6 +31,7 @@ __all__ = [
     "User",
     "Vehicle",
     "VehicleImage",
+    "VehicleInterest",
     "VehicleModel",
     "vehicle_features",
 ]

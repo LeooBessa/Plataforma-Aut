@@ -10,6 +10,7 @@ from src.presentation.v1.routes import (
     auth,
     consignments,
     health,
+    interests,
     vehicles,
 )
 
@@ -19,4 +20,5 @@ api_router.include_router(auth.router)
 api_router.include_router(vehicles.router)
 api_router.include_router(appointments.router)
 api_router.include_router(consignments.router)
+api_router.include_router(interests.router)
 api_router.include_router(admin.router)

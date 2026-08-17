@@ -219,6 +219,51 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/catalog': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Marcas e modelos do catálogo (para o formulário de interesse)
+     * @description O catálogo COMPLETO, não só o que tem carro à venda.
+     *
+     *     É a diferença essencial em relação a `/vehicles/filters`, que devolve apenas
+     *     marcas com estoque — correto lá, porque oferecer um filtro que retorna zero
+     *     resultados é pior do que não oferecer.
+     *
+     *     Aqui é o oposto: a pessoa está dizendo o que quer que a loja ARRANJE. Limitar
+     *     ao que já existe no pátio esvaziaria a funcionalidade — quem procura uma
+     *     Hilux justamente quando não há nenhuma é exatamente quem vale cadastrar.
+     */
+    get: operations['get_catalog_api_v1_catalog_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/interests': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** Me avise quando chegar */
+    post: operations['create_interest_api_v1_interests_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/admin/stats': {
     parameters: {
       query?: never;
@@ -541,6 +586,47 @@ export interface paths {
     head?: never;
     /** Marcar como contatado, anunciado ou recusado */
     patch: operations['update_consignment_status_api_v1_admin_consignments__request_id__status_patch'];
+    trace?: never;
+  };
+  '/api/v1/admin/interests': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Quem pediu para ser avisado
+     * @description Cada item já vem com os carros do estoque que batem com o pedido.
+     *
+     *     É o que separa esta tela de uma lista morta: sem o cruzamento, o vendedor
+     *     teria de abrir o estoque e conferir de cabeça a cada carro que entra — e não
+     *     faria. Com `matching=true`, a lista mostra só quem dá para atender HOJE.
+     */
+    get: operations['list_interests_api_v1_admin_interests_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/interests/{interest_id}/status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    /** Marcar como avisado ou encerrado */
+    patch: operations['update_interest_status_api_v1_admin_interests__interest_id__status_patch'];
     trace?: never;
   };
 }
@@ -963,6 +1049,106 @@ export interface components {
       /** Image Ids */
       image_ids: string[];
     };
+    /** InterestCreateIn */
+    InterestCreateIn: {
+      /** Name */
+      name: string;
+      /** Phone */
+      phone: string;
+      /** Email */
+      email?: string | null;
+      /**
+       * Brand Id
+       * Format: uuid
+       */
+      brand_id: string;
+      /** Model Id */
+      model_id?: string | null;
+      body_type?: components['schemas']['BodyType'] | null;
+      /** Max Price */
+      max_price: number | string;
+      /** Notes */
+      notes?: string | null;
+      /** Website */
+      website?: string | null;
+    };
+    /**
+     * InterestCreatedOut
+     * @description Resposta enxuta de propósito.
+     *
+     *     A rota é pública: devolver os dados enviados a transformaria num verificador
+     *     de dados alheios — bastaria enviar um id para descobrir o telefone de quem
+     *     se cadastrou.
+     */
+    InterestCreatedOut: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /**
+       * Message
+       * @default Pedido recebido! Avisamos assim que aparecer algo com esse perfil.
+       */
+      message: string;
+    };
+    /** InterestOut */
+    InterestOut: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Name */
+      name: string;
+      /** Phone */
+      phone: string;
+      /** Email */
+      email: string | null;
+      /** Brand Name */
+      brand_name: string;
+      /** Model Name */
+      model_name: string | null;
+      body_type: components['schemas']['BodyType'] | null;
+      /** Max Price */
+      max_price: string;
+      /** Notes */
+      notes: string | null;
+      status: components['schemas']['InterestStatus'];
+      /**
+       * Created At
+       * Format: date-time
+       */
+      created_at: string;
+      /** Matches */
+      matches: components['schemas']['MatchingVehicleOut'][];
+    };
+    /** InterestPageOut */
+    InterestPageOut: {
+      /** Items */
+      items: components['schemas']['InterestOut'][];
+      /** Meta */
+      meta: {
+        [key: string]: number;
+      };
+    };
+    /**
+     * InterestStatus
+     * @description Estágios de um pedido de aviso ("me avise quando chegar").
+     *
+     *     O ciclo é o do AVISO, não o da venda: a loja não vende aqui, ela avisa. Por
+     *     isso `NOTIFIED` (a oferta foi disparada) e não "vendido" — o que acontece
+     *     depois do aviso é uma negociação normal, que vive no agendamento.
+     *
+     *     `CLOSED` é para quem já comprou, desistiu ou parou de responder. Sem ele a
+     *     lista só cresce, e uma lista que nunca encolhe deixa de ser lida.
+     * @enum {string}
+     */
+    InterestStatus: 'new' | 'notified' | 'closed';
+    /** InterestStatusIn */
+    InterestStatusIn: {
+      status: components['schemas']['InterestStatus'];
+    };
     /** LoginIn */
     LoginIn: {
       /**
@@ -972,6 +1158,15 @@ export interface components {
       email: string;
       /** Password */
       password: string;
+    };
+    /** MatchingVehicleOut */
+    MatchingVehicleOut: {
+      /** Slug */
+      slug: string;
+      /** Title */
+      title: string;
+      /** Price */
+      price: string;
     };
     /** ModelOptionOut */
     ModelOptionOut: {
@@ -1681,6 +1876,59 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['ConsignmentCreatedOut'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  get_catalog_api_v1_catalog_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['AdminBrandOut'][];
+        };
+      };
+    };
+  };
+  create_interest_api_v1_interests_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['InterestCreateIn'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['InterestCreatedOut'];
         };
       };
       /** @description Validation Error */
@@ -2537,6 +2785,106 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['ConsignmentOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  list_interests_api_v1_admin_interests_get: {
+    parameters: {
+      query?: {
+        /** @description Busca por pessoa, marca ou modelo */
+        q?: string | null;
+        status?: components['schemas']['InterestStatus'][] | null;
+        /** @description Só quem já tem carro compatível no pátio */
+        matching?: boolean;
+        page?: number;
+        page_size?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['InterestPageOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  update_interest_status_api_v1_admin_interests__interest_id__status_patch: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        interest_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['InterestStatusIn'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['InterestOut'];
         };
       };
       /** @description Não autenticado */

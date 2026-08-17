@@ -23,6 +23,8 @@ from src.domain.catalog.value_objects import (
 )
 from src.domain.consignment.enums import ConsignmentStatus
 from src.domain.consignment.value_objects import ConsignmentFilters
+from src.domain.interest.enums import InterestStatus
+from src.domain.interest.value_objects import InterestFilters
 from src.domain.scheduling.enums import AppointmentStatus
 from src.domain.scheduling.value_objects import AppointmentFilters
 from src.presentation.v1.deps import (
@@ -39,12 +41,14 @@ from src.presentation.v1.deps import (
     ListAdminVehiclesDep,
     ListAppointmentsDep,
     ListConsignmentsDep,
+    ListInterestsDep,
     PrepareImageUploadDep,
     RegisterImageDep,
     ReorderImagesDep,
     SetCoverImageDep,
     UpdateAppointmentStatusDep,
     UpdateConsignmentStatusDep,
+    UpdateInterestStatusDep,
     UpdateVehicleDep,
     require_admin,
 )
@@ -67,6 +71,11 @@ from src.presentation.v1.schemas.consignment import (
     ConsignmentOut,
     ConsignmentPageOut,
     ConsignmentStatusIn,
+)
+from src.presentation.v1.schemas.interest import (
+    InterestOut,
+    InterestPageOut,
+    InterestStatusIn,
 )
 from src.presentation.v1.schemas.vehicle import (
     ImageOut,
@@ -375,3 +384,50 @@ async def update_consignment_status(
 ) -> ConsignmentOut:
     pedido = await use_case.execute(request_id, payload.status)
     return ConsignmentOut.model_validate(pedido)
+
+
+# ------------------------------------------------------------------ interesse
+
+
+@router.get(
+    "/interests",
+    response_model=InterestPageOut,
+    summary="Quem pediu para ser avisado",
+)
+async def list_interests(
+    use_case: ListInterestsDep,
+    q: Annotated[
+        str | None, Query(max_length=120, description="Busca por pessoa, marca ou modelo")
+    ] = None,
+    status_filter: Annotated[list[InterestStatus] | None, Query(alias="status")] = None,
+    com_estoque: Annotated[
+        bool, Query(alias="matching", description="Só quem já tem carro compatível no pátio")
+    ] = False,
+    page: Annotated[int, Query(ge=1)] = 1,
+    page_size: Annotated[int, Query(ge=1, le=MAX_PAGE_SIZE)] = 20,
+) -> InterestPageOut:
+    """Cada item já vem com os carros do estoque que batem com o pedido.
+
+    É o que separa esta tela de uma lista morta: sem o cruzamento, o vendedor
+    teria de abrir o estoque e conferir de cabeça a cada carro que entra — e não
+    faria. Com `matching=true`, a lista mostra só quem dá para atender HOJE.
+    """
+    result = await use_case.execute(
+        InterestFilters(query=q, statuses=status_filter or [], only_with_matches=com_estoque),
+        Pagination(page=page, page_size=page_size),
+    )
+    return InterestPageOut.from_page(result)
+
+
+@router.patch(
+    "/interests/{interest_id}/status",
+    response_model=InterestOut,
+    summary="Marcar como avisado ou encerrado",
+)
+async def update_interest_status(
+    interest_id: UUID,
+    payload: InterestStatusIn,
+    use_case: UpdateInterestStatusDep,
+) -> InterestOut:
+    pedido = await use_case.execute(interest_id, payload.status)
+    return InterestOut.model_validate(pedido)
