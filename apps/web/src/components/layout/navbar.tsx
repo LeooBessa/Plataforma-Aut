@@ -8,9 +8,18 @@ import { Menu, Search, X } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
+// "Artigos" entra ANTES de Sobre: é conteúdo que se lê, e fica junto de
+// Veículos, o outro item que leva a alguma coisa para consumir. Sobre e Contato
+// são institucionais e fecham a lista.
+//
+// Fica no menu mesmo com zero artigo publicado. A página vazia diz "em breve",
+// que é honesto — e a alternativa (esconder até publicar) significaria que a
+// loja publica o primeiro artigo e ele não aparece em lugar nenhum até alguém
+// lembrar de mexer no menu.
 const LINKS = [
   { href: '/', label: 'Home' },
   { href: '/veiculos', label: 'Veículos' },
+  { href: '/artigos', label: 'Artigos' },
   { href: '/sobre', label: 'Sobre' },
   { href: '/contato', label: 'Contato' },
 ] as const;
