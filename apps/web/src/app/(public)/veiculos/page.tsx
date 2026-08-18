@@ -1,14 +1,12 @@
 import { Suspense } from 'react';
 import type { Metadata, Route } from 'next';
 import Link from 'next/link';
-import { CarFront, ChevronLeft, ChevronRight, MessageCircle, SearchX } from 'lucide-react';
+import { BellRing, CarFront, ChevronLeft, ChevronRight, SearchX } from 'lucide-react';
 
 import { ButtonLink } from '@/components/ui/button';
 import { SearchFilters } from '@/features/vehicles/search-filters';
 import { VehicleCard, VehicleCardSkeleton } from '@/features/vehicles/vehicle-card';
 import { getFilterOptions, listVehicles, type VehicleSearchParams } from '@/lib/api';
-import { WHATSAPP } from '@/lib/contato';
-import { whatsappLink } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
 export const metadata: Metadata = {
@@ -244,27 +242,25 @@ function EmptyState({ semFiltro }: { semFiltro: boolean }) {
         {semFiltro ? <CarFront className="size-6" /> : <SearchX className="size-6" />}
       </span>
       <h2 className="text-content mt-5 text-lg font-semibold">
-        {semFiltro ? 'Estamos renovando o estoque' : 'Nenhum veículo encontrado'}
+        {semFiltro ? 'Diga o que você procura' : 'Nenhum veículo encontrado'}
       </h2>
       <p className="text-faint mt-1.5 max-w-sm text-sm">
         {semFiltro
-          ? 'Os próximos carros entram em breve. Chame no WhatsApp e diga o que procura — a gente avisa assim que chegar.'
+          ? 'O estoque gira toda semana. Cadastre o carro que você quer e a gente te avisa assim que aparecer um com o seu perfil.'
           : 'Tente remover algum filtro ou buscar por outro termo.'}
       </p>
       {/* Um beco sem saída é onde o usuário abandona o site. Sempre há uma porta —
           mas ela muda: sem estoque, "ver todos os veículos" devolveria a pessoa
-          para a mesma tela vazia. A porta passa a ser a conversa, que é onde a
-          loja consegue atender quem chegou. */}
+          para a mesma tela vazia.
+          A porta passa a ser a lista de espera, que fica na HOME (`/#avise-me`) e
+          não aqui — daí o caminho absoluto. Cadastrar o perfil é melhor que mandar
+          mensagem: a loja fica com o que a pessoa procura em campo estruturado, e
+          o painel cruza isso com cada carro que entra. */}
       {semFiltro ? (
-        <a
-          href={whatsappLink(WHATSAPP, 'Olá! Vi o site da Giro Auto e queria saber o que vai entrar no estoque.')}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="rounded-btn bg-success-700 hover:bg-success-800 mt-6 inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white transition-colors"
-        >
-          <MessageCircle className="size-4" />
-          Falar no WhatsApp
-        </a>
+        <ButtonLink href="/#avise-me" className="mt-6">
+          <BellRing className="size-4" />
+          Quero ser avisado
+        </ButtonLink>
       ) : (
         <ButtonLink href="/veiculos" variant="secondary" className="mt-6">
           Ver todos os veículos

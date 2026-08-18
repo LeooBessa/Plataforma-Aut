@@ -1,5 +1,5 @@
 import { Suspense } from 'react';
-import { CarFront, MessageCircle, SearchX } from 'lucide-react';
+import { BellRing, CarFront, SearchX } from 'lucide-react';
 
 import { ConsignmentSection } from '@/features/consignment/consignment-section';
 import { InterestSection } from '@/features/interest/interest-section';
@@ -7,8 +7,6 @@ import { Hero } from '@/features/home/hero';
 import { SearchFilters } from '@/features/vehicles/search-filters';
 import { VehicleCard, VehicleCardSkeleton } from '@/features/vehicles/vehicle-card';
 import { getFilterOptions, listVehicles, safely, type VehicleSearchParams } from '@/lib/api';
-import { WHATSAPP } from '@/lib/contato';
-import { whatsappLink } from '@/lib/format';
 
 /**
  * Home.
@@ -175,25 +173,23 @@ async function Results({ params }: { params: Record<string, string | string[] | 
           {semFiltro ? <CarFront className="size-6" /> : <SearchX className="size-6" />}
         </span>
         <h3 className="text-content mt-5 text-lg font-semibold">
-          {semFiltro ? 'Estamos renovando o estoque' : 'Nenhum veículo para esse filtro'}
+          {semFiltro ? 'Diga o que você procura' : 'Nenhum veículo para esse filtro'}
         </h3>
         <p className="text-faint mt-1.5 max-w-sm text-sm">
           {semFiltro
-            ? 'Os próximos carros entram em breve. Chame no WhatsApp e diga o que procura — a gente avisa assim que chegar.'
+            ? 'O estoque gira toda semana. Cadastre o carro que você quer e a gente te avisa assim que aparecer um com o seu perfil.'
             : 'Tente remover algum filtro ou buscar por outro termo.'}
         </p>
         {semFiltro && (
+          // Âncora HTML pura, não `<Link>`: o destino está NESTA página, logo
+          // abaixo. Um link de navegação para a própria rota faria o Next
+          // remontar a página inteira para chegar num lugar que já está na tela.
           <a
-            href={whatsappLink(
-              WHATSAPP,
-              'Olá! Vi o site da Giro Auto e queria saber o que vai entrar no estoque.',
-            )}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-btn bg-success-700 hover:bg-success-800 mt-6 inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold text-white transition-colors"
+            href="#avise-me"
+            className="rounded-btn bg-inverse text-on-inverse hover:bg-ink-800 mt-6 inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold transition-colors"
           >
-            <MessageCircle className="size-4" />
-            Falar no WhatsApp
+            <BellRing className="size-4" />
+            Quero ser avisado
           </a>
         )}
       </div>
