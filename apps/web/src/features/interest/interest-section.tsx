@@ -5,7 +5,8 @@ import { InterestForm } from '@/features/interest/interest-form';
 import { getCatalog, safely } from '@/lib/api';
 
 /**
- * "Não achou o que procurava?" — a seção entre o estoque e o "anuncie seu carro".
+ * "Quer saber antes de todo mundo?" — a seção entre o estoque e o "anuncie seu
+ * carro".
  *
  * A POSIÇÃO É O ARGUMENTO. Ela vem logo depois da vitrine porque é exatamente
  * ali que mora a pessoa a quem ela serve: quem rolou a grade inteira e não achou
@@ -13,6 +14,12 @@ import { getCatalog, safely } from '@/lib/api';
  * não procurou); depois do "anuncie seu carro" chegaria tarde, porque aquela
  * seção fala com quem VENDE e o visitante já teria entendido que a página
  * acabou para ele.
+ *
+ * O TÍTULO NÃO MENCIONA A FALTA, e isso é decisão de produto. O primeiro texto
+ * era "Não achou o que procurava?", que parte do princípio de que o estoque
+ * falhou — a pessoa lê como "essa loja não tem carro". O enquadramento agora é o
+ * benefício que a loja consegue mesmo entregar: ser avisado antes de o carro ir
+ * para o site.
  *
  * Fundo cinza claro, e o cartão do formulário branco por cima: é o que separa um
  * do outro sem precisar de moldura pesada.
@@ -34,8 +41,11 @@ const ARGUMENTOS = [
   },
   {
     icon: Sparkles,
-    title: 'A gente procura por você',
-    text: 'Seu perfil entra na nossa lista e cruzamos com cada carro que chega.',
+    title: 'Fica na nossa lista',
+    // "A gente procura por você" era o título antes, e prometia demais: sugeria
+    // que a loja sairia atrás daquele carro. O que o sistema faz é comparar cada
+    // carro que ENTRA com os perfis cadastrados — o que já é útil, e é verdade.
+    text: 'Cada carro que entra é comparado com o seu perfil. Você não precisa voltar aqui para conferir.',
   },
   {
     icon: BellRing,
@@ -58,11 +68,11 @@ export async function InterestSection() {
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
           <div>
             <h2 className="text-content text-2xl font-semibold tracking-tight sm:text-3xl">
-              Não achou o que procurava?
+              Quer saber antes de todo mundo?
             </h2>
             <p className="text-muted mt-3 max-w-md text-base leading-relaxed">
-              O estoque gira toda semana. Diga qual carro você quer e a gente te avisa assim
-              que aparecer um com o seu perfil.
+              Diga qual carro você procura. Quando um com esse perfil entrar, você é o
+              primeiro a saber.
             </p>
 
             <ul className="mt-10 space-y-6">
