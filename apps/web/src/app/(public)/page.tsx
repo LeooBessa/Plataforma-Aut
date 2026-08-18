@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { BellRing, CarFront, SearchX } from 'lucide-react';
 
 import { ConsignmentSection } from '@/features/consignment/consignment-section';
+import { ShinyButtonLink } from '@/components/ui/shiny-button';
 import { InterestSection } from '@/features/interest/interest-section';
 import { Hero } from '@/features/home/hero';
 import { SearchFilters } from '@/features/vehicles/search-filters';
@@ -80,7 +81,7 @@ function EstoqueSection({ params }: { params: Record<string, string | string[] |
           className="from-brand-500 mt-2 h-px w-16 bg-gradient-to-r to-transparent"
         />
         <p className="text-faint mt-2.5 text-sm">
-          Busque e filtre sem sair da página — os resultados aparecem aqui embaixo.
+          Busque e filtre sem sair da página. Os resultados aparecem aqui embaixo.
         </p>
       </div>
 
@@ -181,16 +182,10 @@ async function Results({ params }: { params: Record<string, string | string[] | 
             : 'Tente remover algum filtro ou buscar por outro termo.'}
         </p>
         {semFiltro && (
-          // Âncora HTML pura, não `<Link>`: o destino está NESTA página, logo
-          // abaixo. Um link de navegação para a própria rota faria o Next
-          // remontar a página inteira para chegar num lugar que já está na tela.
-          <a
-            href="#avise-me"
-            className="rounded-btn bg-inverse text-on-inverse hover:bg-ink-800 mt-6 inline-flex items-center gap-2 px-6 py-3 text-sm font-semibold transition-colors"
-          >
+          <ShinyButtonLink href="/#avise-me" className="mt-6">
             <BellRing className="size-4" />
             Quero ser avisado
-          </a>
+          </ShinyButtonLink>
         )}
       </div>
     );

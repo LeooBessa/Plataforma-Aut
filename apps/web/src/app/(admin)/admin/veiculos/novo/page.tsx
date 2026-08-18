@@ -20,7 +20,7 @@ export default function NovoVeiculoPage() {
         <h1 className="text-content mt-3 text-2xl font-bold tracking-tight">Novo anúncio</h1>
         <p className="text-faint mt-1 text-sm">
           O anúncio nasce como <strong>rascunho</strong>. Depois de salvar, você adiciona as
-          fotos e publica — um anúncio sem foto não pode ir ao ar.
+          fotos e publica. Um anúncio sem foto não pode ir ao ar.
         </p>
       </div>
 

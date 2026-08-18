@@ -28,7 +28,7 @@ export default function ErrorPage({
         Algo deu errado
       </h1>
       <p className="text-muted mt-2 text-sm leading-relaxed">
-        Tivemos um problema ao carregar esta página. Tente novamente — se persistir, fale com a
+        Tivemos um problema ao carregar esta página. Tente novamente. Se persistir, fale com a
         gente.
       </p>
 

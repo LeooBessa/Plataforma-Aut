@@ -130,7 +130,7 @@ export default function AdminCatalogoPage() {
               </p>
             ) : (
               <p className="text-faint mt-2 text-sm">
-                Nenhum modelo ainda — cadastre acima para poder usar esta marca.
+                Nenhum modelo ainda. Cadastre acima para poder usar esta marca.
               </p>
             )}
           </div>

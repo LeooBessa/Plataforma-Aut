@@ -188,8 +188,8 @@ export function ConsignmentForm() {
         <CheckCircle2 className="text-success-500 mx-auto size-10" />
         <h3 className="text-content mt-4 text-xl font-bold">Recebemos seu carro!</h3>
         <p className="text-muted mx-auto mt-2 max-w-sm text-sm">
-          Já está com a nossa equipe. Se quiser adiantar, chame no WhatsApp e mande as fotos —
-          é o que mais acelera a avaliação.
+          Já está com a nossa equipe. Se quiser adiantar, chame no WhatsApp e mande as fotos.
+          É o que mais acelera a avaliação.
         </p>
 
         {/* Duas saídas, EMPILHADAS e com pesos bem diferentes.

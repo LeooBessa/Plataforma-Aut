@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { BellRing, CarFront, ChevronLeft, ChevronRight, SearchX } from 'lucide-react';
 
 import { ButtonLink } from '@/components/ui/button';
+import { ShinyButtonLink } from '@/components/ui/shiny-button';
 import { SearchFilters } from '@/features/vehicles/search-filters';
 import { VehicleCard, VehicleCardSkeleton } from '@/features/vehicles/vehicle-card';
 import { getFilterOptions, listVehicles, type VehicleSearchParams } from '@/lib/api';
@@ -257,10 +258,10 @@ function EmptyState({ semFiltro }: { semFiltro: boolean }) {
           mensagem: a loja fica com o que a pessoa procura em campo estruturado, e
           o painel cruza isso com cada carro que entra. */}
       {semFiltro ? (
-        <ButtonLink href="/#avise-me" className="mt-6">
+        <ShinyButtonLink href="/#avise-me" className="mt-6">
           <BellRing className="size-4" />
           Quero ser avisado
-        </ButtonLink>
+        </ShinyButtonLink>
       ) : (
         <ButtonLink href="/veiculos" variant="secondary" className="mt-6">
           Ver todos os veículos

@@ -316,7 +316,7 @@ export function AppointmentModal({
               <Field
                 label="Observações"
                 htmlFor="notes"
-                hint="Opcional — conte o que você quer saber ou avaliar."
+                hint="Opcional. Conte o que você quer saber ou avaliar."
               >
                 <Textarea
                   id="notes"

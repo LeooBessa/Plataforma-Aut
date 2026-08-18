@@ -65,7 +65,7 @@ export function Gallery({ images, title }: { images: VehicleImage[]; title: stri
         <div className="group rounded-card border-line bg-surface relative aspect-[4/3] overflow-hidden border">
           <Image
             src={active.url}
-            alt={active.alt_text ?? `${title} — foto ${current + 1} de ${total}`}
+            alt={active.alt_text ?? `${title}, foto ${current + 1} de ${total}`}
             fill
             sizes="(max-width: 1024px) 100vw, 60vw"
             // A foto principal é quase certamente o LCP da página. No Next 16,
@@ -126,7 +126,7 @@ export function Gallery({ images, title }: { images: VehicleImage[]; title: stri
           // resto da página está inacessível enquanto isto estiver aberto.
           role="dialog"
           aria-modal="true"
-          aria-label={`${title} — foto ampliada`}
+          aria-label={`${title}, foto ampliada`}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 p-4"
           onClick={() => setZoomed(false)}
         >

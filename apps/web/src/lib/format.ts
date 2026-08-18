@@ -18,7 +18,10 @@ const NUMBER = new Intl.NumberFormat('pt-BR');
 /** A API devolve Decimal como string ("129900.00") para não perder precisão. */
 export function formatPrice(value: string | number): string {
   const numeric = typeof value === 'string' ? Number.parseFloat(value) : value;
-  if (Number.isNaN(numeric)) return '—';
+  // Preço que não converte é dado corrompido, não campo em branco. "Consulte"
+  // manda o visitante falar com a loja em vez de exibir um símbolo que não
+  // explica nada.
+  if (Number.isNaN(numeric)) return 'Consulte';
   return BRL.format(numeric);
 }
 

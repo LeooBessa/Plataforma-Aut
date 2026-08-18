@@ -101,7 +101,7 @@ export function ImageUploader({
         const detalhe = await response.text().catch(() => '');
         throw new Error(
           `Falha ao enviar a imagem para o servidor de arquivos. ` +
-            `(HTTP ${response.status}${detalhe ? ` — ${detalhe.slice(0, 200)}` : ''})`,
+            `(HTTP ${response.status}${detalhe ? `: ${detalhe.slice(0, 200)}` : ''})`,
         );
       }
 

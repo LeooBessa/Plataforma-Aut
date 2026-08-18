@@ -37,7 +37,7 @@ export default function SobrePage() {
           {
             icon: BadgeCheck,
             title: 'Transparência no anúncio',
-            text: 'Quilometragem real, número de proprietários e histórico de manutenção — tudo publicado.',
+            text: 'Quilometragem real, número de proprietários e histórico de manutenção. Tudo publicado.',
           },
           {
             icon: Users,

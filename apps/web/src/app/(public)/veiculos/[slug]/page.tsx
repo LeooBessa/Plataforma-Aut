@@ -22,6 +22,10 @@ import { BODY_LABELS, FUEL_LABELS, TRANSMISSION_LABELS } from '@/lib/labels';
 
 // ISR: página estática, regenerada a cada 5 minutos. Quando o admin editar este
 // anúncio, a tag `vehicle:<slug>` é invalidada e a página se atualiza em segundos.
+/** Campo da ficha que a loja não preencheu. Era um travessão, que só quem
+ *  conhece a convenção lê como "vazio". */
+const SEM_INFO = 'Não informado';
+
 export const revalidate = 300;
 
 type Props = { params: Promise<{ slug: string }> };
@@ -66,7 +70,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     // WhatsApp. Um anúncio de carro compartilhado SEM foto praticamente não é
     // clicado — e o WhatsApp é o principal canal de compartilhamento no Brasil.
     openGraph: {
-      title: `${title} — ${formatPrice(vehicle.price)}`,
+      title: `${title} | ${formatPrice(vehicle.price)}`,
       description,
       type: 'website',
       images: cover ? [{ url: cover.url, width: 1200, height: 800, alt: vehicle.title }] : [],
@@ -248,21 +252,21 @@ function Specs({ vehicle }: { vehicle: VehicleDetail }) {
     { icon: null, label: 'Câmbio', value: TRANSMISSION_LABELS[vehicle.transmission] },
     { icon: null, label: 'Categoria', value: BODY_LABELS[vehicle.body_type] },
     { icon: Palette, label: 'Cor', value: vehicle.color },
-    { icon: null, label: 'Motor', value: vehicle.engine ?? '—' },
+    { icon: null, label: 'Motor', value: vehicle.engine ?? SEM_INFO },
     {
       icon: null,
       label: 'Potência',
-      value: vehicle.horsepower ? `${vehicle.horsepower} cv` : '—',
+      value: vehicle.horsepower ? `${vehicle.horsepower} cv` : SEM_INFO,
     },
-    { icon: null, label: 'Portas', value: vehicle.doors ? String(vehicle.doors) : '—' },
+    { icon: null, label: 'Portas', value: vehicle.doors ? String(vehicle.doors) : SEM_INFO },
     {
       icon: Users,
       label: 'Proprietários',
-      value: vehicle.owners_count !== null ? String(vehicle.owners_count) : '—',
+      value: vehicle.owners_count !== null ? String(vehicle.owners_count) : SEM_INFO,
     },
     { icon: KeyRound, label: 'Chave reserva', value: vehicle.has_spare_key ? 'Sim' : 'Não' },
     { icon: null, label: 'Manual', value: vehicle.has_manual ? 'Sim' : 'Não' },
-    { icon: MapPin, label: 'Localização', value: `${vehicle.city} — ${vehicle.state}` },
+    { icon: MapPin, label: 'Localização', value: `${vehicle.city}, ${vehicle.state}` },
   ];
 
   return (

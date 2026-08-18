@@ -176,7 +176,7 @@ export function SearchFilters({
             type="search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Busque por marca, modelo ou versão — ex: corolla xei"
+            placeholder="Busque por marca, modelo ou versão (ex: corolla xei)"
             className="pl-10"
             aria-label="Buscar veículos"
           />

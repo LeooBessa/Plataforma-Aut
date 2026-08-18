@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   // nenhum. A página de veículo define o seu próprio, mais específico.
   alternates: { canonical: './' },
   title: {
-    default: 'Giro Auto — Seminovos selecionados',
+    default: 'Giro Auto | Seminovos selecionados',
     // Cada página preenche o %s. Assim o título nunca fica só "Corolla", sem
     // contexto, na aba do navegador e no resultado do Google.
     template: '%s | Giro Auto',

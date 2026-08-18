@@ -213,7 +213,7 @@ function Pendencias({ stats }: { stats: DashboardStats | null }) {
         stats.vehicles_without_photo === 1
           ? '1 veículo à venda sem foto'
           : `${stats.vehicles_without_photo} veículos à venda sem foto`,
-      apoio: 'Anúncio sem foto quase não é clicado — está no site sem estar de verdade.',
+      apoio: 'Anúncio sem foto quase não é clicado. Está no site sem estar de verdade.',
       tom: 'warning' as const,
     },
     {
