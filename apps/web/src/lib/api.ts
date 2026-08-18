@@ -26,6 +26,10 @@ export type FilterOptions = Schemas['FilterOptionsOut'];
 export type Interest = Schemas['InterestOut'];
 export type InterestPage = Schemas['InterestPageOut'];
 export type CatalogBrand = Schemas['AdminBrandOut'];
+export type Article = Schemas['ArticleOut'];
+export type ArticleSummary = Schemas['ArticleSummaryOut'];
+export type ArticleDetail = Schemas['ArticleDetailOut'];
+export type ArticlePage = Schemas['ArticlePageOut'];
 export type Appointment = Schemas['AppointmentOut'];
 export type DashboardStats = Schemas['DashboardStatsOut'];
 export type Image = Schemas['ImageOut'];
@@ -157,6 +161,20 @@ export function getCatalog(): Promise<CatalogBrand[]> {
   return request<CatalogBrand[]>('/catalog', {
     revalidate: 3600,
     tags: ['catalog'],
+  });
+}
+
+export function listArticles(limit = 12): Promise<ArticlePage> {
+  return request<ArticlePage>(`/articles?page_size=${limit}`, {
+    revalidate: 300,
+    tags: ['articles'],
+  });
+}
+
+export function getArticle(slug: string): Promise<ArticleDetail> {
+  return request<ArticleDetail>(`/articles/${encodeURIComponent(slug)}`, {
+    revalidate: 300,
+    tags: ['articles', `article:${slug}`],
   });
 }
 

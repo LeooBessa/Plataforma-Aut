@@ -23,6 +23,8 @@ from src.domain.catalog.value_objects import (
 )
 from src.domain.consignment.enums import ConsignmentStatus
 from src.domain.consignment.value_objects import ConsignmentFilters
+from src.domain.content.enums import ArticleStatus
+from src.domain.content.value_objects import ArticleFilters
 from src.domain.interest.enums import InterestStatus
 from src.domain.interest.value_objects import InterestFilters
 from src.domain.scheduling.enums import AppointmentStatus
@@ -36,9 +38,11 @@ from src.presentation.v1.deps import (
     CreateModelDep,
     CreateVehicleDep,
     DashboardStatsDep,
+    DeleteArticleDep,
     DeleteImageDep,
     DeleteVehicleDep,
     DuplicateVehicleDep,
+    GetAdminArticleDep,
     GetAdminVehicleDep,
     ListAdminVehiclesDep,
     ListAppointmentsDep,
@@ -47,12 +51,17 @@ from src.presentation.v1.deps import (
     PrepareImageUploadDep,
     RegisterImageDep,
     ReorderImagesDep,
+    SaveArticleDep,
     SetCoverImageDep,
+    StorageDep,
     UpdateAppointmentStatusDep,
     UpdateConsignmentStatusDep,
     UpdateInterestStatusDep,
     UpdateVehicleDep,
     require_admin,
+)
+from src.presentation.v1.deps import (
+    ListArticlesDep as ListAdminArticlesDep,
 )
 from src.presentation.v1.schemas.admin_vehicle import (
     AdminBrandOut,
@@ -77,6 +86,11 @@ from src.presentation.v1.schemas.consignment import (
     ConsignmentOut,
     ConsignmentPageOut,
     ConsignmentStatusIn,
+)
+from src.presentation.v1.schemas.content import (
+    ArticleIn,
+    ArticleOut,
+    ArticlePageOut,
 )
 from src.presentation.v1.schemas.interest import (
     InterestOut,
@@ -468,3 +482,82 @@ async def create_brand(payload: BrandCreateIn, use_case: CreateBrandDep) -> Admi
 async def create_model(payload: ModelCreateIn, use_case: CreateModelDep) -> AdminModelOut:
     modelo = await use_case.execute(payload.brand_id, payload.name)
     return AdminModelOut.model_validate(modelo)
+
+
+# ------------------------------------------------------------------- artigos
+
+
+@router.post(
+    "/articles/cover-upload-url",
+    response_model=UploadUrlOut,
+    summary="Autorizar upload da capa do artigo",
+)
+async def create_article_cover_upload_url(
+    payload: UploadUrlIn, storage: StorageDep
+) -> UploadUrlOut:
+    """Mesmo desenho do upload de foto de carro: a imagem NÃO passa por aqui.
+
+    A função serverless tem limite de tamanho de corpo e uma imagem o estoura. O
+    browser recebe uma autorização temporária e escreve direto no Storage.
+
+    Diferente das fotos de veículo, a autorização não exige um artigo existente:
+    quem escreve escolhe a capa enquanto redige, antes de salvar pela primeira
+    vez.
+    """
+    from src.infrastructure.storage.supabase_storage import build_article_cover_path
+
+    signed = await storage.create_signed_upload(path=build_article_cover_path(payload.content_type))
+    return UploadUrlOut(
+        upload_url=signed.upload_url,
+        token=signed.token,
+        storage_path=signed.storage_path,
+        public_url=signed.public_url,
+    )
+
+
+@router.get("/articles", response_model=ArticlePageOut, summary="Listar artigos (todos)")
+async def list_admin_articles(
+    use_case: ListAdminArticlesDep,
+    q: Annotated[str | None, Query(max_length=120)] = None,
+    status_filter: Annotated[list[ArticleStatus] | None, Query(alias="status")] = None,
+    page: Annotated[int, Query(ge=1)] = 1,
+    page_size: Annotated[int, Query(ge=1, le=MAX_PAGE_SIZE)] = 20,
+) -> ArticlePageOut:
+    """Enxerga rascunho, ao contrário da rota pública."""
+    result = await use_case.execute(
+        ArticleFilters(query=q, statuses=status_filter or []),
+        Pagination(page=page, page_size=page_size),
+    )
+    return ArticlePageOut.from_page(result)
+
+
+@router.get("/articles/{article_id}", response_model=ArticleOut, summary="Ver artigo")
+async def get_admin_article(article_id: UUID, use_case: GetAdminArticleDep) -> ArticleOut:
+    return ArticleOut.model_validate(await use_case.execute(article_id))
+
+
+@router.post(
+    "/articles",
+    response_model=ArticleOut,
+    status_code=status.HTTP_201_CREATED,
+    summary="Criar artigo",
+)
+async def create_article(payload: ArticleIn, use_case: SaveArticleDep) -> ArticleOut:
+    return ArticleOut.model_validate(await use_case.execute(payload.to_domain()))
+
+
+@router.put("/articles/{article_id}", response_model=ArticleOut, summary="Editar artigo")
+async def update_article(
+    article_id: UUID, payload: ArticleIn, use_case: SaveArticleDep
+) -> ArticleOut:
+    artigo = await use_case.execute(payload.to_domain(), article_id=article_id)
+    return ArticleOut.model_validate(artigo)
+
+
+@router.delete(
+    "/articles/{article_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Excluir artigo",
+)
+async def delete_article(article_id: UUID, use_case: DeleteArticleDep) -> None:
+    await use_case.execute(article_id)

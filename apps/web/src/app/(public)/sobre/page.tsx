@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { BadgeCheck, ShieldCheck, Users, Wrench } from 'lucide-react';
 
 import { ButtonLink } from '@/components/ui/button';
+import { ArticleCard } from '@/features/articles/article-card';
+import { listArticles, safely } from '@/lib/api';
 import { ShinyButtonLink } from '@/components/ui/shiny-button';
 
 export const metadata: Metadata = {
@@ -10,7 +12,11 @@ export const metadata: Metadata = {
     'Conheça a Giro Auto: seminovos selecionados, com procedência verificada, revisão completa e histórico transparente.',
 };
 
-export default function SobrePage() {
+export default async function SobrePage() {
+  // `safely` porque a seção é acessória: se a API falhar, o institucional não
+  // pode cair junto — ele existe mesmo sem artigo nenhum.
+  const artigos = (await safely(listArticles(3)))?.items ?? [];
+
   return (
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
       <h1 className="text-content text-3xl font-bold tracking-tight sm:text-4xl">
@@ -54,6 +60,28 @@ export default function SobrePage() {
           </div>
         ))}
       </div>
+
+      {artigos.length > 0 && (
+        <section className="mt-16">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h2 className="text-content text-xl font-bold tracking-tight">O que escrevemos</h2>
+              <p className="text-faint mt-1 text-sm">
+                Dicas de quem lida com carro usado todo dia.
+              </p>
+            </div>
+            <ButtonLink href="/artigos" variant="secondary" size="sm">
+              Ver todos
+            </ButtonLink>
+          </div>
+
+          <div className="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {artigos.map((a) => (
+              <ArticleCard key={a.id} article={a} />
+            ))}
+          </div>
+        </section>
+      )}
 
       <div className="mt-12 flex flex-wrap gap-3">
         <ShinyButtonLink href="/veiculos">Ver veículos disponíveis</ShinyButtonLink>

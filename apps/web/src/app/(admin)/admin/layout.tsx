@@ -8,6 +8,7 @@ import {
   BellRing,
   Calendar,
   Car,
+  FileText,
   HandCoins,
   LayoutDashboard,
   Library,
@@ -43,6 +44,7 @@ const NAV = [
   { href: '/admin/agendamentos', label: 'Agendamentos', icon: Calendar },
   { href: '/admin/anuncie', label: 'Carros oferecidos', icon: HandCoins },
   { href: '/admin/interesses', label: 'Lista de espera', icon: BellRing },
+  { href: '/admin/artigos', label: 'Artigos', icon: FileText },
   { href: '/admin/catalogo', label: 'Catálogo', icon: Library },
 ] as const;
 

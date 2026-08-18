@@ -185,6 +185,49 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/articles': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Artigos publicados
+     * @description Só os publicados. O rascunho não existe para o site.
+     */
+    get: operations['list_articles_api_v1_articles_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/articles/{slug}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Um artigo
+     * @description Rascunho responde 404 como se não existisse.
+     *
+     *     Devolver "não publicado" contaria que o endereço existe, e bastaria adivinhar
+     *     o slug para ler um texto que a loja ainda está escrevendo.
+     */
+    get: operations['get_article_api_v1_articles__slug__get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/appointments': {
     parameters: {
       query?: never;
@@ -670,6 +713,73 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/admin/articles/cover-upload-url': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Autorizar upload da capa do artigo
+     * @description Mesmo desenho do upload de foto de carro: a imagem NÃO passa por aqui.
+     *
+     *     A função serverless tem limite de tamanho de corpo e uma imagem o estoura. O
+     *     browser recebe uma autorização temporária e escreve direto no Storage.
+     *
+     *     Diferente das fotos de veículo, a autorização não exige um artigo existente:
+     *     quem escreve escolhe a capa enquanto redige, antes de salvar pela primeira
+     *     vez.
+     */
+    post: operations['create_article_cover_upload_url_api_v1_admin_articles_cover_upload_url_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/articles': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Listar artigos (todos)
+     * @description Enxerga rascunho, ao contrário da rota pública.
+     */
+    get: operations['list_admin_articles_api_v1_admin_articles_get'];
+    put?: never;
+    /** Criar artigo */
+    post: operations['create_article_api_v1_admin_articles_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/articles/{article_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** Ver artigo */
+    get: operations['get_admin_article_api_v1_admin_articles__article_id__get'];
+    /** Editar artigo */
+    put: operations['update_article_api_v1_admin_articles__article_id__put'];
+    post?: never;
+    /** Excluir artigo */
+    delete: operations['delete_article_api_v1_admin_articles__article_id__delete'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -818,6 +928,111 @@ export interface components {
     /** AppointmentStatusIn */
     AppointmentStatusIn: {
       status: components['schemas']['AppointmentStatus'];
+    };
+    /**
+     * ArticleDetailOut
+     * @description O artigo mais o "leia também", numa resposta só.
+     *
+     *     Duas chamadas separadas dobrariam a latência de uma página que é lida do
+     *     início ao fim — e os relacionados aparecem no rodapé dela, sempre.
+     */
+    ArticleDetailOut: {
+      article: components['schemas']['ArticleOut'];
+      /** Related */
+      related: components['schemas']['ArticleSummaryOut'][];
+    };
+    /** ArticleIn */
+    ArticleIn: {
+      /** Title */
+      title: string;
+      /** Excerpt */
+      excerpt: string;
+      /** Body */
+      body: string;
+      /** @default draft */
+      status: components['schemas']['ArticleStatus'];
+      /** Cover Url */
+      cover_url?: string | null;
+      /** Cover Path */
+      cover_path?: string | null;
+      /** Faq */
+      faq?: components['schemas']['FaqItemIn'][];
+    };
+    /** ArticleOut */
+    ArticleOut: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Slug */
+      slug: string;
+      /** Title */
+      title: string;
+      /** Excerpt */
+      excerpt: string;
+      /** Body */
+      body: string;
+      /** Cover Url */
+      cover_url: string | null;
+      /** Cover Path */
+      cover_path: string | null;
+      /** Faq */
+      faq: components['schemas']['FaqItemOut'][];
+      status: components['schemas']['ArticleStatus'];
+      /** Reading Minutes */
+      reading_minutes: number;
+      /** Published At */
+      published_at: string | null;
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string;
+    };
+    /** ArticlePageOut */
+    ArticlePageOut: {
+      /** Items */
+      items: components['schemas']['ArticleSummaryOut'][];
+      /** Meta */
+      meta: {
+        [key: string]: number;
+      };
+    };
+    /**
+     * ArticleStatus
+     * @description Rascunho ou publicado.
+     *
+     *     O rascunho existe para que a loja possa escrever em várias sessões sem que
+     *     um texto pela metade apareça no site. Publicar é um ato explícito.
+     * @enum {string}
+     */
+    ArticleStatus: 'draft' | 'published';
+    /** ArticleSummaryOut */
+    ArticleSummaryOut: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Slug */
+      slug: string;
+      /** Title */
+      title: string;
+      /** Excerpt */
+      excerpt: string;
+      /** Cover Url */
+      cover_url: string | null;
+      status: components['schemas']['ArticleStatus'];
+      /** Reading Minutes */
+      reading_minutes: number;
+      /** Published At */
+      published_at: string | null;
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string;
     };
     /**
      * BodyType
@@ -987,6 +1202,20 @@ export interface components {
      * @enum {string}
      */
     Environment: 'development' | 'staging' | 'production';
+    /** FaqItemIn */
+    FaqItemIn: {
+      /** Question */
+      question: string;
+      /** Answer */
+      answer: string;
+    };
+    /** FaqItemOut */
+    FaqItemOut: {
+      /** Question */
+      question: string;
+      /** Answer */
+      answer: string;
+    };
     /**
      * FeatureCategory
      * @description Agrupamento dos opcionais na ficha do veículo.
@@ -1869,6 +2098,69 @@ export interface operations {
           [name: string]: unknown;
         };
         content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  list_articles_api_v1_articles_get: {
+    parameters: {
+      query?: {
+        page?: number;
+        page_size?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticlePageOut'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  get_article_api_v1_articles__slug__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        slug: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleDetailOut'];
+        };
       };
       /** @description Validation Error */
       422: {
@@ -3038,6 +3330,285 @@ export interface operations {
         content: {
           'application/json': components['schemas']['AdminModelOut'];
         };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  create_article_cover_upload_url_api_v1_admin_articles_cover_upload_url_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UploadUrlIn'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['UploadUrlOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  list_admin_articles_api_v1_admin_articles_get: {
+    parameters: {
+      query?: {
+        q?: string | null;
+        status?: components['schemas']['ArticleStatus'][] | null;
+        page?: number;
+        page_size?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticlePageOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  create_article_api_v1_admin_articles_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ArticleIn'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  get_admin_article_api_v1_admin_articles__article_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        article_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  update_article_api_v1_admin_articles__article_id__put: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        article_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['ArticleIn'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['ArticleOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  delete_article_api_v1_admin_articles__article_id__delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        article_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
       };
       /** @description Não autenticado */
       401: {

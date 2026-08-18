@@ -73,6 +73,7 @@ export function Footer() {
             {(
               [
                 { href: '/veiculos', label: 'Veículos' },
+                { href: '/artigos', label: 'Artigos' },
                 { href: '/sobre', label: 'Sobre nós' },
                 { href: '/contato', label: 'Contato' },
               ] as const

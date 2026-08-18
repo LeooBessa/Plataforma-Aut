@@ -61,6 +61,23 @@ def build_storage_path(vehicle_id: uuid.UUID, content_type: str) -> str:
     return str(PurePosixPath("vehicles") / str(vehicle_id) / f"{uuid.uuid4().hex}{extension}")
 
 
+def build_article_cover_path(content_type: str) -> str:
+    """Caminho da capa de artigo. Mesma regra de nome do caminho de veículo.
+
+    Sem id na pasta, ao contrário das fotos de carro: a capa é emitida ANTES de o
+    artigo existir (quem escreve escolhe a imagem enquanto redige), então não há
+    id para agrupar. O nome aleatório já garante que dois uploads não colidam.
+    """
+    extension = ALLOWED_CONTENT_TYPES.get(content_type)
+    if extension is None:
+        raise ValidationError(
+            "Formato de imagem não suportado. Envie JPG, PNG, WebP ou AVIF.",
+            details={"content_type": content_type},
+        )
+
+    return str(PurePosixPath("articles") / f"{uuid.uuid4().hex}{extension}")
+
+
 class SupabaseStorageService:
     def __init__(self) -> None:
         settings = get_settings()

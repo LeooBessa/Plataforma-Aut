@@ -45,6 +45,14 @@ from src.application.consignment.use_cases import (
     ListConsignmentRequestsUseCase,
     UpdateConsignmentStatusUseCase,
 )
+from src.application.content.use_cases import (
+    DeleteArticleUseCase,
+    GetAdminArticleUseCase,
+    GetArticleUseCase,
+    ListArticlesUseCase,
+    RelatedArticlesUseCase,
+    SaveArticleUseCase,
+)
 from src.application.identity.use_cases import (
     LoginUseCase,
     LogoutUseCase,
@@ -69,6 +77,7 @@ from src.core.security import PasswordHasher, get_password_hasher
 from src.core.tokens import decode_access_token
 from src.domain.catalog.repositories import VehicleAdminRepository, VehicleRepository
 from src.domain.consignment.repositories import ConsignmentRepository
+from src.domain.content.repositories import ArticleRepository
 from src.domain.identity.entities import AuthenticatedUser
 from src.domain.identity.repositories import RefreshTokenRepository, UserRepository
 from src.domain.interest.repositories import InterestRepository
@@ -76,6 +85,9 @@ from src.domain.scheduling.repositories import AppointmentRepository, StatsRepos
 from src.infrastructure.database.repositories.appointment_repository import (
     SqlAlchemyAppointmentRepository,
     SqlAlchemyStatsRepository,
+)
+from src.infrastructure.database.repositories.article_repository import (
+    SqlAlchemyArticleRepository,
 )
 from src.infrastructure.database.repositories.consignment_repository import (
     SqlAlchemyConsignmentRepository,
@@ -492,3 +504,49 @@ def get_create_model_use_case(repo: VehicleAdminRepositoryDep) -> CreateModelUse
 
 CreateBrandDep = Annotated[CreateBrandUseCase, Depends(get_create_brand_use_case)]
 CreateModelDep = Annotated[CreateModelUseCase, Depends(get_create_model_use_case)]
+
+
+# ------------------------------------------------------------------- artigos
+
+
+def get_article_repository(session: SessionDep) -> ArticleRepository:
+    return SqlAlchemyArticleRepository(session)
+
+
+ArticleRepositoryDep = Annotated[ArticleRepository, Depends(get_article_repository)]
+
+
+def get_save_article_use_case(
+    repo: ArticleRepositoryDep, storage: StorageDep
+) -> SaveArticleUseCase:
+    return SaveArticleUseCase(repo, storage)
+
+
+def get_delete_article_use_case(
+    repo: ArticleRepositoryDep, storage: StorageDep
+) -> DeleteArticleUseCase:
+    return DeleteArticleUseCase(repo, storage)
+
+
+def get_get_article_use_case(repo: ArticleRepositoryDep) -> GetArticleUseCase:
+    return GetArticleUseCase(repo)
+
+
+def get_get_admin_article_use_case(repo: ArticleRepositoryDep) -> GetAdminArticleUseCase:
+    return GetAdminArticleUseCase(repo)
+
+
+def get_list_articles_use_case(repo: ArticleRepositoryDep) -> ListArticlesUseCase:
+    return ListArticlesUseCase(repo)
+
+
+def get_related_articles_use_case(repo: ArticleRepositoryDep) -> RelatedArticlesUseCase:
+    return RelatedArticlesUseCase(repo)
+
+
+SaveArticleDep = Annotated[SaveArticleUseCase, Depends(get_save_article_use_case)]
+DeleteArticleDep = Annotated[DeleteArticleUseCase, Depends(get_delete_article_use_case)]
+GetArticleDep = Annotated[GetArticleUseCase, Depends(get_get_article_use_case)]
+GetAdminArticleDep = Annotated[GetAdminArticleUseCase, Depends(get_get_admin_article_use_case)]
+ListArticlesDep = Annotated[ListArticlesUseCase, Depends(get_list_articles_use_case)]
+RelatedArticlesDep = Annotated[RelatedArticlesUseCase, Depends(get_related_articles_use_case)]
