@@ -47,19 +47,19 @@ import { cn } from '@/lib/utils';
  * azul, lia como sujeira. Do cinza funciona porque a base já não é branca, então
  * o azul soma como segunda cor de propósito.
  *
- * O azul do claro é o `brand-200`, e a escolha entre ele e o `brand-100` foi
- * comparada na tela: no 100 o azul quase volta ao problema do branco, discreto
- * até o ponto de parecer acidente. O 200 lê como intenção e ainda faz ponte para
- * a seção preta abaixo.
+ * O claro vai de `brand-50` a `brand-300`, e chegou aí por comparação na tela.
+ * Antes saía do cinza para o `brand-200` e a seção inteira ficava entre 93% e
+ * 100% de luminosidade — sem nada que ancorasse o olho, lia como sobra. Saindo de
+ * uma base já azulada, o degradê tem para onde ir.
  *
- * Mais forte que isso não dá: o degradê fica atrás de texto ESCURO. No escuro é o
- * contrário — texto branco exige azul fundo (`brand-800`). Trocar um pelo outro
+ * Mais forte que o 300 não dá: o degradê fica atrás de texto ESCURO. No escuro é
+ * o contrário — texto branco exige azul fundo (`brand-800`). Trocar um pelo outro
  * deixa ilegível a metade de baixo da seção.
  */
 const TONS = {
   dark: '[background:radial-gradient(125%_125%_at_50%_10%,var(--color-ink-950)_40%,var(--color-brand-800)_100%)]',
   light:
-    '[background:radial-gradient(125%_125%_at_50%_10%,var(--color-ink-100)_40%,var(--color-brand-200)_100%)]',
+    '[background:radial-gradient(125%_125%_at_50%_10%,var(--color-brand-50)_40%,var(--color-brand-300)_100%)]',
 } as const;
 
 export function GradientBackdrop({

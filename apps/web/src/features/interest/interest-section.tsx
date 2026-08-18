@@ -21,13 +21,20 @@ import { getCatalog, safely } from '@/lib/api';
  * benefício que a loja consegue mesmo entregar: ser avisado antes de o carro ir
  * para o site.
  *
- * Fundo cinza claro, e o cartão do formulário branco por cima: é o que separa um
- * do outro sem precisar de moldura pesada.
+ * ----------------------------------------------------------------------------
+ * A COR DA SEÇÃO, E POR QUE ELA CHEGOU AQUI
+ * ----------------------------------------------------------------------------
+ * Base azul diluída (`accent-soft`), degradê até um azul mais presente, ícones em
+ * azul CHEIO com glifo branco.
  *
- * Tentei aqui o mesmo brilho radial azul da seção de baixo, numa versão clara.
- * Foi descartado — sobre fundo branco o azul precisa ser pálido para o texto
- * escuro sobreviver, e pálido demais ele deixa de somar: virou uma mancha azulada
- * sem intenção. O efeito depende do contraste com o preto para funcionar.
+ * As duas versões anteriores morriam pelo mesmo motivo: tudo ficava entre 93% e
+ * 100% de luminosidade. Fundo cinza claro, cartão branco, azul pálido — nada
+ * ancorava o olho, e a seção lia como sobra entre a vitrine branca acima e o
+ * bloco preto abaixo, que são definidos.
+ *
+ * Base colorida e ícone sólido dependem UM DO OUTRO. Testei separado: com a base
+ * azulada e o chip pálido de antes, os ícones se dissolvem no fundo e a seção
+ * fica pior do que era. Quem mexer numa das duas precisa mexer na outra.
  *
  * A seção seguinte é preta, e duas escuras seguidas viram um bloco só. A
  * alternância clara → escura → rodapé claro é o que dá ritmo ao fim da página.
@@ -62,7 +69,7 @@ export async function InterestSection() {
   if (!brands || brands.length === 0) return null;
 
   return (
-    <section id="avise-me" className="bg-sunken relative isolate mt-16">
+    <section id="avise-me" className="bg-accent-soft relative isolate mt-16">
       <GradientBackdrop tone="light" />
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
@@ -78,7 +85,11 @@ export async function InterestSection() {
             <ul className="mt-10 space-y-6">
               {ARGUMENTOS.map(({ icon: Icon, title, text }) => (
                 <li key={title} className="flex gap-4">
-                  <span className="rounded-btn bg-accent-soft text-accent flex size-10 shrink-0 items-center justify-center">
+                  {/* AZUL CHEIO, não o azul diluído do resto do site.
+                      Com a base da seção azulada, o chip pálido que havia antes
+                      se dissolvia no fundo — os ícones sumiam. As duas coisas
+                      dependem uma da outra: base colorida exige ícone sólido. */}
+                  <span className="rounded-btn bg-brand-600 flex size-10 shrink-0 items-center justify-center text-white">
                     <Icon className="size-5" />
                   </span>
                   <div>
