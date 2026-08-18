@@ -15,7 +15,12 @@ from fastapi import APIRouter, Query
 from src.domain.catalog.value_objects import Pagination
 from src.domain.content.enums import ArticleStatus
 from src.domain.content.value_objects import ArticleFilters
-from src.presentation.v1.deps import GetArticleDep, ListArticlesDep, RelatedArticlesDep
+from src.presentation.v1.deps import (
+    FeaturedArticleDep,
+    GetArticleDep,
+    ListArticlesDep,
+    RelatedArticlesDep,
+)
 from src.presentation.v1.schemas.content import (
     ArticleDetailOut,
     ArticleOut,
@@ -26,6 +31,22 @@ from src.presentation.v1.schemas.content import (
 router = APIRouter(prefix="/articles", tags=["artigos"])
 
 MAX_PAGE_SIZE = 50
+
+
+@router.get(
+    "/featured",
+    response_model=ArticleSummaryOut | None,
+    summary="Artigo em destaque no topo da home",
+)
+async def get_featured_article(use_case: FeaturedArticleDep) -> ArticleSummaryOut | None:
+    """`null` quando nenhum artigo está marcado — o topo do site fica com a foto
+    de vitrine padrão, que é o estado normal.
+
+    Declarada ANTES de `/{slug}`, senão o FastAPI leria "featured" como slug de
+    artigo e esta rota nunca seria alcançada.
+    """
+    artigo = await use_case.execute()
+    return ArticleSummaryOut.model_validate(artigo) if artigo else None
 
 
 @router.get("", response_model=ArticlePageOut, summary="Artigos publicados")

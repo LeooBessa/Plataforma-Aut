@@ -4,7 +4,7 @@ import { useState, type ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import imageCompression from 'browser-image-compression';
-import { AlertCircle, Eye, ImagePlus, Loader2, Plus, Trash2 } from 'lucide-react';
+import { AlertCircle, ArrowRight, Eye, ImagePlus, Loader2, Plus, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Field, Input, Textarea } from '@/components/ui/field';
@@ -42,6 +42,7 @@ export function ArticleForm({ article }: { article?: Article }) {
   const [capaUrl, setCapaUrl] = useState(article?.cover_url ?? '');
   const [capaPath, setCapaPath] = useState(article?.cover_path ?? '');
   const [faq, setFaq] = useState<Faq[]>(article?.faq ?? []);
+  const [destacar, setDestacar] = useState(article?.featured ?? false);
 
   const [previa, setPrevia] = useState(false);
   const [enviandoCapa, setEnviandoCapa] = useState(false);
@@ -106,6 +107,11 @@ export function ArticleForm({ article }: { article?: Article }) {
         cover_url: capaUrl || undefined,
         cover_path: capaPath || undefined,
         faq: faq.filter((f) => f.question.trim() && f.answer.trim()),
+        // O destaque só existe para artigo publicado: no topo da home, uma capa
+        // de rascunho levaria a uma página que ainda não existe. Salvar como
+        // rascunho com a caixa marcada guarda o texto e deixa o destaque para a
+        // hora de publicar, em vez de recusar a gravação inteira.
+        featured: destacar && status === 'published',
       };
 
       if (article) {
@@ -303,6 +309,35 @@ export function ArticleForm({ article }: { article?: Article }) {
         )}
       </div>
 
+      {/* DESTAQUE NA HOME */}
+      <div className="rounded-card bg-surface ring-line p-5 ring-1 sm:p-6">
+        <label className="flex cursor-pointer items-start gap-3">
+          <input
+            type="checkbox"
+            checked={destacar}
+            onChange={(e) => setDestacar(e.target.checked)}
+            className="accent-brand-600 mt-0.5 size-4.5 shrink-0 cursor-pointer"
+          />
+          <span>
+            <span className="text-content block text-sm font-medium">Destacar na home</span>
+            {/* Um por vez, e a tela avisa antes: descobrir que o destaque
+                anterior saiu do ar só olhando o site seria pior. */}
+            <span className="text-faint mt-0.5 block text-xs leading-relaxed">
+              A capa deste artigo ocupa o topo do site, com um botão &ldquo;Ler artigo&rdquo;.
+              É um artigo por vez: marcar este tira o que estiver em destaque hoje. Só vale
+              depois de publicado.
+            </span>
+          </span>
+        </label>
+
+        {destacar && capaUrl && (
+          <div className="mt-4">
+            <p className="text-muted mb-2 text-xs font-medium">Como vai ficar no topo do site:</p>
+            <PreviaDoTopo src={capaUrl} titulo={titulo || 'Título do artigo'} />
+          </div>
+        )}
+      </div>
+
       {/* AÇÕES — rascunho primeiro, publicar depois.
           A ordem importa: publicar é o irreversível dos dois, e o botão mais à
           direita é o que o dedo alcança sem pensar. */}
@@ -320,6 +355,70 @@ export function ArticleForm({ article }: { article?: Article }) {
           {salvando === 'published' ? <Loader2 className="size-4 animate-spin" /> : null}
           {article?.status === 'published' ? 'Salvar e manter publicado' : 'Publicar'}
         </Button>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Como a capa vai aparecer no topo da home.
+ *
+ * O topo do site recorta a mesma capa de dois jeitos: faixa deitada no celular
+ * e painel alto cortado na diagonal no computador. A capa é 16:9, então no
+ * computador ela perde as laterais — e quem escolhe a imagem não tem como
+ * adivinhar isso.
+ *
+ * A prévia usa a geometria real do hero (a mesma diagonal, a mesma proporção) e
+ * só aparece quando a caixa está marcada, para não pesar a tela de quem está
+ * apenas escrevendo.
+ */
+function PreviaDoTopo({ src, titulo }: { src: string; titulo: string }) {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2">
+      <div>
+        <p className="text-faint text-xs">No celular</p>
+        <div className="rounded-btn bg-sunken relative mt-1.5 aspect-video overflow-hidden">
+          <Image src={src} alt="" fill sizes="320px" className="object-cover object-center" />
+          <TarjaPrevia titulo={titulo} />
+        </div>
+      </div>
+      <div>
+        <p className="text-faint text-xs">No computador</p>
+        <div className="rounded-btn relative mt-1.5 aspect-square overflow-hidden">
+          {/* O azul por baixo é o mesmo degradê do hero: sem ele a área cortada
+              pela diagonal viraria um buraco e a prévia enganaria. */}
+          <div className="from-brand-300 to-brand-600 absolute inset-0 bg-linear-to-b" />
+          <div className="absolute inset-0" style={{ clipPath: DIAGONAL_DO_HERO }}>
+            <Image src={src} alt="" fill sizes="320px" className="object-cover object-center" />
+            <TarjaPrevia titulo={titulo} />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+//: O MESMO polígono do hero. Se mudar lá, muda aqui — senão a prévia mente.
+const DIAGONAL_DO_HERO = 'polygon(24% 0, 100% 0, 100% 100%, 5% 100%)';
+
+function TarjaPrevia({ titulo }: { titulo: string }) {
+  return (
+    <div className="absolute inset-x-0 bottom-0 p-3 pt-10">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/75 via-black/40 to-transparent"
+      />
+      <div className="relative">
+        <p className="text-[7px] font-semibold tracking-[0.18em] text-white/70 uppercase">
+          Em destaque
+        </p>
+        <p className="mt-0.5 line-clamp-2 text-[11px] leading-tight font-bold text-white">
+          {titulo}
+        </p>
+        <span className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-white px-2 py-0.5 text-[9px] font-semibold text-neutral-900">
+          Ler artigo
+          <ArrowRight className="size-2.5" />
+        </span>
       </div>
     </div>
   );

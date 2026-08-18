@@ -8,15 +8,9 @@ from uuid import UUID
 from src.application.ports import RevalidationService, StorageService
 from src.core.exceptions import NotFoundError, ValidationError
 from src.domain.catalog.value_objects import Page, Pagination
-from src.domain.content.entities import (
-    Article,
-    ArticleSummary,
-    ArticleWrite,
-    HeroBanner,
-    HeroBannerWrite,
-)
+from src.domain.content.entities import Article, ArticleSummary, ArticleWrite
 from src.domain.content.enums import ArticleStatus
-from src.domain.content.repositories import ArticleRepository, BannerRepository
+from src.domain.content.repositories import ArticleRepository
 from src.domain.content.value_objects import ArticleFilters
 
 #: Quantos artigos aparecem em "Leia também".
@@ -28,8 +22,9 @@ _RELACIONADOS = 3
 #: Sem isto, o site só se corrigiria no fim do ciclo de cache (5 minutos). Cinco
 #: minutos olhando para uma página que não mudou é tempo suficiente para a loja
 #: concluir que publicar não funcionou e tentar de novo.
+#: A home entra na lista porque o artigo em destaque aparece no topo dela.
 def _tags_do_artigo(slug: str) -> list[str]:
-    return ["articles", f"article:{slug}"]
+    return ["articles", f"article:{slug}", "home"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -124,6 +119,19 @@ class ListArticlesUseCase:
 
 
 @dataclass(frozen=True, slots=True)
+class FeaturedArticleUseCase:
+    """O artigo que ocupa o topo da home. `None` é o normal, não erro.
+
+    Sem destaque, o topo do site fica com a foto de vitrine de sempre.
+    """
+
+    repository: ArticleRepository
+
+    async def execute(self) -> ArticleSummary | None:
+        return await self.repository.featured()
+
+
+@dataclass(frozen=True, slots=True)
 class RelatedArticlesUseCase:
     """"Leia também" — os mais recentes, exceto o que está aberto.
 
@@ -150,98 +158,13 @@ def _validar(data: ArticleWrite) -> None:
     if data.status is ArticleStatus.PUBLISHED and not data.cover_url:
         raise ValidationError("Adicione uma imagem de capa antes de publicar.")
 
+    # Destacar rascunho colocaria no topo da home uma capa que leva a uma página
+    # que não existe. A tela do painel já esconde a opção enquanto é rascunho;
+    # esta regra é a que vale se a requisição vier de outro lugar.
+    if data.featured and data.status is not ArticleStatus.PUBLISHED:
+        raise ValidationError("Só dá para destacar na home um artigo publicado.")
+
     for item in data.faq:
         if not item.question.strip() or not item.answer.strip():
             raise ValidationError("Toda pergunta do FAQ precisa de uma resposta.")
 
-
-# ------------------------------------------------------------------- banner
-
-
-#: A home é a única página que mostra o banner.
-_TAGS_DO_BANNER = ["banner", "home"]
-
-
-@dataclass(frozen=True, slots=True)
-class GetHeroBannerUseCase:
-    """O banner que o site exibe. Devolve `None` quando não há.
-
-    `None` não é erro: é o estado normal enquanto a loja não subiu banner
-    nenhum, e o topo do site cai na foto de vitrine padrão.
-    """
-
-    repository: BannerRepository
-
-    async def execute(self) -> HeroBanner | None:
-        return await self.repository.get_active()
-
-
-@dataclass(frozen=True, slots=True)
-class GetCurrentBannerUseCase:
-    """O banner gravado, ligado ou não — é o que a tela de edição carrega."""
-
-    repository: BannerRepository
-
-    async def execute(self) -> HeroBanner | None:
-        return await self.repository.get_current()
-
-
-@dataclass(frozen=True, slots=True)
-class SaveHeroBannerUseCase:
-    """Grava a imagem do topo.
-
-    Trocar a imagem APAGA a anterior do Storage. Sem isso, cada promoção nova
-    deixaria a antiga ocupando espaço no bucket para sempre — e o plano é
-    gratuito, então o espaço é finito de verdade.
-    """
-
-    repository: BannerRepository
-    storage: StorageService
-    revalidation: RevalidationService
-
-    async def execute(self, data: HeroBannerWrite) -> HeroBanner:
-        _validar_banner(data)
-
-        anterior = await self.repository.get_current()
-        salvo = await self.repository.save(data)
-
-        if anterior and anterior.image_path and anterior.image_path != data.image_path:
-            await self.storage.delete(path=anterior.image_path)
-
-        await self.revalidation.revalidate(_TAGS_DO_BANNER)
-        return salvo
-
-
-@dataclass(frozen=True, slots=True)
-class ClearHeroBannerUseCase:
-    """Remove o banner e devolve o topo do site à foto de vitrine."""
-
-    repository: BannerRepository
-    storage: StorageService
-    revalidation: RevalidationService
-
-    async def execute(self) -> None:
-        removido = await self.repository.clear()
-        if removido is None:
-            raise NotFoundError("Não há banner para remover.")
-        if removido.image_path:
-            await self.storage.delete(path=removido.image_path)
-        await self.revalidation.revalidate(_TAGS_DO_BANNER)
-
-
-def _validar_banner(data: HeroBannerWrite) -> None:
-    if not data.image_url or not data.image_path:
-        raise ValidationError("Envie a imagem do banner.")
-
-    # `alt` obrigatório: a promoção costuma estar escrita DENTRO da imagem, e
-    # sem descrição essa informação não existe para leitor de tela nem para o
-    # Google. Campo opcional aqui seria campo vazio na prática.
-    if not data.alt.strip():
-        raise ValidationError("Descreva a imagem — é o que leitores de tela leem.")
-
-    # Só link interno ou http(s). Um `javascript:` gravado aqui viraria execução
-    # de script no clique de qualquer visitante da home.
-    if data.link_url:
-        destino = data.link_url.strip()
-        if not (destino.startswith("/") or destino.startswith(("http://", "https://"))):
-            raise ValidationError("O link deve começar com / ou com http.")

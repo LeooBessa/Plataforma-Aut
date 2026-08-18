@@ -1,12 +1,11 @@
 import type { Route } from 'next';
 import Image from 'next/image';
-import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 
 import AnimatedTextCycle from '@/components/ui/animated-text-cycle';
 import { ButtonLink } from '@/components/ui/button';
 import { ShinyButtonLink } from '@/components/ui/shiny-button';
-import type { HeroBanner } from '@/lib/api';
+import type { ArticleSummary } from '@/lib/api';
 
 /** As palavras que giram no título. A ordem é a que aparece na tela. */
 const QUALIDADES = ['Preço acessível.', 'Economia.', 'Qualidade.', 'Conforto.'];
@@ -18,32 +17,44 @@ const FOTO_PADRAO = {
 };
 
 /**
- * Área clicável do banner, recortada junto com a imagem.
+ * A tarja do artigo em destaque, sobre a imagem.
  *
- * Fica DENTRO do contêiner com `clip-path`, não em volta dele. Por fora, o
- * retângulo do link cobriria também o triângulo branco à esquerda da diagonal —
- * e clicar no vazio da página abriria a promoção. O `clip-path` recorta o
- * teste de clique junto com o desenho, então por dentro o alvo tem exatamente o
- * formato do que se vê.
+ * Fica DENTRO do contêiner recortado, não em volta dele. Por fora, ela
+ * apareceria também sobre o triângulo branco à esquerda da diagonal — e o botão
+ * flutuaria no vazio da página. O `clip-path` recorta o conteúdo junto com o
+ * desenho.
  *
- * Link externo sai em `<a>` com `noopener`; interno em `<Link>`, que mantém a
- * navegação do Next. O `linkSeguro` da API já barrou `javascript:` na gravação;
- * aqui o `startsWith` decide só qual elemento usar.
+ * O véu escuro por baixo do texto não é enfeite: a capa do artigo é uma foto
+ * qualquer, e texto branco sobre foto clara some. Com o degradê, o título é
+ * legível independentemente da imagem que a loja escolher.
  */
-function AreaClicavel({ href, rotulo }: { href: string; rotulo: string }) {
-  const classe = 'absolute inset-0 z-10';
-
-  if (href.startsWith('http')) {
-    return (
-      <a href={href} target="_blank" rel="noopener noreferrer" className={classe}>
-        <span className="sr-only">{rotulo}</span>
-      </a>
-    );
-  }
+function TarjaDoArtigo({ artigo }: { artigo: ArticleSummary }) {
   return (
-    <Link href={href as Route} className={classe}>
-      <span className="sr-only">{rotulo}</span>
-    </Link>
+    <div className="absolute inset-x-0 bottom-0 z-10 p-6 pt-20 sm:p-8 sm:pt-24">
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/75 via-black/40 to-transparent"
+      />
+      <div className="relative">
+        <p className="text-[11px] font-semibold tracking-[0.18em] text-white/70 uppercase">
+          Em destaque
+        </p>
+        <h2 className="mt-1.5 max-w-md text-lg font-bold text-balance text-white sm:text-xl">
+          {artigo.title}
+        </h2>
+        {/* O botão é o alvo de clique, e ele SOZINHO — a imagem inteira não é
+            clicável. Um bloco enorme que navega ao ser tocado surpreende no
+            celular, onde o dedo encosta na tela para rolar a página. */}
+        <ButtonLink
+          href={`/artigos/${artigo.slug}` as Route}
+          size="sm"
+          className="mt-4 bg-white text-neutral-900 hover:bg-white/90"
+        >
+          Ler artigo
+          <ArrowRight className="size-4" />
+        </ButtonLink>
+      </div>
+    </div>
   );
 }
 
@@ -71,16 +82,15 @@ function AreaClicavel({ href, rotulo }: { href: string; rotulo: string }) {
  * carros do banco continuam logo abaixo, em "Nosso estoque".
  *
  * ----------------------------------------------------------------------------
- * A IMAGEM PODE VIR DO PAINEL (BANNER)
+ * UM ARTIGO PODE OCUPAR ESSE ESPAÇO
  * ----------------------------------------------------------------------------
- * Se houver banner ligado, ele ocupa o lugar da foto de vitrine nos dois
- * recortes. O resto do hero — título, parágrafo, botões, marca d'água — não
- * muda: o banner troca a IMAGEM, não a promessa da marca.
+ * Marcando "destacar na home" no artigo, a CAPA dele entra no lugar da foto de
+ * vitrine e ganha uma tarja com o título e um botão "Ler artigo".
  *
- * Os dois recortes são bem diferentes (painel alto e diagonal no desktop, faixa
- * 16:9 no celular), e é por isso que o painel pede imagem QUADRADA e mostra as
- * duas prévias na hora do envio. Sem essa dupla prévia, um banner com o texto
- * na borda esquerda ficaria perfeito no celular e decapitado no desktop.
+ * A capa serve para os dois recortes sem imagem nova porque ela já é a mesma
+ * imagem que abre a página do artigo — a loja escolhe uma vez e ela vale nos
+ * dois lugares. O resto do hero (título, parágrafo, botões, marca d'água) não
+ * muda: o destaque troca a IMAGEM, não a promessa da marca.
  *
  * ----------------------------------------------------------------------------
  * A DOBRA: só o hero na primeira tela
@@ -90,18 +100,20 @@ function AreaClicavel({ href, rotulo }: { href: string; rotulo: string }) {
  * abrir o site, o visitante vê apenas o carro e a promessa. O convite para o
  * estoque vem logo abaixo da dobra, como um bloco de destaque próprio (na home).
  */
-export function Hero({ banner }: { banner?: HeroBanner | null }) {
-  // Banner ligado no painel substitui a foto de vitrine nos DOIS recortes.
-  // Sem banner, nada muda: o site segue com a foto padrão, que é o estado
-  // normal enquanto a loja não tem promoção no ar.
-  const imagem = banner ? { src: banner.image_url, alt: banner.alt } : FOTO_PADRAO;
+export function Hero({ destaque }: { destaque?: ArticleSummary | null }) {
+  // Só entra no lugar da foto se o artigo destacado TIVER capa. Publicar já
+  // exige capa, então na prática sempre tem — mas sem esta guarda um dado
+  // inesperado no banco deixaria o topo do site sem imagem nenhuma.
+  const artigo = destaque?.cover_url ? destaque : null;
 
-  // A foto padrão é decorativa e fica escondida de leitor de tela — o texto ao
-  // lado já diz tudo que ela mostra. O BANNER não: a promoção costuma estar
-  // escrita dentro da imagem ("taxa zero até domingo"), e escondê-la apagaria
-  // essa informação para quem usa leitor de tela e para o Google. É por isso
-  // que o painel exige a descrição.
-  const decorativa = !banner;
+  const imagem = artigo?.cover_url
+    ? { src: artigo.cover_url, alt: artigo.title }
+    : FOTO_PADRAO;
+
+  // A foto padrão é decorativa: o texto ao lado já diz tudo que ela mostra, e
+  // repeti-lo para leitor de tela seria ruído. A capa do artigo não — ela vem
+  // acompanhada do título na tarja, então é conteúdo.
+  const decorativa = !artigo;
 
   return (
     <section className="bg-canvas relative overflow-hidden">
@@ -140,7 +152,7 @@ export function Hero({ banner }: { banner?: HeroBanner | null }) {
               fetchPriority="high"
               className="object-cover object-center"
             />
-            {banner?.link_url && <AreaClicavel href={banner.link_url} rotulo={banner.alt} />}
+            {artigo && <TarjaDoArtigo artigo={artigo} />}
             {/* SEM degradê na base, de propósito.
                 Havia um branco→transparente aqui para suavizar o encontro da
                 foto com a página. Ele fazia sentido quando a foto tinha base
@@ -259,7 +271,7 @@ export function Hero({ banner }: { banner?: HeroBanner | null }) {
                   fetchPriority="high"
                   className="object-cover object-center"
                 />
-                {banner?.link_url && <AreaClicavel href={banner.link_url} rotulo={banner.alt} />}
+                {artigo && <TarjaDoArtigo artigo={artigo} />}
               </div>
 
               <p className="text-muted mx-auto mt-6 max-w-md text-base leading-relaxed text-pretty lg:mx-0">

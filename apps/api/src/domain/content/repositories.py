@@ -6,13 +6,7 @@ from typing import Protocol
 from uuid import UUID
 
 from src.domain.catalog.value_objects import Page, Pagination
-from src.domain.content.entities import (
-    Article,
-    ArticleSummary,
-    ArticleWrite,
-    HeroBanner,
-    HeroBannerWrite,
-)
+from src.domain.content.entities import Article, ArticleSummary, ArticleWrite
 from src.domain.content.value_objects import ArticleFilters
 
 
@@ -31,23 +25,9 @@ class ArticleRepository(Protocol):
         self, filters: ArticleFilters, pagination: Pagination
     ) -> Page[ArticleSummary]: ...
 
+    async def featured(self) -> ArticleSummary | None: ...
+
     async def latest_published(
         self, *, limit: int, exclude_id: UUID | None = None
     ) -> list[ArticleSummary]: ...
 
-
-class BannerRepository(Protocol):
-    """Porta do banner do topo da home.
-
-    `save` é upsert de propósito: do ponto de vista da loja existe UMA imagem de
-    topo, que ela troca. Separar em criar/editar obrigaria a tela a saber se já
-    existe banner antes de gravar, sem nenhum ganho.
-    """
-
-    async def get_active(self) -> HeroBanner | None: ...
-
-    async def get_current(self) -> HeroBanner | None: ...
-
-    async def save(self, data: HeroBannerWrite) -> HeroBanner: ...
-
-    async def clear(self) -> HeroBanner | None: ...

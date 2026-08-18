@@ -34,7 +34,6 @@ from src.presentation.v1.deps import (
     AdminUser,
     ArchiveVehicleDep,
     ChangeVehicleStatusDep,
-    ClearHeroBannerDep,
     CreateBrandDep,
     CreateModelDep,
     CreateVehicleDep,
@@ -45,7 +44,6 @@ from src.presentation.v1.deps import (
     DuplicateVehicleDep,
     GetAdminArticleDep,
     GetAdminVehicleDep,
-    GetCurrentBannerDep,
     ListAdminVehiclesDep,
     ListAppointmentsDep,
     ListConsignmentsDep,
@@ -54,7 +52,6 @@ from src.presentation.v1.deps import (
     RegisterImageDep,
     ReorderImagesDep,
     SaveArticleDep,
-    SaveHeroBannerDep,
     SetCoverImageDep,
     StorageDep,
     UpdateAppointmentStatusDep,
@@ -94,8 +91,6 @@ from src.presentation.v1.schemas.content import (
     ArticleIn,
     ArticleOut,
     ArticlePageOut,
-    BannerIn,
-    BannerOut,
 )
 from src.presentation.v1.schemas.interest import (
     InterestOut,
@@ -567,53 +562,3 @@ async def update_article(
 async def delete_article(article_id: UUID, use_case: DeleteArticleDep) -> None:
     await use_case.execute(article_id)
 
-
-# -------------------------------------------------------------------- banner
-
-
-@router.get("/banner", response_model=BannerOut | None, summary="Banner gravado")
-async def get_current_banner(use_case: GetCurrentBannerDep) -> BannerOut | None:
-    """O banner gravado, LIGADO OU NÃO.
-
-    Diferente da rota pública, que só devolve o ativo: aqui a tela precisa
-    carregar a imagem mesmo quando ela está desligada, senão desligar o banner
-    faria a imagem sumir do painel e a loja teria de subir tudo de novo para
-    religar.
-    """
-    banner = await use_case.execute()
-    return BannerOut.model_validate(banner) if banner else None
-
-
-@router.put("/banner", response_model=BannerOut, summary="Gravar o banner do topo")
-async def save_banner(payload: BannerIn, use_case: SaveHeroBannerDep) -> BannerOut:
-    """PUT, não POST: do ponto de vista da loja existe um banner só, que ela troca."""
-    banner = await use_case.execute(payload.to_domain())
-    return BannerOut.model_validate(banner)
-
-
-@router.delete("/banner", status_code=204, summary="Remover o banner do topo")
-async def delete_banner(use_case: ClearHeroBannerDep) -> None:
-    """Apaga o registro e o arquivo, devolvendo a foto de vitrine ao topo do site.
-
-    Para tirar do ar SEM perder a imagem, a loja usa o interruptor da tela
-    (`active`), que é a operação que ela vai querer na maior parte das vezes.
-    """
-    await use_case.execute()
-
-
-@router.post(
-    "/banner/upload-url",
-    response_model=UploadUrlOut,
-    summary="Autorizar upload da imagem do banner",
-)
-async def create_banner_upload_url(payload: UploadUrlIn, storage: StorageDep) -> UploadUrlOut:
-    """Mesmo desenho dos outros uploads: a imagem não passa pela função."""
-    from src.infrastructure.storage.supabase_storage import build_banner_path
-
-    signed = await storage.create_signed_upload(path=build_banner_path(payload.content_type))
-    return UploadUrlOut(
-        upload_url=signed.upload_url,
-        token=signed.token,
-        storage_path=signed.storage_path,
-        public_url=storage.public_url(signed.storage_path),
-    )

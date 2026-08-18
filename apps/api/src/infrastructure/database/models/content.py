@@ -78,47 +78,20 @@ class Article(Base, UUIDPrimaryKeyMixin, TimestampMixin):
         server_default=text("'draft'"),
     )
 
+    #: Marca o artigo que ocupa o topo da home, com a capa dele como banner e um
+    #: botão "Ler artigo".
+    #:
+    #: É UM POR VEZ: marcar um desmarca o anterior. O espaço no topo do site é
+    #: um só, e deixar dois marcados obrigaria a escolher um deles na hora de
+    #: exibir — a loja veria dois artigos marcados no painel e um só no site.
+    #:
+    #: Só vale para artigo PUBLICADO. Destacar um rascunho colocaria no topo da
+    #: home uma capa que leva a uma página que não existe.
+    featured: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, server_default=text("false"), index=True
+    )
+
     #: Preenchido na PRIMEIRA publicação e mantido depois. Editar um artigo
     #: publicado não deve fazê-lo pular para o topo da lista como se fosse novo.
     published_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
 
-
-class Banner(Base, UUIDPrimaryKeyMixin, TimestampMixin):
-    """A imagem do topo da home, trocada pela loja no painel.
-
-    ----------------------------------------------------------------------------
-    A MESMA IMAGEM É RECORTADA DE DOIS JEITOS MUITO DIFERENTES
-    ----------------------------------------------------------------------------
-    No desktop ela é um painel alto e cortado na diagonal; no celular, uma faixa
-    16:9. Uma foto pensada só para o desktop perde o assunto no celular, e o
-    contrário também. É por isso que o formato pedido é QUADRADO (1600x1600): é o
-    único que sobrevive aos dois recortes com folga.
-
-    O painel mostra os dois recortes lado a lado no momento do envio — é a tela
-    que impede o banner ruim, não este comentário.
-
-    ----------------------------------------------------------------------------
-    `alt` É OBRIGATÓRIO
-    ----------------------------------------------------------------------------
-    O banner costuma trazer a promoção escrita DENTRO da imagem ("taxa zero até
-    domingo"). Sem `alt`, essa informação não existe para quem usa leitor de tela
-    e nem para o Google. Deixar o campo opcional garantiria que ficasse vazio.
-    """
-
-    __tablename__ = "banners"
-
-    image_url: Mapped[str] = mapped_column(String(500), nullable=False)
-    #: Caminho no Storage, para APAGAR o arquivo quando a imagem for trocada.
-    #: Sem ele cada troca deixaria um arquivo órfão no bucket para sempre.
-    image_path: Mapped[str] = mapped_column(String(500), nullable=False)
-
-    alt: Mapped[str] = mapped_column(String(200), nullable=False)
-
-    #: Para onde o banner leva ao ser clicado. Vazio = banner só decorativo.
-    #: Uma promoção que não leva a lugar nenhum desperdiça o clique de quem se
-    #: interessou.
-    link_url: Mapped[str | None] = mapped_column(String(500))
-
-    #: Desligado devolve a foto de vitrine padrão ao topo do site, sem apagar a
-    #: imagem enviada.
-    active: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default=text("true"))

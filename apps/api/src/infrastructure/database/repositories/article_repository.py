@@ -7,7 +7,7 @@ from datetime import UTC, datetime
 from uuid import UUID
 
 from slugify import slugify
-from sqlalchemy import ColumnElement, func, or_, select
+from sqlalchemy import ColumnElement, func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.domain.catalog.value_objects import Page, Pagination
@@ -59,8 +59,11 @@ class SqlAlchemyArticleRepository:
             faq=[{"question": f.question, "answer": f.answer} for f in data.faq],
             reading_minutes=_minutos_de_leitura(data.body),
             status=data.status,
+            featured=data.featured,
             published_at=agora if data.status is ArticleStatus.PUBLISHED else None,
         )
+        if data.featured:
+            await self._desmarcar_outros()
         self._session.add(modelo)
         await self._session.flush()
         await self._session.refresh(modelo)
@@ -81,6 +84,14 @@ class SqlAlchemyArticleRepository:
         modelo.faq = [{"question": f.question, "answer": f.answer} for f in data.faq]
         modelo.reading_minutes = _minutos_de_leitura(data.body)
         modelo.status = data.status
+
+        # Marcar este DESMARCA os outros, antes de gravar o novo valor. O topo
+        # da home é um espaço só; dois artigos marcados obrigariam a escolher um
+        # na hora de exibir, e o painel mostraria dois destaques para um único
+        # lugar no site.
+        if data.featured and not modelo.featured:
+            await self._desmarcar_outros(exceto=article_id)
+        modelo.featured = data.featured
 
         # Carimba a data na PRIMEIRA publicação e nunca mais. Editar um artigo
         # antigo não deve fazê-lo pular para o topo como se fosse novo.
@@ -147,6 +158,31 @@ class SqlAlchemyArticleRepository:
             page_size=pagination.page_size,
         )
 
+    async def featured(self) -> ArticleSummary | None:
+        """O artigo em destaque no topo da home.
+
+        Exige PUBLICADO além de marcado: se um artigo destacado for despublicado
+        pelo painel, o topo do site volta sozinho à foto de vitrine em vez de
+        apontar para uma página que sumiu.
+        """
+        modelo = await self._session.scalar(
+            select(ArticleModel)
+            .where(
+                ArticleModel.featured.is_(True),
+                ArticleModel.status == ArticleStatus.PUBLISHED,
+            )
+            .limit(1)
+        )
+        return _para_resumo(modelo) if modelo else None
+
+    async def _desmarcar_outros(self, *, exceto: UUID | None = None) -> None:
+        condicoes: list[ColumnElement[bool]] = [ArticleModel.featured.is_(True)]
+        if exceto is not None:
+            condicoes.append(ArticleModel.id != exceto)
+        await self._session.execute(
+            update(ArticleModel).where(*condicoes).values(featured=False)
+        )
+
     async def latest_published(
         self, *, limit: int, exclude_id: UUID | None = None
     ) -> list[ArticleSummary]:
@@ -171,6 +207,7 @@ def _para_resumo(m: ArticleModel) -> ArticleSummary:
         cover_url=m.cover_url,
         status=m.status,
         reading_minutes=m.reading_minutes,
+        featured=m.featured,
         published_at=m.published_at,
         updated_at=m.updated_at,
     )
@@ -188,6 +225,7 @@ def _para_entidade(m: ArticleModel) -> Article:
         faq=[FaqItem(question=f.get("question", ""), answer=f.get("answer", "")) for f in m.faq],
         status=m.status,
         reading_minutes=m.reading_minutes,
+        featured=m.featured,
         published_at=m.published_at,
         created_at=m.created_at,
         updated_at=m.updated_at,

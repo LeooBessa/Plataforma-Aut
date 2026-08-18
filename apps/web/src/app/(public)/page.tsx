@@ -9,7 +9,7 @@ import { SearchFilters } from '@/features/vehicles/search-filters';
 import { VehicleCard, VehicleCardSkeleton } from '@/features/vehicles/vehicle-card';
 import {
   getFilterOptions,
-  getHeroBanner,
+  getFeaturedArticle,
   listVehicles,
   safely,
   type VehicleSearchParams,
@@ -39,10 +39,10 @@ export default async function HomePage({ searchParams }: Props) {
 
   return (
     <>
-      {/* O texto do hero é fixo; só a IMAGEM pode vir do painel.
-          `safely` porque o banner é enfeite: se a API não responder, o topo cai
-          na foto de vitrine padrão em vez de derrubar a home inteira. */}
-      <Hero banner={await safely(getHeroBanner())} />
+      {/* O texto do hero é fixo; só a IMAGEM pode vir de um artigo destacado.
+          `safely` porque o destaque é acessório: se a API não responder, o topo
+          cai na foto de vitrine padrão em vez de derrubar a home inteira. */}
+      <Hero destaque={await safely(getFeaturedArticle())} />
 
       <EstoqueSection params={params} />
 

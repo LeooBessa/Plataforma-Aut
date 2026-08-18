@@ -30,7 +30,6 @@ export type Article = Schemas['ArticleOut'];
 export type ArticleSummary = Schemas['ArticleSummaryOut'];
 export type ArticleDetail = Schemas['ArticleDetailOut'];
 export type ArticlePage = Schemas['ArticlePageOut'];
-export type HeroBanner = Schemas['BannerOut'];
 export type Appointment = Schemas['AppointmentOut'];
 export type DashboardStats = Schemas['DashboardStatsOut'];
 export type Image = Schemas['ImageOut'];
@@ -173,16 +172,16 @@ export function listArticles(limit = 12): Promise<ArticlePage> {
 }
 
 /**
- * O banner do topo da home. `null` é resposta válida, não falha.
+ * O artigo marcado como destaque, que ocupa o topo da home. `null` é resposta
+ * válida, não falha: sem destaque, o topo fica com a foto de vitrine padrão.
  *
- * Enquanto a loja não subir banner, o hero usa a foto de vitrine padrão. Por
- * isso a tag `home`: gravar o banner no painel invalida a home na hora, em vez
- * de a loja esperar o ciclo de cache e achar que não funcionou.
+ * A tag `home` faz o topo trocar assim que a loja marca o destaque no painel,
+ * em vez de ela esperar o ciclo de cache e achar que não funcionou.
  */
-export function getHeroBanner(): Promise<HeroBanner | null> {
-  return request<HeroBanner | null>('/banner', {
+export function getFeaturedArticle(): Promise<ArticleSummary | null> {
+  return request<ArticleSummary | null>('/articles/featured', {
     revalidate: 300,
-    tags: ['banner', 'home'],
+    tags: ['articles', 'home'],
   });
 }
 

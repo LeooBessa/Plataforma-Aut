@@ -207,3 +207,107 @@ async def test_leia_tambem_nao_repete_o_artigo_aberto(
     slugs = [a["slug"] for a in detalhe["related"]]
     assert "artigo-1" not in slugs
     assert len(slugs) == 2
+
+
+# ------------------------------------------------------- destaque na home
+
+
+async def _publicado(client: AsyncClient, headers: dict[str, str], titulo: str) -> dict:
+    r = await client.post(
+        ADMIN,
+        json=_payload(title=titulo, status="published", cover_url=CAPA, cover_path="a/b.jpg"),
+        headers=headers,
+    )
+    return r.json()
+
+
+async def test_sem_destaque_a_rota_devolve_vazio(client: AsyncClient) -> None:
+    """Estado normal do site: `null`, não erro. O topo fica com a foto padrão."""
+    r = await client.get(f"{PUBLICO}/featured")
+    assert r.status_code == 200
+    assert r.json() is None
+
+
+async def test_destacar_coloca_o_artigo_no_topo(client: AsyncClient, admin: User) -> None:
+    headers = await _auth(client, admin)
+    artigo = await _publicado(client, headers, "Como escolher um seminovo")
+
+    await client.put(
+        f"{ADMIN}/{artigo['id']}",
+        json=_payload(
+            title=artigo["title"],
+            status="published",
+            cover_url=CAPA,
+            cover_path="a/b.jpg",
+            featured=True,
+        ),
+        headers=headers,
+    )
+
+    destaque = (await client.get(f"{PUBLICO}/featured")).json()
+    assert destaque is not None
+    assert destaque["slug"] == artigo["slug"]
+    assert destaque["cover_url"] == CAPA
+
+
+async def test_destacar_um_desmarca_o_outro(client: AsyncClient, admin: User) -> None:
+    """O topo da home é um espaço só.
+
+    Sem esta regra, dois artigos apareceriam marcados no painel para um único
+    lugar no site, e qual dos dois aparece viraria sorteio.
+    """
+    headers = await _auth(client, admin)
+    primeiro = await _publicado(client, headers, "Primeiro artigo")
+    segundo = await _publicado(client, headers, "Segundo artigo")
+
+    for artigo in (primeiro, segundo):
+        await client.put(
+            f"{ADMIN}/{artigo['id']}",
+            json=_payload(
+                title=artigo["title"],
+                status="published",
+                cover_url=CAPA,
+                cover_path="a/b.jpg",
+                featured=True,
+            ),
+            headers=headers,
+        )
+
+    destaque = (await client.get(f"{PUBLICO}/featured")).json()
+    assert destaque["slug"] == segundo["slug"]
+
+    anterior = (await client.get(f"{ADMIN}/{primeiro['id']}", headers=headers)).json()
+    assert anterior["featured"] is False
+
+
+async def test_nao_da_para_destacar_rascunho(client: AsyncClient, admin: User) -> None:
+    """Destacar rascunho poria no topo uma capa que leva a página inexistente."""
+    headers = await _auth(client, admin)
+    r = await client.post(
+        ADMIN,
+        json=_payload(status="draft", cover_url=CAPA, cover_path="a/b.jpg", featured=True),
+        headers=headers,
+    )
+    assert r.status_code == 422
+
+
+async def test_despublicar_o_destaque_limpa_o_topo(client: AsyncClient, admin: User) -> None:
+    """O site se protege sozinho.
+
+    Se despublicar deixasse o destaque de pé, o topo da home apontaria para uma
+    página que passou a devolver 404.
+    """
+    headers = await _auth(client, admin)
+    artigo = await _publicado(client, headers, "Vai sair do ar")
+    corpo = _payload(
+        title=artigo["title"], status="published", cover_url=CAPA, cover_path="a/b.jpg"
+    )
+    await client.put(f"{ADMIN}/{artigo['id']}", json={**corpo, "featured": True}, headers=headers)
+    assert (await client.get(f"{PUBLICO}/featured")).json() is not None
+
+    await client.put(
+        f"{ADMIN}/{artigo['id']}",
+        json={**corpo, "status": "draft", "featured": False},
+        headers=headers,
+    )
+    assert (await client.get(f"{PUBLICO}/featured")).json() is None

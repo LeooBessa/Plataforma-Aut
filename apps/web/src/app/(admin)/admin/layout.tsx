@@ -9,7 +9,6 @@ import {
   Calendar,
   Car,
   FileText,
-  Image as ImageIcon,
   HandCoins,
   LayoutDashboard,
   Library,
@@ -46,7 +45,6 @@ const NAV = [
   { href: '/admin/anuncie', label: 'Carros oferecidos', icon: HandCoins },
   { href: '/admin/interesses', label: 'Lista de espera', icon: BellRing },
   { href: '/admin/artigos', label: 'Artigos', icon: FileText },
-  { href: '/admin/banner', label: 'Banner da home', icon: ImageIcon },
   { href: '/admin/catalogo', label: 'Catálogo', icon: Library },
 ] as const;
 
