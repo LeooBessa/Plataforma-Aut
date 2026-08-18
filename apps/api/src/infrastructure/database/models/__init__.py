@@ -16,7 +16,7 @@ from src.infrastructure.database.models.catalog import (
     vehicle_features,
 )
 from src.infrastructure.database.models.consignment import ConsignmentRequest
-from src.infrastructure.database.models.content import Article
+from src.infrastructure.database.models.content import Article, Banner
 from src.infrastructure.database.models.dealership import Dealership
 from src.infrastructure.database.models.identity import RefreshToken, User
 from src.infrastructure.database.models.interest import VehicleInterest
@@ -25,6 +25,7 @@ from src.infrastructure.database.models.scheduling import Appointment
 __all__ = [
     "Appointment",
     "Article",
+    "Banner",
     "Brand",
     "ConsignmentRequest",
     "Dealership",

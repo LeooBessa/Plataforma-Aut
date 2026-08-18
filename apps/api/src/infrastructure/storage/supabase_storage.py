@@ -139,3 +139,20 @@ class SupabaseStorageService:
             return False
 
         return True
+
+
+def build_banner_path(content_type: str) -> str:
+    """Caminho da imagem do banner do topo.
+
+    Pasta própria, separada de `articles/` e das fotos de veículo: é UMA imagem
+    que a loja troca de tempos em tempos, e vê-la isolada no bucket facilita
+    conferir o que está no ar.
+    """
+    extension = ALLOWED_CONTENT_TYPES.get(content_type)
+    if extension is None:
+        raise ValidationError(
+            "Formato de imagem não suportado. Envie JPG, PNG, WebP ou AVIF.",
+            details={"content_type": content_type},
+        )
+
+    return str(PurePosixPath("banners") / f"{uuid.uuid4().hex}{extension}")

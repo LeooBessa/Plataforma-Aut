@@ -70,3 +70,47 @@ class Article:
     published_at: datetime | None
     created_at: datetime
     updated_at: datetime
+
+
+@dataclass(frozen=True, slots=True)
+class HeroBannerWrite:
+    """O que o painel envia ao trocar a imagem do topo da home."""
+
+    image_url: str
+    image_path: str
+    alt: str
+    link_url: str | None = None
+    active: bool = True
+
+
+@dataclass(frozen=True, slots=True)
+class HeroBanner:
+    """A imagem que substitui a foto de vitrine no topo da home.
+
+    ----------------------------------------------------------------------------
+    É UM REGISTRO SÓ, E ISSO É PROPOSITAL
+    ----------------------------------------------------------------------------
+    Uma revenda troca o banner quando entra promoção ("feirão", "taxa zero") e
+    não volta ao anterior — o de junho não serve em julho. Guardar histórico
+    obrigaria a loja a escolher qual está no ar toda vez que abre a tela, para
+    resolver um problema que ela não tem.
+
+    A tabela, ainda assim, aceita mais de uma linha. Se um dia houver carrossel
+    ou banner agendado, o que muda é o caso de uso, não o schema.
+
+    ----------------------------------------------------------------------------
+    `active` EXISTE PARA PODER VOLTAR ATRÁS SEM PERDER A IMAGEM
+    ----------------------------------------------------------------------------
+    Desligar devolve a foto de vitrine padrão ao topo do site, e a imagem
+    enviada continua guardada. Sem isso, "tirar o banner do ar por uma semana"
+    significaria excluir e subir de novo depois.
+    """
+
+    id: UUID
+    image_url: str
+    image_path: str
+    alt: str
+    link_url: str | None
+    active: bool
+    created_at: datetime
+    updated_at: datetime

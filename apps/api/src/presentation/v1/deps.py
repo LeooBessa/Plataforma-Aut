@@ -46,12 +46,16 @@ from src.application.consignment.use_cases import (
     UpdateConsignmentStatusUseCase,
 )
 from src.application.content.use_cases import (
+    ClearHeroBannerUseCase,
     DeleteArticleUseCase,
     GetAdminArticleUseCase,
     GetArticleUseCase,
+    GetCurrentBannerUseCase,
+    GetHeroBannerUseCase,
     ListArticlesUseCase,
     RelatedArticlesUseCase,
     SaveArticleUseCase,
+    SaveHeroBannerUseCase,
 )
 from src.application.identity.use_cases import (
     LoginUseCase,
@@ -77,7 +81,7 @@ from src.core.security import PasswordHasher, get_password_hasher
 from src.core.tokens import decode_access_token
 from src.domain.catalog.repositories import VehicleAdminRepository, VehicleRepository
 from src.domain.consignment.repositories import ConsignmentRepository
-from src.domain.content.repositories import ArticleRepository
+from src.domain.content.repositories import ArticleRepository, BannerRepository
 from src.domain.identity.entities import AuthenticatedUser
 from src.domain.identity.repositories import RefreshTokenRepository, UserRepository
 from src.domain.interest.repositories import InterestRepository
@@ -88,6 +92,9 @@ from src.infrastructure.database.repositories.appointment_repository import (
 )
 from src.infrastructure.database.repositories.article_repository import (
     SqlAlchemyArticleRepository,
+)
+from src.infrastructure.database.repositories.banner_repository import (
+    SqlAlchemyBannerRepository,
 )
 from src.infrastructure.database.repositories.consignment_repository import (
     SqlAlchemyConsignmentRepository,
@@ -517,15 +524,15 @@ ArticleRepositoryDep = Annotated[ArticleRepository, Depends(get_article_reposito
 
 
 def get_save_article_use_case(
-    repo: ArticleRepositoryDep, storage: StorageDep
+    repo: ArticleRepositoryDep, storage: StorageDep, revalidation: RevalidationDep
 ) -> SaveArticleUseCase:
-    return SaveArticleUseCase(repo, storage)
+    return SaveArticleUseCase(repo, storage, revalidation)
 
 
 def get_delete_article_use_case(
-    repo: ArticleRepositoryDep, storage: StorageDep
+    repo: ArticleRepositoryDep, storage: StorageDep, revalidation: RevalidationDep
 ) -> DeleteArticleUseCase:
-    return DeleteArticleUseCase(repo, storage)
+    return DeleteArticleUseCase(repo, storage, revalidation)
 
 
 def get_get_article_use_case(repo: ArticleRepositoryDep) -> GetArticleUseCase:
@@ -550,3 +557,39 @@ GetArticleDep = Annotated[GetArticleUseCase, Depends(get_get_article_use_case)]
 GetAdminArticleDep = Annotated[GetAdminArticleUseCase, Depends(get_get_admin_article_use_case)]
 ListArticlesDep = Annotated[ListArticlesUseCase, Depends(get_list_articles_use_case)]
 RelatedArticlesDep = Annotated[RelatedArticlesUseCase, Depends(get_related_articles_use_case)]
+
+
+# -------------------------------------------------------------------- banner
+
+
+def get_banner_repository(session: SessionDep) -> BannerRepository:
+    return SqlAlchemyBannerRepository(session)
+
+
+BannerRepositoryDep = Annotated[BannerRepository, Depends(get_banner_repository)]
+
+
+def get_hero_banner_use_case(repo: BannerRepositoryDep) -> GetHeroBannerUseCase:
+    return GetHeroBannerUseCase(repo)
+
+
+def get_current_banner_use_case(repo: BannerRepositoryDep) -> GetCurrentBannerUseCase:
+    return GetCurrentBannerUseCase(repo)
+
+
+def get_save_hero_banner_use_case(
+    repo: BannerRepositoryDep, storage: StorageDep, revalidation: RevalidationDep
+) -> SaveHeroBannerUseCase:
+    return SaveHeroBannerUseCase(repo, storage, revalidation)
+
+
+def get_clear_hero_banner_use_case(
+    repo: BannerRepositoryDep, storage: StorageDep, revalidation: RevalidationDep
+) -> ClearHeroBannerUseCase:
+    return ClearHeroBannerUseCase(repo, storage, revalidation)
+
+
+GetHeroBannerDep = Annotated[GetHeroBannerUseCase, Depends(get_hero_banner_use_case)]
+GetCurrentBannerDep = Annotated[GetCurrentBannerUseCase, Depends(get_current_banner_use_case)]
+SaveHeroBannerDep = Annotated[SaveHeroBannerUseCase, Depends(get_save_hero_banner_use_case)]
+ClearHeroBannerDep = Annotated[ClearHeroBannerUseCase, Depends(get_clear_hero_banner_use_case)]

@@ -5,16 +5,31 @@ from __future__ import annotations
 from dataclasses import dataclass
 from uuid import UUID
 
-from src.application.ports import StorageService
+from src.application.ports import RevalidationService, StorageService
 from src.core.exceptions import NotFoundError, ValidationError
 from src.domain.catalog.value_objects import Page, Pagination
-from src.domain.content.entities import Article, ArticleSummary, ArticleWrite
+from src.domain.content.entities import (
+    Article,
+    ArticleSummary,
+    ArticleWrite,
+    HeroBanner,
+    HeroBannerWrite,
+)
 from src.domain.content.enums import ArticleStatus
-from src.domain.content.repositories import ArticleRepository
+from src.domain.content.repositories import ArticleRepository, BannerRepository
 from src.domain.content.value_objects import ArticleFilters
 
 #: Quantos artigos aparecem em "Leia também".
 _RELACIONADOS = 3
+
+#: As páginas que mudam quando um artigo é gravado: a listagem, a página do
+#: próprio artigo e a Sobre, que mostra os três mais recentes.
+#:
+#: Sem isto, o site só se corrigiria no fim do ciclo de cache (5 minutos). Cinco
+#: minutos olhando para uma página que não mudou é tempo suficiente para a loja
+#: concluir que publicar não funcionou e tentar de novo.
+def _tags_do_artigo(slug: str) -> list[str]:
+    return ["articles", f"article:{slug}"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -28,12 +43,15 @@ class SaveArticleUseCase:
 
     repository: ArticleRepository
     storage: StorageService
+    revalidation: RevalidationService
 
     async def execute(self, data: ArticleWrite, *, article_id: UUID | None = None) -> Article:
         _validar(data)
 
         if article_id is None:
-            return await self.repository.create(data)
+            criado = await self.repository.create(data)
+            await self.revalidation.revalidate(_tags_do_artigo(criado.slug))
+            return criado
 
         anterior = await self.repository.get_by_id(article_id)
         if anterior is None:
@@ -46,6 +64,9 @@ class SaveArticleUseCase:
         if anterior.cover_path and anterior.cover_path != data.cover_path:
             await self.storage.delete(path=anterior.cover_path)
 
+        # Depois de gravar, nunca antes: revalidar uma página que ainda mostra o
+        # conteúdo velho só reescreveria o cache com o mesmo conteúdo velho.
+        await self.revalidation.revalidate(_tags_do_artigo(atualizado.slug))
         return atualizado
 
 
@@ -53,6 +74,7 @@ class SaveArticleUseCase:
 class DeleteArticleUseCase:
     repository: ArticleRepository
     storage: StorageService
+    revalidation: RevalidationService
 
     async def execute(self, article_id: UUID) -> None:
         apagado = await self.repository.delete(article_id)
@@ -60,6 +82,7 @@ class DeleteArticleUseCase:
             raise NotFoundError("Artigo não encontrado.")
         if apagado.cover_path:
             await self.storage.delete(path=apagado.cover_path)
+        await self.revalidation.revalidate(_tags_do_artigo(apagado.slug))
 
 
 @dataclass(frozen=True, slots=True)
@@ -130,3 +153,95 @@ def _validar(data: ArticleWrite) -> None:
     for item in data.faq:
         if not item.question.strip() or not item.answer.strip():
             raise ValidationError("Toda pergunta do FAQ precisa de uma resposta.")
+
+
+# ------------------------------------------------------------------- banner
+
+
+#: A home é a única página que mostra o banner.
+_TAGS_DO_BANNER = ["banner", "home"]
+
+
+@dataclass(frozen=True, slots=True)
+class GetHeroBannerUseCase:
+    """O banner que o site exibe. Devolve `None` quando não há.
+
+    `None` não é erro: é o estado normal enquanto a loja não subiu banner
+    nenhum, e o topo do site cai na foto de vitrine padrão.
+    """
+
+    repository: BannerRepository
+
+    async def execute(self) -> HeroBanner | None:
+        return await self.repository.get_active()
+
+
+@dataclass(frozen=True, slots=True)
+class GetCurrentBannerUseCase:
+    """O banner gravado, ligado ou não — é o que a tela de edição carrega."""
+
+    repository: BannerRepository
+
+    async def execute(self) -> HeroBanner | None:
+        return await self.repository.get_current()
+
+
+@dataclass(frozen=True, slots=True)
+class SaveHeroBannerUseCase:
+    """Grava a imagem do topo.
+
+    Trocar a imagem APAGA a anterior do Storage. Sem isso, cada promoção nova
+    deixaria a antiga ocupando espaço no bucket para sempre — e o plano é
+    gratuito, então o espaço é finito de verdade.
+    """
+
+    repository: BannerRepository
+    storage: StorageService
+    revalidation: RevalidationService
+
+    async def execute(self, data: HeroBannerWrite) -> HeroBanner:
+        _validar_banner(data)
+
+        anterior = await self.repository.get_current()
+        salvo = await self.repository.save(data)
+
+        if anterior and anterior.image_path and anterior.image_path != data.image_path:
+            await self.storage.delete(path=anterior.image_path)
+
+        await self.revalidation.revalidate(_TAGS_DO_BANNER)
+        return salvo
+
+
+@dataclass(frozen=True, slots=True)
+class ClearHeroBannerUseCase:
+    """Remove o banner e devolve o topo do site à foto de vitrine."""
+
+    repository: BannerRepository
+    storage: StorageService
+    revalidation: RevalidationService
+
+    async def execute(self) -> None:
+        removido = await self.repository.clear()
+        if removido is None:
+            raise NotFoundError("Não há banner para remover.")
+        if removido.image_path:
+            await self.storage.delete(path=removido.image_path)
+        await self.revalidation.revalidate(_TAGS_DO_BANNER)
+
+
+def _validar_banner(data: HeroBannerWrite) -> None:
+    if not data.image_url or not data.image_path:
+        raise ValidationError("Envie a imagem do banner.")
+
+    # `alt` obrigatório: a promoção costuma estar escrita DENTRO da imagem, e
+    # sem descrição essa informação não existe para leitor de tela nem para o
+    # Google. Campo opcional aqui seria campo vazio na prática.
+    if not data.alt.strip():
+        raise ValidationError("Descreva a imagem — é o que leitores de tela leem.")
+
+    # Só link interno ou http(s). Um `javascript:` gravado aqui viraria execução
+    # de script no clique de qualquer visitante da home.
+    if data.link_url:
+        destino = data.link_url.strip()
+        if not (destino.startswith("/") or destino.startswith(("http://", "https://"))):
+            raise ValidationError("O link deve começar com / ou com http.")

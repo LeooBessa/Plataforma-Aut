@@ -228,6 +228,26 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/banner': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Banner ativo do topo da home
+     * @description `null` quando não há banner ligado — não é erro, é o padrão do site.
+     */
+    get: operations['get_hero_banner_api_v1_banner_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   '/api/v1/appointments': {
     parameters: {
       query?: never;
@@ -780,6 +800,62 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  '/api/v1/admin/banner': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /**
+     * Banner gravado
+     * @description O banner gravado, LIGADO OU NÃO.
+     *
+     *     Diferente da rota pública, que só devolve o ativo: aqui a tela precisa
+     *     carregar a imagem mesmo quando ela está desligada, senão desligar o banner
+     *     faria a imagem sumir do painel e a loja teria de subir tudo de novo para
+     *     religar.
+     */
+    get: operations['get_current_banner_api_v1_admin_banner_get'];
+    /**
+     * Gravar o banner do topo
+     * @description PUT, não POST: do ponto de vista da loja existe um banner só, que ela troca.
+     */
+    put: operations['save_banner_api_v1_admin_banner_put'];
+    post?: never;
+    /**
+     * Remover o banner do topo
+     * @description Apaga o registro e o arquivo, devolvendo a foto de vitrine ao topo do site.
+     *
+     *     Para tirar do ar SEM perder a imagem, a loja usa o interruptor da tela
+     *     (`active`), que é a operação que ela vai querer na maior parte das vezes.
+     */
+    delete: operations['delete_banner_api_v1_admin_banner_delete'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/v1/admin/banner/upload-url': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /**
+     * Autorizar upload da imagem do banner
+     * @description Mesmo desenho dos outros uploads: a imagem não passa pela função.
+     */
+    post: operations['create_banner_upload_url_api_v1_admin_banner_upload_url_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -1028,6 +1104,48 @@ export interface components {
       reading_minutes: number;
       /** Published At */
       published_at: string | null;
+      /**
+       * Updated At
+       * Format: date-time
+       */
+      updated_at: string;
+    };
+    /**
+     * BannerIn
+     * @description O que o painel envia ao gravar o banner do topo.
+     */
+    BannerIn: {
+      /** Image Url */
+      image_url: string;
+      /** Image Path */
+      image_path: string;
+      /** Alt */
+      alt: string;
+      /** Link Url */
+      link_url?: string | null;
+      /**
+       * Active
+       * @default true
+       */
+      active: boolean;
+    };
+    /** BannerOut */
+    BannerOut: {
+      /**
+       * Id
+       * Format: uuid
+       */
+      id: string;
+      /** Image Url */
+      image_url: string;
+      /** Image Path */
+      image_path: string;
+      /** Alt */
+      alt: string;
+      /** Link Url */
+      link_url: string | null;
+      /** Active */
+      active: boolean;
       /**
        * Updated At
        * Format: date-time
@@ -2169,6 +2287,26 @@ export interface operations {
         };
         content: {
           'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  get_hero_banner_api_v1_banner_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BannerOut'] | null;
         };
       };
     };
@@ -3609,6 +3747,166 @@ export interface operations {
           [name: string]: unknown;
         };
         content?: never;
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  get_current_banner_api_v1_admin_banner_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BannerOut'] | null;
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  save_banner_api_v1_admin_banner_put: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['BannerIn'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['BannerOut'];
+        };
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  delete_banner_api_v1_admin_banner_delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Não autenticado */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Sem permissão */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  create_banner_upload_url_api_v1_admin_banner_upload_url_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['UploadUrlIn'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['UploadUrlOut'];
+        };
       };
       /** @description Não autenticado */
       401: {

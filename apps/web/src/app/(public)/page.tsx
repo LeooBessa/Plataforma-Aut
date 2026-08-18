@@ -7,7 +7,13 @@ import { InterestSection } from '@/features/interest/interest-section';
 import { Hero } from '@/features/home/hero';
 import { SearchFilters } from '@/features/vehicles/search-filters';
 import { VehicleCard, VehicleCardSkeleton } from '@/features/vehicles/vehicle-card';
-import { getFilterOptions, listVehicles, safely, type VehicleSearchParams } from '@/lib/api';
+import {
+  getFilterOptions,
+  getHeroBanner,
+  listVehicles,
+  safely,
+  type VehicleSearchParams,
+} from '@/lib/api';
 
 /**
  * Home.
@@ -33,8 +39,10 @@ export default async function HomePage({ searchParams }: Props) {
 
   return (
     <>
-      {/* Hero estático (foto de vitrine + texto), sem dado de API. */}
-      <Hero />
+      {/* O texto do hero é fixo; só a IMAGEM pode vir do painel.
+          `safely` porque o banner é enfeite: se a API não responder, o topo cai
+          na foto de vitrine padrão em vez de derrubar a home inteira. */}
+      <Hero banner={await safely(getHeroBanner())} />
 
       <EstoqueSection params={params} />
 

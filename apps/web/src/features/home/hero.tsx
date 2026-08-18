@@ -1,12 +1,51 @@
+import type { Route } from 'next';
 import Image from 'next/image';
+import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 
 import AnimatedTextCycle from '@/components/ui/animated-text-cycle';
 import { ButtonLink } from '@/components/ui/button';
 import { ShinyButtonLink } from '@/components/ui/shiny-button';
+import type { HeroBanner } from '@/lib/api';
 
 /** As palavras que giram no título. A ordem é a que aparece na tela. */
 const QUALIDADES = ['Preço acessível.', 'Economia.', 'Qualidade.', 'Conforto.'];
+
+/** A foto de vitrine que ocupa o topo quando não há banner no painel. */
+const FOTO_PADRAO = {
+  src: '/hero-car.jpg',
+  alt: 'SUV em destaque na vitrine da Giro Auto',
+};
+
+/**
+ * Área clicável do banner, recortada junto com a imagem.
+ *
+ * Fica DENTRO do contêiner com `clip-path`, não em volta dele. Por fora, o
+ * retângulo do link cobriria também o triângulo branco à esquerda da diagonal —
+ * e clicar no vazio da página abriria a promoção. O `clip-path` recorta o
+ * teste de clique junto com o desenho, então por dentro o alvo tem exatamente o
+ * formato do que se vê.
+ *
+ * Link externo sai em `<a>` com `noopener`; interno em `<Link>`, que mantém a
+ * navegação do Next. O `linkSeguro` da API já barrou `javascript:` na gravação;
+ * aqui o `startsWith` decide só qual elemento usar.
+ */
+function AreaClicavel({ href, rotulo }: { href: string; rotulo: string }) {
+  const classe = 'absolute inset-0 z-10';
+
+  if (href.startsWith('http')) {
+    return (
+      <a href={href} target="_blank" rel="noopener noreferrer" className={classe}>
+        <span className="sr-only">{rotulo}</span>
+      </a>
+    );
+  }
+  return (
+    <Link href={href as Route} className={classe}>
+      <span className="sr-only">{rotulo}</span>
+    </Link>
+  );
+}
 
 /**
  * Hero da home.
@@ -32,6 +71,18 @@ const QUALIDADES = ['Preço acessível.', 'Economia.', 'Qualidade.', 'Conforto.'
  * carros do banco continuam logo abaixo, em "Nosso estoque".
  *
  * ----------------------------------------------------------------------------
+ * A IMAGEM PODE VIR DO PAINEL (BANNER)
+ * ----------------------------------------------------------------------------
+ * Se houver banner ligado, ele ocupa o lugar da foto de vitrine nos dois
+ * recortes. O resto do hero — título, parágrafo, botões, marca d'água — não
+ * muda: o banner troca a IMAGEM, não a promessa da marca.
+ *
+ * Os dois recortes são bem diferentes (painel alto e diagonal no desktop, faixa
+ * 16:9 no celular), e é por isso que o painel pede imagem QUADRADA e mostra as
+ * duas prévias na hora do envio. Sem essa dupla prévia, um banner com o texto
+ * na borda esquerda ficaria perfeito no celular e decapitado no desktop.
+ *
+ * ----------------------------------------------------------------------------
  * A DOBRA: só o hero na primeira tela
  * ----------------------------------------------------------------------------
  *
@@ -39,7 +90,19 @@ const QUALIDADES = ['Preço acessível.', 'Economia.', 'Qualidade.', 'Conforto.'
  * abrir o site, o visitante vê apenas o carro e a promessa. O convite para o
  * estoque vem logo abaixo da dobra, como um bloco de destaque próprio (na home).
  */
-export function Hero() {
+export function Hero({ banner }: { banner?: HeroBanner | null }) {
+  // Banner ligado no painel substitui a foto de vitrine nos DOIS recortes.
+  // Sem banner, nada muda: o site segue com a foto padrão, que é o estado
+  // normal enquanto a loja não tem promoção no ar.
+  const imagem = banner ? { src: banner.image_url, alt: banner.alt } : FOTO_PADRAO;
+
+  // A foto padrão é decorativa e fica escondida de leitor de tela — o texto ao
+  // lado já diz tudo que ela mostra. O BANNER não: a promoção costuma estar
+  // escrita dentro da imagem ("taxa zero até domingo"), e escondê-la apagaria
+  // essa informação para quem usa leitor de tela e para o Google. É por isso
+  // que o painel exige a descrição.
+  const decorativa = !banner;
+
   return (
     <section className="bg-canvas relative overflow-hidden">
       {/* ------ HERO — ocupa a tela inteira (menos a navbar) ------ */}
@@ -54,7 +117,10 @@ export function Hero() {
             deslocado 2,5px à direita do plano azul de trás. O que sobra do
             azul nesses 2,5px, ao longo da diagonal, é a linha. Fica preso à
             geometria, então acompanha qualquer tamanho de tela sozinho. */}
-        <div aria-hidden className="absolute inset-y-0 right-0 hidden w-[58%] lg:block">
+        <div
+          aria-hidden={decorativa}
+          className="absolute inset-y-0 right-0 hidden w-[58%] lg:block"
+        >
           <div
             className="from-brand-300 to-brand-600 absolute inset-0 bg-gradient-to-b"
             style={{ clipPath: 'polygon(24% 0, 100% 0, 100% 100%, 5% 100%)' }}
@@ -64,8 +130,8 @@ export function Hero() {
             style={{ clipPath: 'polygon(calc(24% + 2.5px) 0, 100% 0, 100% 100%, calc(5% + 2.5px) 100%)' }}
           >
             <Image
-              src="/hero-car.jpg"
-              alt="SUV em destaque na vitrine da Giro Auto"
+              src={imagem.src}
+              alt={decorativa ? '' : imagem.alt}
               fill
               sizes="58vw"
               // Maior elemento acima da dobra: quase certamente o LCP. No Next 16
@@ -74,6 +140,7 @@ export function Hero() {
               fetchPriority="high"
               className="object-cover object-center"
             />
+            {banner?.link_url && <AreaClicavel href={banner.link_url} rotulo={banner.alt} />}
             {/* SEM degradê na base, de propósito.
                 Havia um branco→transparente aqui para suavizar o encontro da
                 foto com a página. Ele fazia sentido quando a foto tinha base
@@ -177,16 +244,22 @@ export function Hero() {
                   horizontal.
                   No desktop nada muda — lá a foto é o painel diagonal à direita
                   e este bloco fica oculto (`lg:hidden`). */}
-              <div className="mt-8 -mx-4 overflow-hidden sm:-mx-6 lg:hidden">
+              {/* `fill` dentro de uma caixa 16:9, e não `width`/`height`: a
+                  imagem do banner vem do painel e não tem medida conhecida em
+                  tempo de compilação. `fill` fixa o quadro e deixa o recorte
+                  para o `object-cover`, que é justamente o que o formato
+                  quadrado pedido no painel foi pensado para atravessar. */}
+              <div className="relative mt-8 -mx-4 aspect-video overflow-hidden sm:-mx-6 lg:hidden">
                 <Image
-                  src="/hero-car.jpg"
-                  alt="SUV em destaque na vitrine da Giro Auto"
-                  width={1700}
-                  height={2125}
+                  src={imagem.src}
+                  alt={decorativa ? '' : imagem.alt}
+                  fill
+                  sizes="100vw"
                   loading="eager"
                   fetchPriority="high"
-                  className="aspect-video w-full object-cover object-center"
+                  className="object-cover object-center"
                 />
+                {banner?.link_url && <AreaClicavel href={banner.link_url} rotulo={banner.alt} />}
               </div>
 
               <p className="text-muted mx-auto mt-6 max-w-md text-base leading-relaxed text-pretty lg:mx-0">

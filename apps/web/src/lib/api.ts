@@ -30,6 +30,7 @@ export type Article = Schemas['ArticleOut'];
 export type ArticleSummary = Schemas['ArticleSummaryOut'];
 export type ArticleDetail = Schemas['ArticleDetailOut'];
 export type ArticlePage = Schemas['ArticlePageOut'];
+export type HeroBanner = Schemas['BannerOut'];
 export type Appointment = Schemas['AppointmentOut'];
 export type DashboardStats = Schemas['DashboardStatsOut'];
 export type Image = Schemas['ImageOut'];
@@ -168,6 +169,20 @@ export function listArticles(limit = 12): Promise<ArticlePage> {
   return request<ArticlePage>(`/articles?page_size=${limit}`, {
     revalidate: 300,
     tags: ['articles'],
+  });
+}
+
+/**
+ * O banner do topo da home. `null` é resposta válida, não falha.
+ *
+ * Enquanto a loja não subir banner, o hero usa a foto de vitrine padrão. Por
+ * isso a tag `home`: gravar o banner no painel invalida a home na hora, em vez
+ * de a loja esperar o ciclo de cache e achar que não funcionou.
+ */
+export function getHeroBanner(): Promise<HeroBanner | null> {
+  return request<HeroBanner | null>('/banner', {
+    revalidate: 300,
+    tags: ['banner', 'home'],
   });
 }
 
