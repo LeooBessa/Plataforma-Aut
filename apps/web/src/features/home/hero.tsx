@@ -142,9 +142,19 @@ export function Hero({ destaque }: { destaque?: ArticleSummary | null }) {
             deslocado 2,5px à direita do plano azul de trás. O que sobra do
             azul nesses 2,5px, ao longo da diagonal, é a linha. Fica preso à
             geometria, então acompanha qualquer tamanho de tela sozinho. */}
+        {/* `z-10` NÃO É ENFEITE: sem ele o botão "Ler artigo" não clica.
+            A coluna de texto vem DEPOIS deste painel no HTML e é `relative`,
+            então ela paintava por cima. Ela ocupa a largura inteira do
+            contêiner (`w-full max-w-7xl`) e é transparente do meio para a
+            direita — invisível, mas capturando todo clique que caísse ali. O
+            botão da tarja ficava exatamente embaixo dessa área morta.
+            No celular o problema não existe porque lá a tarja fica DENTRO da
+            coluna de texto, não embaixo dela.
+            Subir o painel não esconde nada: o recorte diagonal começa em 24%
+            da largura dele, bem à direita de onde o texto do hero termina. */}
         <div
           aria-hidden={decorativa}
-          className="absolute inset-y-0 right-0 hidden w-[58%] lg:block"
+          className="absolute inset-y-0 right-0 z-10 hidden w-[58%] lg:block"
         >
           <div
             className="from-brand-300 to-brand-600 absolute inset-0 bg-gradient-to-b"
