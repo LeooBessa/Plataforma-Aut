@@ -116,7 +116,7 @@ export function Navbar() {
                   href={link.href}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    'rounded-btn block px-3 py-2.5 text-sm transition-colors',
+                    'rounded-btn block px-3 py-3 text-sm transition-colors',
                     pathname === link.href
                       ? 'bg-surface text-accent'
                       : 'text-muted hover:bg-surface',

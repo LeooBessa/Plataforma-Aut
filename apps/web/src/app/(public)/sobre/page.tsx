@@ -67,10 +67,12 @@ export default async function SobrePage() {
             <div>
               <h2 className="text-content text-xl font-bold tracking-tight">O que escrevemos</h2>
               <p className="text-faint mt-1 text-sm">
-                Dicas de quem lida com carro usado todo dia.
+                Dicas de quem lida com carro todo dia.
               </p>
             </div>
-            <ButtonLink href="/artigos" variant="secondary" size="sm">
+            {/* `h-11` no celular pelo mesmo motivo do botão do topo: `sm` dá
+                36px e o dedo erra. */}
+            <ButtonLink href="/artigos" variant="secondary" size="sm" className="h-11 px-5 sm:h-9 sm:px-4">
               Ver todos
             </ButtonLink>
           </div>

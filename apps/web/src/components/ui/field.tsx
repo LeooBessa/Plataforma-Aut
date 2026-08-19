@@ -2,9 +2,24 @@ import type { ComponentProps, ReactNode } from 'react';
 
 import { cn } from '@/lib/utils';
 
+/**
+ * 16px NO CELULAR, 14px do `sm` para cima. Isto não é gosto.
+ *
+ * O Safari do iPhone AMPLIA a página sozinho quando o visitante foca um campo
+ * com fonte menor que 16px — e não desfaz o zoom ao sair dele. A pessoa toca em
+ * "Seu nome", a tela salta, e o resto do formulário passa a ser preenchido com
+ * a página torta, precisando de pinça para voltar.
+ *
+ * Todos os 18 campos do site estavam em 14px, então isso valia para o
+ * formulário de anunciar o carro, o da lista de espera e o de contato — as três
+ * telas onde o visitante vira contato. Era o defeito mais caro do celular.
+ *
+ * A partir do `sm` o dedo dá lugar ao ponteiro, o zoom automático não existe, e
+ * os 14px voltam para o campo não ficar grande demais no desktop.
+ */
 const CONTROL = cn(
   'w-full rounded-btn border border-line-strong bg-surface',
-  'px-3.5 py-2.5 text-sm text-content',
+  'px-3.5 py-2.5 text-base text-content sm:text-sm',
   'placeholder:text-faint',
   'transition-colors',
   'hover:border-ink-600',

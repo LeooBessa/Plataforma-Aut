@@ -46,7 +46,7 @@ function TarjaDoArtigo({ artigo }: { artigo: ArticleSummary }) {
     <div className="absolute inset-x-0 bottom-0 z-10 p-6 pt-20 sm:p-8 sm:pt-24 lg:pl-[15%]">
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/75 via-black/40 to-transparent"
+        className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/85 via-black/60 to-transparent"
       />
       <div className="relative">
         <p className="text-[11px] font-semibold tracking-[0.18em] text-white/70 uppercase">
@@ -58,10 +58,14 @@ function TarjaDoArtigo({ artigo }: { artigo: ArticleSummary }) {
         {/* O botão é o alvo de clique, e ele SOZINHO — a imagem inteira não é
             clicável. Um bloco enorme que navega ao ser tocado surpreende no
             celular, onde o dedo encosta na tela para rolar a página. */}
+        {/* `h-11` no celular: o tamanho `sm` dá 36px, abaixo dos 44px que o
+            dedo alcança sem errar. Do `sm` para cima volta ao normal, onde o
+            ponteiro é preciso e um botão alto ficaria desproporcional sobre a
+            imagem. */}
         <ButtonLink
           href={`/artigos/${artigo.slug}` as Route}
           size="sm"
-          className="mt-4 bg-white text-neutral-900 hover:bg-white/90"
+          className="mt-4 h-11 bg-white px-5 text-neutral-900 hover:bg-white/90 sm:h-9 sm:px-4"
         >
           Ler artigo
           <ArrowRight className="size-4" />
