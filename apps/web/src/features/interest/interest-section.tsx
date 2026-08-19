@@ -74,14 +74,24 @@ export async function InterestSection() {
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
           <div>
-            {/* MAIOR que "Nosso estoque", e isso é hierarquia, não descuido.
+            {/* MAIOR que "Nosso estoque" E MAIOR QUE O h1 DO TOPO (60px contra
+                54,4px). As duas coisas são decisão, não descuido.
+
                 "Nosso estoque" é placa: nomeia o que vem abaixo e sai de cena.
-                Este título é a proposta em si — ele tem de convencer alguém a
-                preencher um formulário. Do lado de um cartão branco de 600px,
-                a 30px ele perdia a disputa e o bloco lia como legenda.
-                O peso vai junto com o tamanho: na condensada, largura estreita
-                significa menos massa visual, então subir só o corpo não bastava. */}
-            <h2 className="text-content text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+                Este título é a proposta em si — precisa convencer alguém a
+                preencher um formulário, e disputa espaço com um cartão branco
+                de 600px ao lado. A 30px ele perdia, e o bloco lia como legenda
+                do formulário.
+
+                Passar o h1 não gera conflito visual porque os dois nunca
+                aparecem juntos: o topo ocupa a primeira tela inteira e esta
+                seção fica lá embaixo. E o h1 tem uma foto sangrada ao lado
+                fazendo o trabalho pesado; aqui o título é o peso todo.
+
+                O peso (bold) vai junto com o tamanho: na condensada, largura
+                estreita significa menos massa visual, então subir só o corpo
+                não recuperava a presença. */}
+            <h2 className="text-content text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
               Quer saber antes de todo mundo?
             </h2>
             <p className="text-muted mt-3 max-w-md text-base leading-relaxed">

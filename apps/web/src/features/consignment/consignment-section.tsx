@@ -66,7 +66,7 @@ export function ConsignmentSection() {
                 as duas seções são propostas que precisam convencer, não placas
                 que nomeiam. Manter as duas iguais entre si é o que faz a
                 diferença em relação a "Nosso estoque" ler como decisão. */}
-            <h2 className="text-on-inverse text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
+            <h2 className="text-on-inverse text-4xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
               Quer vender seu carro?
             </h2>
             <p className="mt-3 max-w-md text-base leading-relaxed text-white/60">
