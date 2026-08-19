@@ -251,7 +251,7 @@ export function Hero({ destaque }: { destaque?: ArticleSummary | null }) {
                   ouve a frase inteira, uma vez. */}
               <h1
                 aria-label="Carros para quem quer mais: preço acessível, economia, qualidade e conforto."
-                className="text-content text-[2rem] font-semibold tracking-tight text-balance sm:text-5xl lg:text-[3.4rem] lg:leading-[1.05]"
+                className="text-content text-[2rem] font-bold tracking-tight text-balance sm:text-5xl lg:text-[3.4rem] lg:leading-[1.05]"
               >
                 Carros para quem quer mais
                 {/* `animateWidth={false}`: a palavra está sozinha na linha, não

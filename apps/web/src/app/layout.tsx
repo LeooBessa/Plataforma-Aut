@@ -1,41 +1,32 @@
 import type { Metadata } from 'next';
-import { Barlow, Barlow_Condensed } from 'next/font/google';
+import { Plus_Jakarta_Sans } from 'next/font/google';
 
 import './globals.css';
 
-// As fontes são auto-hospedadas pelo Next em build time — não há requisição ao
+// A fonte é auto-hospedada pelo Next em build time — não há requisição ao
 // Google em runtime. Isso tira uma conexão externa do caminho crítico e elimina
 // o "flash of unstyled text", em que o texto aparece numa fonte e salta para
 // outra quando a definitiva carrega.
 //
 // ----------------------------------------------------------------------------
-// POR QUE BARLOW, E NÃO INTER
+// UMA FAMÍLIA SÓ, E A HIERARQUIA VEM DO PESO
 // ----------------------------------------------------------------------------
-// Inter é a fonte padrão de praticamente todo site gerado por ferramenta: ela
-// não erra, mas também não diz nada, e um site inteiro nela lê como template.
+// O site já usou Inter (a fonte padrão de toda ferramenta que gera site, que
+// fazia tudo parecer template) e depois Barlow com uma condensada nos títulos.
+// A condensada dava caráter, mas deixava o texto corrido fino demais.
 //
-// Barlow nasceu inspirada na sinalização de rodovia da Califórnia. É levemente
-// quadrada e de contraste baixo, com jeito de placa e de painel de carro — numa
-// revenda, ela pertence ao assunto em vez de ser só "uma fonte limpa".
+// Plus Jakarta Sans resolve as duas coisas com uma família só: tem desenho
+// próprio o bastante para não parecer genérica, corpo com traço mais cheio que
+// o da Barlow, e um peso 800 que dá aos títulos a presença que antes vinha da
+// largura estreita. Menos peças para manter, e nada de duas personalidades
+// disputando na mesma página.
 //
-// Nenhuma das duas é variável no Google Fonts, então os pesos vão declarados um
-// a um. Pedir o que não se usa engorda o download sem nada em troca.
-const barlow = Barlow({
+// É variável, então um arquivo só cobre do 400 ao 800 — mais leve que os seis
+// arquivos estáticos que a combinação anterior exigia.
+const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
   display: 'swap',
-  variable: '--font-barlow',
-});
-
-// A condensada é só para TÍTULO. Ela ganha presença no tamanho grande e cabe
-// mais palavra por linha — o que resolve manchete quebrando feio no celular.
-// Em texto corrido ela cansaria: letra estreita em parágrafo longo atrapalha a
-// leitura, que é justamente o que um artigo precisa preservar.
-const barlowCondensed = Barlow_Condensed({
-  subsets: ['latin'],
-  weight: ['600', '700'],
-  display: 'swap',
-  variable: '--font-barlow-condensed',
+  variable: '--font-jakarta',
 });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
@@ -76,7 +67,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     // `lang="pt-BR"` não é detalhe: é o que faz o leitor de tela pronunciar o
     // conteúdo em português, e o que diz ao Google em que idioma indexar.
-    <html lang="pt-BR" className={`${barlow.variable} ${barlowCondensed.variable}`}>
+    <html lang="pt-BR" className={jakarta.variable}>
       <body className="flex min-h-dvh flex-col font-sans">{children}</body>
     </html>
   );
