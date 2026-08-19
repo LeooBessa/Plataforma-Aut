@@ -12,7 +12,7 @@ from typing import Annotated
 
 from fastapi import APIRouter, Query
 
-from src.domain.catalog.value_objects import Pagination
+from src.domain.catalog.value_objects import MAX_PAGE_SIZE, Pagination
 from src.domain.content.enums import ArticleStatus
 from src.domain.content.value_objects import ArticleFilters
 from src.presentation.v1.deps import (
@@ -30,7 +30,12 @@ from src.presentation.v1.schemas.content import (
 
 router = APIRouter(prefix="/articles", tags=["artigos"])
 
-MAX_PAGE_SIZE = 50
+# O teto vem do DOMÍNIO, não de um número escrito aqui.
+#
+# Esta rota declarava 50 por conta própria enquanto `Pagination` recusa acima de
+# 48. O resultado era o pior tipo de erro: `page_size=50` passava pela validação
+# do FastAPI, estourava lá dentro e voltava como falha interna em vez de erro de
+# validação — e quem chamava não tinha como saber qual era o limite de verdade.
 
 
 @router.get(

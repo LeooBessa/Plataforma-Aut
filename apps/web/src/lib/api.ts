@@ -164,8 +164,18 @@ export function getCatalog(): Promise<CatalogBrand[]> {
   });
 }
 
-export function listArticles(limit = 12): Promise<ArticlePage> {
-  return request<ArticlePage>(`/articles?page_size=${limit}`, {
+/**
+ * `limit` é limitado a 48, o teto que a API aceita em `page_size`.
+ *
+ * Pedir mais é recusado, e como as chamadas passam por `safely` a recusa vira
+ * uma lista vazia sem erro nenhum na tela — foi exatamente assim que os artigos
+ * sumiram do sitemap sem ninguém perceber. O `Math.min` fecha essa porta do
+ * lado de cá; do lado da API, a rota passou a usar a constante do domínio em
+ * vez de repetir o número.
+ */
+export function listArticles(limit = 12, page = 1): Promise<ArticlePage> {
+  const tamanho = Math.min(limit, 48);
+  return request<ArticlePage>(`/articles?page_size=${tamanho}&page=${page}`, {
     revalidate: 300,
     tags: ['articles'],
   });
