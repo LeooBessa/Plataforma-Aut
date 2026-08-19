@@ -113,22 +113,35 @@ export function ArticleForm({ article }: { article?: Article }) {
     const { selectionStart: inicio, selectionEnd: fim } = el;
 
     if (marca === 'negrito') {
-      // SEM SELEÇÃO, PEGA A PALAVRA SOB O CURSOR.
+      // SEM SELEÇÃO, MARCA A LINHA INTEIRA.
       //
-      // Antes o botão inseria o texto "texto em negrito" como exemplo. Foi
-      // parar publicado no site: quem clicou sem selecionar nada não percebeu
-      // que aquilo era um espaço reservado a preencher. Marcar a palavra onde o
-      // cursor já está é o que a pessoa queria, e nunca inventa texto.
+      // Duas versões anteriores erraram aqui. A primeira inseria o texto
+      // "texto em negrito" como exemplo, e ele foi parar publicado no site: quem
+      // clicou não percebeu que era um espaço a preencher. A segunda marcava só
+      // a palavra sob o cursor, e quem punha o cursor no começo da frase para
+      // destacá-la inteira via só a primeira palavra ficar em negrito.
+      //
+      // A linha inteira é o comportamento certo porque é o dos OUTROS botões:
+      // Subtítulo, Lista e Destaque já agem na linha toda. Negrito agindo numa
+      // palavra era o único fora do padrão, e nada na tela avisava disso.
+      // Quem quiser só uma palavra continua podendo selecionar antes.
       let ini = inicio;
       let fi = fim;
       if (ini === fi) {
-        const antes = corpo.slice(0, ini).search(/\S+$/);
-        const depois = corpo.slice(fi).search(/\s/);
-        ini = antes === -1 ? ini : antes;
-        fi = depois === -1 ? corpo.length : fi + depois;
-        // Cursor no vazio (linha em branco, ou entre espaços): não há o que
-        // marcar, e inventar conteúdo é justamente o que causou o problema.
-        if (ini === fi) return;
+        const comecoLinha = corpo.lastIndexOf('\n', ini - 1) + 1;
+        const quebra = corpo.indexOf('\n', ini);
+        const fimDaLinha = quebra === -1 ? corpo.length : quebra;
+
+        // Encolhe para fora dos espaços das pontas: `** frase **` guardaria o
+        // espaço dentro do negrito e deixaria a marcação frouxa no texto.
+        const linha = corpo.slice(comecoLinha, fimDaLinha);
+        const recuo = linha.length - linha.trimStart().length;
+        ini = comecoLinha + recuo;
+        fi = comecoLinha + linha.trimEnd().length;
+
+        // Linha vazia: não há o que marcar, e inventar conteúdo foi justamente
+        // o defeito da primeira versão.
+        if (ini >= fi) return;
       }
 
       const jaMarcado = corpo.slice(ini - 2, ini) === '**' && corpo.slice(fi, fi + 2) === '**';
