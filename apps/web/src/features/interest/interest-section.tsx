@@ -1,5 +1,3 @@
-import { BellRing, Search, Sparkles } from 'lucide-react';
-
 import { GradientBackdrop } from '@/components/ui/gradient-backdrop';
 import { InterestForm } from '@/features/interest/interest-form';
 import { getCatalog, safely } from '@/lib/api';
@@ -24,17 +22,16 @@ import { getCatalog, safely } from '@/lib/api';
  * ----------------------------------------------------------------------------
  * A COR DA SEÇÃO, E POR QUE ELA CHEGOU AQUI
  * ----------------------------------------------------------------------------
- * Base azul diluída (`accent-soft`), degradê até um azul mais presente, ícones em
- * azul CHEIO com glifo branco.
+ * Base azul diluída (`accent-soft`), com degradê até um azul mais presente.
  *
  * As duas versões anteriores morriam pelo mesmo motivo: tudo ficava entre 93% e
  * 100% de luminosidade. Fundo cinza claro, cartão branco, azul pálido — nada
  * ancorava o olho, e a seção lia como sobra entre a vitrine branca acima e o
  * bloco preto abaixo, que são definidos.
  *
- * Base colorida e ícone sólido dependem UM DO OUTRO. Testei separado: com a base
- * azulada e o chip pálido de antes, os ícones se dissolvem no fundo e a seção
- * fica pior do que era. Quem mexer numa das duas precisa mexer na outra.
+ * A base colorida é o que segura a seção agora que os ícones saíram. Quem quiser
+ * clarear esse fundo precisa devolver contraste em outro lugar, senão o bloco
+ * volta a sumir entre os vizinhos.
  *
  * A seção seguinte é preta, e duas escuras seguidas viram um bloco só. A
  * alternância clara → escura → rodapé claro é o que dá ritmo ao fim da página.
@@ -42,12 +39,10 @@ import { getCatalog, safely } from '@/lib/api';
 
 const ARGUMENTOS = [
   {
-    icon: Search,
     title: 'Diga o que procura',
     text: 'Marca, modelo e quanto quer gastar. Leva menos de um minuto.',
   },
   {
-    icon: Sparkles,
     title: 'Fica na nossa lista',
     // "A gente procura por você" era o título antes, e prometia demais: sugeria
     // que a loja sairia atrás daquele carro. O que o sistema faz é comparar cada
@@ -55,7 +50,6 @@ const ARGUMENTOS = [
     text: 'Cada carro que entra é comparado com o seu perfil. Você não precisa voltar aqui para conferir.',
   },
   {
-    icon: BellRing,
     title: 'Você é avisado primeiro',
     text: 'Apareceu algo que combina, te chamamos no WhatsApp antes de anunciar.',
   },
@@ -95,27 +89,42 @@ export async function InterestSection() {
               Quer saber antes de todo mundo?
             </h2>
             <p className="text-muted mt-3 max-w-md text-base leading-relaxed">
-              Diga qual carro você procura. Quando um com esse perfil entrar, você é o
-              primeiro a saber.
+              Diga qual carro você procura. Quando um com esse perfil entrar, você é o primeiro
+              a saber.
             </p>
 
-            <ul className="mt-10 space-y-6">
-              {ARGUMENTOS.map(({ icon: Icon, title, text }) => (
-                <li key={title} className="flex gap-4">
-                  {/* AZUL CHEIO, não o azul diluído do resto do site.
-                      Com a base da seção azulada, o chip pálido que havia antes
-                      se dissolvia no fundo — os ícones sumiam. As duas coisas
-                      dependem uma da outra: base colorida exige ícone sólido. */}
-                  <span className="rounded-btn bg-brand-600 flex size-10 shrink-0 items-center justify-center text-white">
-                    <Icon className="size-5" />
+            {/* NUMERADO, e o número diz uma coisa verdadeira.
+                Aqui os três itens são MESMO uma sequência: a pessoa diz o que
+                procura, entra na lista, e é avisada. Numerar comunica que são
+                três passos e que acabam — informação que ícone nenhum daria.
+
+                É um `<ol>` de verdade, então a ordem chega a leitor de tela
+                pela estrutura. O número visível fica `aria-hidden` para não ser
+                anunciado duas vezes.
+
+                O que havia aqui antes eram ícones dentro de quadradinhos azuis,
+                três lado a lado. É o bloco padrão de landing page gerada por
+                ferramenta — e um dos ícones era literalmente o de "sparkles",
+                que virou o símbolo de "isto foi feito por IA". */}
+            <ol className="mt-10 list-none">
+              {ARGUMENTOS.map(({ title, text }, i) => (
+                <li
+                  key={title}
+                  className="border-line flex gap-4 border-t py-5 first:border-t-0 first:pt-0"
+                >
+                  <span
+                    aria-hidden
+                    className="text-accent w-5 shrink-0 text-base font-bold tabular-nums"
+                  >
+                    {i + 1}
                   </span>
                   <div>
-                    <p className="text-content text-sm font-semibold">{title}</p>
-                    <p className="text-muted mt-1 max-w-xs text-sm leading-relaxed">{text}</p>
+                    <p className="text-content font-semibold">{title}</p>
+                    <p className="text-muted mt-1 max-w-sm text-sm leading-relaxed">{text}</p>
                   </div>
                 </li>
               ))}
-            </ul>
+            </ol>
           </div>
 
           {/* O cartão branco sobre o cinza da seção: é o que separa o formulário

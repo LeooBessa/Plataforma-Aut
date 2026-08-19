@@ -1,5 +1,4 @@
 import type { Metadata } from 'next';
-import { BadgeCheck, ShieldCheck, Users, Wrench } from 'lucide-react';
 
 import { ButtonLink } from '@/components/ui/button';
 import { ArticleCard } from '@/features/articles/article-card';
@@ -31,31 +30,35 @@ export default async function SobrePage() {
       <div className="mt-12 grid gap-6 sm:grid-cols-2">
         {[
           {
-            icon: ShieldCheck,
             title: 'Procedência verificada',
             text: 'Consultamos o histórico e emitimos laudo cautelar de todos os veículos antes de anunciá-los.',
           },
           {
-            icon: Wrench,
             title: 'Revisão completa',
             text: 'Cada carro passa por um checklist técnico. O que precisa de reparo, é reparado antes da venda.',
           },
           {
-            icon: BadgeCheck,
             title: 'Transparência no anúncio',
             text: 'Quilometragem real, número de proprietários e histórico de manutenção. Tudo publicado.',
           },
           {
-            icon: Users,
             title: 'Sem pressão',
             text: 'Agende uma visita, faça o test drive e leve o tempo que precisar. A decisão é sua.',
           },
-        ].map(({ icon: Icon, title, text }) => (
-          <div key={title} className="rounded-card bg-surface ring-line p-6 ring-1">
-            <span className="rounded-btn text-accent ring-line bg-surface flex size-11 items-center justify-center shadow-sm ring-1">
-              <Icon className="size-5" />
-            </span>
-            <h2 className="text-content mt-4 font-semibold">{title}</h2>
+        ].map(({ title, text }) => (
+          // SEM ÍCONE E SEM CARTÃO.
+          //
+          // Os quatro itens são promessas independentes, não etapas — numerar
+          // inventaria uma ordem que não existe. E ícone dentro de quadradinho,
+          // quatro vezes numa grade, é o bloco que faz qualquer página parecer
+          // gerada por ferramenta.
+          //
+          // Também não entra filete colorido no topo do cartão: é outro enfeite
+          // do mesmo repertório. O que separa um item do outro é uma linha fina
+          // e o que dá hierarquia é o peso do texto — com a tipografia certa,
+          // isso basta.
+          <div key={title} className="border-line border-t pt-5">
+            <h2 className="text-content font-semibold">{title}</h2>
             <p className="text-muted mt-1.5 text-sm leading-relaxed">{text}</p>
           </div>
         ))}
@@ -65,14 +68,19 @@ export default async function SobrePage() {
         <section className="mt-16">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <h2 className="text-content text-xl font-bold tracking-tight">O que escrevemos</h2>
-              <p className="text-faint mt-1 text-sm">
-                Dicas de quem lida com carro todo dia.
-              </p>
+              <h2 className="text-content text-xl font-bold tracking-tight">
+                O que escrevemos
+              </h2>
+              <p className="text-faint mt-1 text-sm">Dicas de quem lida com carro todo dia.</p>
             </div>
             {/* `h-11` no celular pelo mesmo motivo do botão do topo: `sm` dá
                 36px e o dedo erra. */}
-            <ButtonLink href="/artigos" variant="secondary" size="sm" className="h-11 px-5 sm:h-9 sm:px-4">
+            <ButtonLink
+              href="/artigos"
+              variant="secondary"
+              size="sm"
+              className="h-11 px-5 sm:h-9 sm:px-4"
+            >
               Ver todos
             </ButtonLink>
           </div>

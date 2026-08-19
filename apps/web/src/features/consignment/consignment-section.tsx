@@ -1,5 +1,3 @@
-import { BadgeCheck, HandCoins, Timer } from 'lucide-react';
-
 import { GradientBackdrop } from '@/components/ui/gradient-backdrop';
 import { ConsignmentForm } from '@/features/consignment/consignment-form';
 
@@ -29,17 +27,14 @@ import { ConsignmentForm } from '@/features/consignment/consignment-form';
 
 const ARGUMENTOS = [
   {
-    icon: HandCoins,
     title: 'Você define o preço',
     text: 'Diga quanto quer pelo carro. A gente avalia e conversa a partir daí.',
   },
   {
-    icon: Timer,
     title: 'Sem burocracia',
     text: 'Nada de cadastro. Preencha os dados do carro e a gente te chama no WhatsApp.',
   },
   {
-    icon: BadgeCheck,
     title: 'Anunciamos por você',
     text: 'Seu carro entra no nosso estoque e aparece para quem já está procurando.',
   },
@@ -74,16 +69,25 @@ export function ConsignmentSection() {
               contato pelo WhatsApp.
             </p>
 
-            <ul className="mt-10 space-y-6">
-              {ARGUMENTOS.map(({ icon: Icon, title, text }) => (
-                <li key={title} className="flex gap-4">
-                  <span className="rounded-btn bg-brand-600/15 text-brand-400 flex size-10 shrink-0 items-center justify-center">
-                    <Icon className="size-5" />
-                  </span>
-                  <div>
-                    <p className="text-on-inverse text-sm font-semibold">{title}</p>
-                    <p className="mt-1 max-w-xs text-sm leading-relaxed text-white/55">{text}</p>
-                  </div>
+            {/* SEM MARCADOR NENHUM, e isso é diferente da seção de cima de
+                propósito.
+
+                Lá os três itens são uma sequência, e por isso são numerados.
+                Aqui são três afirmações independentes — "você define o preço"
+                não vem antes nem depois de "sem burocracia". Numerar inventaria
+                uma ordem que não existe, e ícone em quadradinho era justamente
+                o enfeite que fazia a seção parecer gerada por ferramenta.
+
+                O que separa um item do outro é um filete, e o que dá hierarquia
+                é o peso do texto. Com a tipografia certa isso basta. */}
+            <ul className="mt-10">
+              {ARGUMENTOS.map(({ title, text }) => (
+                <li
+                  key={title}
+                  className="border-t border-white/10 py-5 first:border-t-0 first:pt-0"
+                >
+                  <p className="text-on-inverse font-semibold">{title}</p>
+                  <p className="mt-1 max-w-sm text-sm leading-relaxed text-white/55">{text}</p>
                 </li>
               ))}
             </ul>
