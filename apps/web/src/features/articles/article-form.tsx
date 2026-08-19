@@ -1,10 +1,22 @@
 'use client';
 
-import { useState, type ChangeEvent } from 'react';
+import { useEffect, useRef, useState, type ChangeEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import imageCompression from 'browser-image-compression';
-import { AlertCircle, ArrowRight, Eye, ImagePlus, Loader2, Plus, Trash2 } from 'lucide-react';
+import {
+  AlertCircle,
+  ArrowRight,
+  Bold,
+  Eye,
+  Heading2,
+  ImagePlus,
+  List,
+  Loader2,
+  Plus,
+  Quote,
+  Trash2,
+} from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Field, Input, Textarea } from '@/components/ui/field';
@@ -16,22 +28,45 @@ import { Markdown } from '@/features/articles/markdown';
  * O editor de artigo do painel.
  *
  * ============================================================================
- * O CORPO É MARKDOWN NUMA CAIXA DE TEXTO, COM PRÉ-VISUALIZAÇÃO
+ * ESCREVE SOLTO. OS BOTÕES FAZEM A MARCAÇÃO.
  * ============================================================================
- * Sem barra de ferramentas e sem editor rico, e isso foi escolha. Um editor rico
- * traria ~150KB de dependência e, pior, guardaria HTML — que depois teria de ser
- * renderizado, abrindo XSS armazenado justamente pela conta com mais poder.
+ * A pessoa digita como falaria com um cliente. Quando quiser um subtítulo, uma
+ * lista ou um negrito, seleciona o trecho e clica no botão.
  *
- * O custo é a loja aprender três regras (`## `, `- `, `**negrito**`). O que
- * torna isso aceitável é o botão de pré-visualizar ao lado: dá para ver o
- * resultado sem publicar, então a regra se aprende testando, não decorando. E
- * texto colado de qualquer lugar já vira parágrafo sem nenhuma marcação.
+ * Antes desta versão havia um parágrafo ensinando `## `, `- ` e `**negrito**`.
+ * Funcionava, mas empurrava para quem vende carro a tarefa de decorar sinal de
+ * marcação — e quem não lê o aviso publica um bloco de texto sem estrutura
+ * nenhuma, que é ruim de ler e ruim para a busca.
+ *
+ * ----------------------------------------------------------------------------
+ * POR QUE NÃO UM EDITOR RICO DE VERDADE
+ * ----------------------------------------------------------------------------
+ * Um editor rico traria ~150KB de dependência e, pior, guardaria HTML — que
+ * depois teria de ser renderizado, abrindo XSS armazenado justamente pela conta
+ * com mais poder no sistema.
+ *
+ * Aqui os botões só inserem marcação num campo de texto comum. O que vai para o
+ * banco continua sendo TEXTO, e vira componente React na hora de exibir. A
+ * experiência é a de um editor; o risco, o de um bloco de notas.
+ *
+ * Texto colado de qualquer lugar continua virando parágrafo sem marcação
+ * nenhuma, e o botão de pré-visualizar mostra o resultado antes de publicar.
  */
 
 const TAMANHO_MAXIMO_MB = 1;
 const DIMENSAO_MAXIMA = 1920;
 
 type Faq = { question: string; answer: string };
+
+type Marca = 'subtitulo' | 'lista' | 'negrito' | 'citacao';
+
+//: O que cada botão põe no começo da linha. `negrito` não está aqui porque ele
+//: envolve o trecho selecionado em vez de prefixar a linha.
+const PREFIXOS: Record<Exclude<Marca, 'negrito'>, string> = {
+  subtitulo: '## ',
+  lista: '- ',
+  citacao: '> ',
+};
 
 export function ArticleForm({ article }: { article?: Article }) {
   const router = useRouter();
@@ -48,6 +83,66 @@ export function ArticleForm({ article }: { article?: Article }) {
   const [enviandoCapa, setEnviandoCapa] = useState(false);
   const [salvando, setSalvando] = useState<'draft' | 'published' | null>(null);
   const [erro, setErro] = useState<string | null>(null);
+
+  const areaRef = useRef<HTMLTextAreaElement>(null);
+  //: Onde o cursor deve ficar depois que o React repintar o campo.
+  //: Sem isto, clicar num botão jogaria o cursor para o fim do texto e a
+  //: pessoa perderia o lugar onde estava escrevendo.
+  const selecaoPendente = useRef<[number, number] | null>(null);
+
+  useEffect(() => {
+    const el = areaRef.current;
+    const alvo = selecaoPendente.current;
+    if (!el || !alvo) return;
+    selecaoPendente.current = null;
+    el.focus();
+    el.setSelectionRange(alvo[0], alvo[1]);
+  }, [corpo]);
+
+  /**
+   * Aplica a marcação no trecho selecionado.
+   *
+   * Alterna: clicar de novo num trecho já marcado TIRA a marcação. Sem isso, a
+   * única forma de desfazer seria apagar os caracteres na mão — e a pessoa nem
+   * sabe que eles existem, porque a tela não ensina mais a sintaxe.
+   */
+  const aplicar = (marca: Marca) => {
+    const el = areaRef.current;
+    if (!el) return;
+
+    const { selectionStart: inicio, selectionEnd: fim } = el;
+
+    if (marca === 'negrito') {
+      const jaMarcado = corpo.slice(inicio - 2, inicio) === '**' && corpo.slice(fim, fim + 2) === '**';
+      if (jaMarcado) {
+        const novo = corpo.slice(0, inicio - 2) + corpo.slice(inicio, fim) + corpo.slice(fim + 2);
+        selecaoPendente.current = [inicio - 2, fim - 2];
+        setCorpo(novo);
+        return;
+      }
+      const trecho = corpo.slice(inicio, fim) || 'texto em negrito';
+      const novo = `${corpo.slice(0, inicio)}**${trecho}**${corpo.slice(fim)}`;
+      selecaoPendente.current = [inicio + 2, inicio + 2 + trecho.length];
+      setCorpo(novo);
+      return;
+    }
+
+    // Marcação de LINHA: cresce a seleção até abraçar as linhas inteiras, senão
+    // marcar do meio de uma frase inseriria o "## " no meio dela.
+    const prefixo = PREFIXOS[marca];
+    const inicioLinha = corpo.lastIndexOf('\n', inicio - 1) + 1;
+    const proximaQuebra = corpo.indexOf('\n', fim);
+    const fimLinha = proximaQuebra === -1 ? corpo.length : proximaQuebra;
+
+    const marcado = corpo
+      .slice(inicioLinha, fimLinha)
+      .split('\n')
+      .map((linha) => (linha.startsWith(prefixo) ? linha.slice(prefixo.length) : prefixo + linha))
+      .join('\n');
+
+    selecaoPendente.current = [inicioLinha, inicioLinha + marcado.length];
+    setCorpo(corpo.slice(0, inicioLinha) + marcado + corpo.slice(fimLinha));
+  };
 
   const enviarCapa = async (e: ChangeEvent<HTMLInputElement>) => {
     const arquivo = e.target.files?.[0];
@@ -247,22 +342,42 @@ export function ArticleForm({ article }: { article?: Article }) {
           </div>
         ) : (
           <>
+            {/* BOTÕES NO LUGAR DAS INSTRUÇÕES.
+                Antes havia um parágrafo ensinando `##`, `-` e `**`. Decorar
+                sinal de marcação não é trabalho de quem vende carro: agora a
+                pessoa escreve solto, seleciona o trecho e clica.
+                O texto continua sendo guardado como TEXTO, não HTML — que é o
+                que mantém a página imune a XSS pelo conteúdo do painel. Os
+                botões só inserem a marcação por baixo. */}
+            <div className="mt-3 flex flex-wrap gap-1.5">
+              {(
+                [
+                  { marca: 'subtitulo', rotulo: 'Subtítulo', Icone: Heading2 },
+                  { marca: 'lista', rotulo: 'Lista', Icone: List },
+                  { marca: 'negrito', rotulo: 'Negrito', Icone: Bold },
+                  { marca: 'citacao', rotulo: 'Destaque', Icone: Quote },
+                ] as const
+              ).map(({ marca, rotulo, Icone }) => (
+                <button
+                  key={marca}
+                  type="button"
+                  onClick={() => aplicar(marca)}
+                  className="rounded-btn border-line text-muted hover:bg-sunken hover:text-content flex items-center gap-1.5 border px-2.5 py-1.5 text-xs font-medium transition-colors"
+                >
+                  <Icone className="size-3.5" />
+                  {rotulo}
+                </button>
+              ))}
+            </div>
+
             <Textarea
+              ref={areaRef}
               rows={18}
               value={corpo}
               onChange={(e) => setCorpo(e.target.value)}
-              className="mt-3 font-mono text-sm"
-              placeholder={'Escreva aqui.\n\n## Um subtítulo\n\n- Um item de lista\n- Outro item'}
+              className="mt-2"
+              placeholder="Escreva aqui, do jeito que você falaria com um cliente. Deixe uma linha em branco entre um parágrafo e outro."
             />
-            {/* As três regras que a loja precisa saber, à vista. Decorar
-                markdown não é trabalho de quem vende carro. */}
-            <p className="text-faint mt-2 text-xs leading-relaxed">
-              <strong className="text-muted">Como formatar:</strong> comece a linha com{' '}
-              <code className="bg-sunken rounded px-1">## </code> para subtítulo,{' '}
-              <code className="bg-sunken rounded px-1">- </code> para item de lista, e use{' '}
-              <code className="bg-sunken rounded px-1">**palavra**</code> para negrito. Linha em
-              branco separa parágrafos. Se não usar nada disso, o texto vira parágrafos normais.
-            </p>
           </>
         )}
       </div>
