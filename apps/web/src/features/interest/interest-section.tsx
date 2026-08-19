@@ -74,7 +74,14 @@ export async function InterestSection() {
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 lg:py-20">
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
           <div>
-            <h2 className="text-content text-2xl font-semibold tracking-tight sm:text-3xl">
+            {/* MAIOR que "Nosso estoque", e isso é hierarquia, não descuido.
+                "Nosso estoque" é placa: nomeia o que vem abaixo e sai de cena.
+                Este título é a proposta em si — ele tem de convencer alguém a
+                preencher um formulário. Do lado de um cartão branco de 600px,
+                a 30px ele perdia a disputa e o bloco lia como legenda.
+                O peso vai junto com o tamanho: na condensada, largura estreita
+                significa menos massa visual, então subir só o corpo não bastava. */}
+            <h2 className="text-content text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
               Quer saber antes de todo mundo?
             </h2>
             <p className="text-muted mt-3 max-w-md text-base leading-relaxed">

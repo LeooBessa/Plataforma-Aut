@@ -62,7 +62,11 @@ export function ConsignmentSection() {
             de quem usa leitor de tela, que segue o documento e não o CSS. */}
         <div className="grid gap-12 lg:grid-cols-2 lg:gap-16">
           <div className="lg:order-2">
-            <h2 className="text-on-inverse text-2xl font-semibold tracking-tight sm:text-3xl">
+            {/* Mesmo tamanho do título da lista de espera, e pelo mesmo motivo:
+                as duas seções são propostas que precisam convencer, não placas
+                que nomeiam. Manter as duas iguais entre si é o que faz a
+                diferença em relação a "Nosso estoque" ler como decisão. */}
+            <h2 className="text-on-inverse text-3xl font-bold tracking-tight sm:text-4xl lg:text-5xl">
               Quer vender seu carro?
             </h2>
             <p className="mt-3 max-w-md text-base leading-relaxed text-white/60">
