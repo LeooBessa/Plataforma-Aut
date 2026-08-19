@@ -30,7 +30,20 @@ const FOTO_PADRAO = {
  */
 function TarjaDoArtigo({ artigo }: { artigo: ArticleSummary }) {
   return (
-    <div className="absolute inset-x-0 bottom-0 z-10 p-6 pt-20 sm:p-8 sm:pt-24">
+    // `lg:pl-[15%]` DESVIA DA DIAGONAL.
+    //
+    // A tarja mora dentro do contêiner recortado, que tem a largura inteira do
+    // painel — inclusive o triângulo que o `clip-path` joga fora. Encostada em
+    // `left: 0`, o começo do título e do botão caíam nesse triângulo e sumiam:
+    // na tela aparecia "er artigo" no lugar de "Ler artigo".
+    //
+    // O corte desce de 24% (topo) a 5% (base). A tarja começa perto de 81% da
+    // altura, onde a diagonal está em ~8,6%. Os 15% cobrem isso com folga e
+    // ainda deixam respiro entre o texto e a borda inclinada.
+    //
+    // Só a partir do `lg` porque abaixo disso a mesma tarja é usada no bloco
+    // 16:9 do celular, que é retangular e não tem diagonal nenhuma.
+    <div className="absolute inset-x-0 bottom-0 z-10 p-6 pt-20 sm:p-8 sm:pt-24 lg:pl-[15%]">
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/75 via-black/40 to-transparent"

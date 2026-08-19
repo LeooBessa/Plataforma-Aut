@@ -167,13 +167,26 @@ export function ArticleForm({ article }: { article?: Article }) {
       {/* CAPA */}
       <div className="rounded-card bg-surface ring-line p-5 ring-1 sm:p-6">
         <p className="text-content text-sm font-semibold">Capa</p>
-        <p className="text-faint mt-0.5 text-xs">
-          Formato 16:9, de preferência 1600×900. Obrigatória para publicar.
+        {/* PEDE QUADRADA mesmo a capa aparecendo deitada na maior parte dos
+            lugares, e o motivo não é óbvio: a mesma imagem é recortada de dois
+            jeitos incompatíveis.
+
+              deitada (16:9)   listagem, página do artigo, topo no celular
+              quase quadrada   topo da home no computador (medido: 1:1 a 1,13:1)
+
+            Uma arte 16:9 jogada no painel quadrado do computador precisa ampliar
+            78% para preencher, e é isso que faz a foto parecer torta e ampliada
+            demais. Uma arte quadrada, ao contrário, só perde as faixas de cima e
+            de baixo quando aparece deitada — por isso o pedido de deixar o
+            assunto no meio. */}
+        <p className="text-faint mt-0.5 text-xs leading-relaxed">
+          Quadrada, 1600 × 1600, com o assunto no meio. Nas listagens ela aparece
+          deitada e as bordas de cima e de baixo somem. Obrigatória para publicar.
         </p>
 
         {capaUrl ? (
           <div className="mt-3">
-            <div className="rounded-btn bg-sunken relative aspect-video max-w-md overflow-hidden">
+            <div className="rounded-btn bg-sunken relative aspect-square max-w-xs overflow-hidden">
               <Image src={capaUrl} alt="" fill sizes="448px" className="object-cover" />
             </div>
             <Button
@@ -390,7 +403,7 @@ function PreviaDoTopo({ src, titulo }: { src: string; titulo: string }) {
           <div className="from-brand-300 to-brand-600 absolute inset-0 bg-linear-to-b" />
           <div className="absolute inset-0" style={{ clipPath: DIAGONAL_DO_HERO }}>
             <Image src={src} alt="" fill sizes="320px" className="object-cover object-center" />
-            <TarjaPrevia titulo={titulo} />
+            <TarjaPrevia titulo={titulo} diagonal />
           </div>
         </div>
       </div>
@@ -401,9 +414,17 @@ function PreviaDoTopo({ src, titulo }: { src: string; titulo: string }) {
 //: O MESMO polígono do hero. Se mudar lá, muda aqui — senão a prévia mente.
 const DIAGONAL_DO_HERO = 'polygon(24% 0, 100% 0, 100% 100%, 5% 100%)';
 
-function TarjaPrevia({ titulo }: { titulo: string }) {
+/**
+ * `diagonal` empurra o conteúdo para a direita na prévia do computador.
+ *
+ * É o mesmo desvio que o hero de verdade faz: lá o `clip-path` come o canto
+ * esquerdo, e sem o recuo o começo do título e do botão caem fora da imagem.
+ * Se a prévia não repetisse o desvio, ela mostraria um enquadramento que o site
+ * não entrega — que é pior do que não ter prévia.
+ */
+function TarjaPrevia({ titulo, diagonal = false }: { titulo: string; diagonal?: boolean }) {
   return (
-    <div className="absolute inset-x-0 bottom-0 p-3 pt-10">
+    <div className={`absolute inset-x-0 bottom-0 p-3 pt-10 ${diagonal ? 'pl-[15%]' : ''}`}>
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/75 via-black/40 to-transparent"
