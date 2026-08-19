@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { Fragment, type ReactNode } from 'react';
 
 /**
  * Renderizador de um SUBCONJUNTO de markdown.
@@ -28,6 +28,7 @@ import type { ReactNode } from 'react';
  *   > citação             → destaque
  *   **negrito**           → <strong>
  *   [texto](url)          → link
+ *   um Enter              → quebra a linha
  *   linha em branco       → separa parágrafos
  *
  * Qualquer outra coisa é tratada como texto comum. Isso é decisão, não
@@ -95,12 +96,34 @@ export function Markdown({ children }: { children: string }) {
   let lista: { ordenada: boolean; itens: string[] } | null = null;
   let n = 0;
 
+  /**
+   * ENTER É ENTER.
+   *
+   * Antes as linhas seguidas eram grudadas com espaço, que é o comportamento
+   * clássico de markdown: só linha em branco separa parágrafo. O resultado no
+   * site era desastroso — quem escreveu cinco itens, um por linha, viu os cinco
+   * virarem um parágrafo corrido só.
+   *
+   * Ninguém digitando numa caixa de texto espera isso. Agora:
+   *
+   *   um Enter    quebra a linha, mesmo parágrafo
+   *   dois Enter  parágrafo novo, com espaço maior antes
+   *
+   * É o que acontece no WhatsApp e no Word, e é o que a pessoa já tem na
+   * cabeça quando aperta a tecla.
+   */
   const fecharParagrafo = () => {
     if (!paragrafo.length) return;
-    const texto = paragrafo.join(' ');
+    const linhas = paragrafo;
+    const chave = n++;
     blocos.push(
-      <p key={`p${n++}`} className="text-muted mt-4 leading-relaxed">
-        {inline(texto, `p${n}`)}
+      <p key={`p${chave}`} className="text-muted mt-4 leading-relaxed">
+        {linhas.map((linha, k) => (
+          <Fragment key={k}>
+            {k > 0 && <br />}
+            {inline(linha, `p${chave}-${k}`)}
+          </Fragment>
+        ))}
       </p>,
     );
     paragrafo = [];

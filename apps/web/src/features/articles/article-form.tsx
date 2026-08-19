@@ -113,17 +113,34 @@ export function ArticleForm({ article }: { article?: Article }) {
     const { selectionStart: inicio, selectionEnd: fim } = el;
 
     if (marca === 'negrito') {
-      const jaMarcado = corpo.slice(inicio - 2, inicio) === '**' && corpo.slice(fim, fim + 2) === '**';
+      // SEM SELEÇÃO, PEGA A PALAVRA SOB O CURSOR.
+      //
+      // Antes o botão inseria o texto "texto em negrito" como exemplo. Foi
+      // parar publicado no site: quem clicou sem selecionar nada não percebeu
+      // que aquilo era um espaço reservado a preencher. Marcar a palavra onde o
+      // cursor já está é o que a pessoa queria, e nunca inventa texto.
+      let ini = inicio;
+      let fi = fim;
+      if (ini === fi) {
+        const antes = corpo.slice(0, ini).search(/\S+$/);
+        const depois = corpo.slice(fi).search(/\s/);
+        ini = antes === -1 ? ini : antes;
+        fi = depois === -1 ? corpo.length : fi + depois;
+        // Cursor no vazio (linha em branco, ou entre espaços): não há o que
+        // marcar, e inventar conteúdo é justamente o que causou o problema.
+        if (ini === fi) return;
+      }
+
+      const jaMarcado = corpo.slice(ini - 2, ini) === '**' && corpo.slice(fi, fi + 2) === '**';
       if (jaMarcado) {
-        const novo = corpo.slice(0, inicio - 2) + corpo.slice(inicio, fim) + corpo.slice(fim + 2);
-        selecaoPendente.current = [inicio - 2, fim - 2];
-        setCorpo(novo);
+        selecaoPendente.current = [ini - 2, fi - 2];
+        setCorpo(corpo.slice(0, ini - 2) + corpo.slice(ini, fi) + corpo.slice(fi + 2));
         return;
       }
-      const trecho = corpo.slice(inicio, fim) || 'texto em negrito';
-      const novo = `${corpo.slice(0, inicio)}**${trecho}**${corpo.slice(fim)}`;
-      selecaoPendente.current = [inicio + 2, inicio + 2 + trecho.length];
-      setCorpo(novo);
+
+      const trecho = corpo.slice(ini, fi);
+      selecaoPendente.current = [ini + 2, ini + 2 + trecho.length];
+      setCorpo(`${corpo.slice(0, ini)}**${trecho}**${corpo.slice(fi)}`);
       return;
     }
 
