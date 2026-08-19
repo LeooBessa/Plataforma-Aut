@@ -8,18 +8,19 @@ import { Menu, Search, X } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 
-// "Artigos" entra ANTES de Sobre: é conteúdo que se lê, e fica junto de
-// Veículos, o outro item que leva a alguma coisa para consumir. Sobre e Contato
-// são institucionais e fecham a lista.
+// ARTIGOS NÃO ENTRA AQUI, e isso é decisão de produto.
 //
-// Fica no menu mesmo com zero artigo publicado. A página vazia diz "em breve",
-// que é honesto — e a alternativa (esconder até publicar) significaria que a
-// loja publica o primeiro artigo e ele não aparece em lugar nenhum até alguém
-// lembrar de mexer no menu.
+// O menu do topo é a lista curta do que a loja vende: carros, quem ela é, como
+// falar com ela. Artigo é conteúdo de apoio — quem chega procurando carro não
+// veio ler texto, e um item a mais no topo dilui os que importam.
+//
+// Os artigos entram pela página Sobre, que é o institucional, e cada um tem
+// endereço próprio (`/artigos/<slug>`) que o Google indexa e que o destaque do
+// topo da home aponta. Sair do menu não os torna invisíveis: as duas portas de
+// entrada que realmente trazem visita — busca e destaque — continuam abertas.
 const LINKS = [
   { href: '/', label: 'Home' },
   { href: '/veiculos', label: 'Veículos' },
-  { href: '/artigos', label: 'Artigos' },
   { href: '/sobre', label: 'Sobre' },
   { href: '/contato', label: 'Contato' },
 ] as const;
