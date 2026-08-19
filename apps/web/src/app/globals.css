@@ -26,6 +26,34 @@
 
 @theme {
   /* ==========================================================================
+     TIPOGRAFIA
+     ==========================================================================
+     Duas famílias, com papéis separados:
+
+       font-sans     Barlow            todo o texto que se lê
+       font-display  Barlow Condensed  títulos
+
+     São irmãs do mesmo desenho, então convivem sem parecer colagem — a
+     diferença entre elas é a LARGURA, não o estilo, e é isso que dá hierarquia
+     sem precisar de duas personalidades brigando na mesma página.
+
+     A pilha de reserva termina em `system-ui`: se o download falhar, o texto
+     sai na fonte do sistema em vez de cair no Times New Roman, que é o padrão
+     do navegador e destoaria de tudo. */
+  --font-sans: var(--font-barlow), ui-sans-serif, system-ui, sans-serif;
+
+  /* `tracking-tight` do Tailwind vale -0.025em, calibrado para fonte de
+     largura normal. Numa condensada, que já nasce apertada, essa mesma medida
+     encosta as letras umas nas outras — na manchete de 54px do topo, o "quem
+     quer mais" virava um borrão. Aqui ele é reduzido a menos da metade: ainda
+     fecha o espaçamento do título, sem colar.
+     Os 31 usos no projeto são todos em título, então mexer no token corrige
+     todos de uma vez em vez de caçar classe por classe. */
+  --tracking-tight: -0.01em;
+  --font-display:
+    var(--font-barlow-condensed), var(--font-barlow), ui-sans-serif, system-ui, sans-serif;
+
+  /* ==========================================================================
      CAMADA 1 — ESCALAS BRUTAS
      ========================================================================== */
 
@@ -142,6 +170,24 @@
 
   body {
     @apply bg-canvas text-content antialiased;
+  }
+
+  /* TÍTULO USA A CONDENSADA, em regra de base e não classe a classe.
+     São dezenas de componentes; espalhar `font-display` por todos eles
+     garantiria esquecer alguns, e um título fora do padrão no meio da página é
+     mais visível que a troca de fonte inteira.
+
+     `text-wrap: balance` distribui as palavras entre as linhas em vez de
+     encher a primeira e deixar uma palavra órfã na última — em fonte
+     condensada, que cabe mais palavra por linha, a órfã aparece mais.
+
+     Vai até o h3. Do h4 para baixo o texto é pequeno demais para a condensada
+     ajudar: ela só ficaria apertada e mais difícil de ler. */
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    text-wrap: balance;
   }
 
   /* Marcar uma caixa acende o azul da marca, não o azul padrão do sistema. */
