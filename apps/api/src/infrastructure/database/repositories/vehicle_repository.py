@@ -23,7 +23,7 @@ from src.domain.catalog.entities import (
     VehicleDetail,
     VehicleSummary,
 )
-from src.domain.catalog.enums import VehicleStatus
+from src.domain.catalog.enums import BodyType, VehicleStatus
 from src.domain.catalog.value_objects import Page, Pagination, VehicleFilters, VehicleSort
 from src.infrastructure.database.models import (
     Brand,
@@ -237,6 +237,15 @@ class SqlAlchemyVehicleRepository:
             select(Vehicle.city).where(visible).distinct().order_by(Vehicle.city)
         )
 
+        # Mesma regra das marcas e das cidades: só o que tem carro à venda.
+        # A ordem sai da declaração do enum (hatch, sedan, SUV...), que é a
+        # ordem que faz sentido para quem compra — não a alfabética.
+        body_rows = await self._session.scalars(
+            select(Vehicle.body_type).where(visible).distinct()
+        )
+        em_uso = set(body_rows)
+        body_types = [b for b in BodyType if b in em_uso]
+
         feature_rows = await self._session.scalars(
             select(Feature)
             .join(vehicle_features, vehicle_features.c.feature_id == Feature.id)
@@ -260,6 +269,7 @@ class SqlAlchemyVehicleRepository:
         return FilterOptions(
             brands=brands,
             cities=list(city_rows),
+            body_types=body_types,
             features=[_to_feature(f) for f in feature_rows],
             price_min=bounds[0],
             price_max=bounds[1],

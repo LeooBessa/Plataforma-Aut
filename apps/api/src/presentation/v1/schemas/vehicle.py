@@ -178,6 +178,10 @@ class FilterOptionsOut(BaseModel):
 
     brands: list[BrandOptionOut]
     cities: list[str]
+    #: Derivado do estoque, como marcas e cidades. Antes era a lista fixa das
+    #: nove categorias do enum, que oferecia "Conversível" numa loja que nunca
+    #: teve um — filtro que devolve zero é pior do que filtro ausente.
+    body_types: list[BodyType]
     features: list[FeatureOut]
     price_min: Decimal | None
     price_max: Decimal | None
@@ -185,13 +189,13 @@ class FilterOptionsOut(BaseModel):
     year_max: int | None
     fuel_types: list[FuelType] = Field(default_factory=lambda: list(FuelType))
     transmissions: list[TransmissionType] = Field(default_factory=lambda: list(TransmissionType))
-    body_types: list[BodyType] = Field(default_factory=lambda: list(BodyType))
 
     @classmethod
     def from_domain(cls, options: FilterOptions) -> FilterOptionsOut:
         return cls(
             brands=[BrandOptionOut.model_validate(b) for b in options.brands],
             cities=options.cities,
+            body_types=options.body_types,
             features=[FeatureOut.model_validate(f) for f in options.features],
             price_min=options.price_min,
             price_max=options.price_max,

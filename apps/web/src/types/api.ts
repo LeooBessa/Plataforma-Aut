@@ -1278,6 +1278,8 @@ export interface components {
       brands: components['schemas']['BrandOptionOut'][];
       /** Cities */
       cities: string[];
+      /** Body Types */
+      body_types: components['schemas']['BodyType'][];
       /** Features */
       features: components['schemas']['FeatureOut'][];
       /** Price Min */
@@ -1292,8 +1294,6 @@ export interface components {
       fuel_types?: components['schemas']['FuelType'][];
       /** Transmissions */
       transmissions?: components['schemas']['TransmissionType'][];
-      /** Body Types */
-      body_types?: components['schemas']['BodyType'][];
     };
     /**
      * FuelType

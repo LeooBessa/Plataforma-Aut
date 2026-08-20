@@ -187,6 +187,9 @@ class FilterOptions:
 
     brands: list[BrandOption] = field(default_factory=list)
     cities: list[str] = field(default_factory=list)
+    #: Só as categorias que TÊM veículo à venda. Oferecer "Conversível" num
+    #: filtro que devolve zero resultados é pior do que não oferecer.
+    body_types: list[BodyType] = field(default_factory=list)
     features: list[FeatureItem] = field(default_factory=list)
     price_min: Decimal | None = None
     price_max: Decimal | None = None

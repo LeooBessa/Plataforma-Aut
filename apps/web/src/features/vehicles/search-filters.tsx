@@ -12,7 +12,7 @@ import type { FilterOptions } from '@/lib/api';
 // eram ruído numa vitrine pequena, onde quem quer um automático já vê isso no
 // cartão do carro. A API continua aceitando os dois parâmetros, então link
 // antigo com `?body=suv` na URL segue funcionando.
-import { FUEL_LABELS, SORT_OPTIONS } from '@/lib/labels';
+import { BODY_LABELS, FUEL_LABELS, SORT_OPTIONS } from '@/lib/labels';
 import { cn } from '@/lib/utils';
 
 /**
@@ -150,8 +150,12 @@ export function SearchFilters({
 
   const faixas = faixasDePreco(Number(options.price_min ?? 0), Number(options.price_max ?? 0));
 
-  const activeCount = ['brand', 'model', 'city', 'fuel', 'price_max', 'year_min'].filter((key) =>
-    searchParams.has(key),
+  // A lista precisa acompanhar os campos da tela. Esquecer um aqui não quebra
+  // nada visível de imediato: o filtro funciona, mas não conta como ativo, e o
+  // "Limpar filtros" some se ele for o único aplicado — a pessoa fica sem saída
+  // sem entender por quê.
+  const activeCount = ['brand', 'model', 'city', 'body', 'fuel', 'price_max', 'year_min'].filter(
+    (key) => searchParams.has(key),
   ).length;
 
   const clearAll = () => {
@@ -293,6 +297,27 @@ export function SearchFilters({
                     currency: 'BRL',
                     maximumFractionDigits: 0,
                   })}
+                </option>
+              ))}
+            </Select>
+          )}
+
+          {/* CATEGORIA vem do estoque, não da lista fixa das nove do sistema.
+              É a mesma regra de marca e cidade: se a loja nunca teve um
+              conversível, "Conversível" não aparece. Filtro que devolve zero
+              resultados frustra mais do que filtro ausente.
+              Por isso o campo some quando há uma categoria só — escolher entre
+              "qualquer" e a única que existe não é escolha. */}
+          {options.body_types.length > 1 && (
+            <Select
+              value={searchParams.get('body') ?? ''}
+              onChange={(e) => updateParams({ body: e.target.value || undefined })}
+              aria-label="Categoria"
+            >
+              <option value="">Qualquer categoria</option>
+              {options.body_types.map((valor) => (
+                <option key={valor} value={valor}>
+                  {BODY_LABELS[valor]}
                 </option>
               ))}
             </Select>
