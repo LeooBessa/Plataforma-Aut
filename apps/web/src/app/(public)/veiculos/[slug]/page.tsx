@@ -179,9 +179,7 @@ export default async function VeiculoPage({ params }: Props) {
             <div className="mt-6">
               {isSold ? (
                 <div className="rounded-btn bg-sunken p-4 text-center">
-                  <p className="text-muted text-sm font-medium">
-                    Este veículo já foi vendido.
-                  </p>
+                  <p className="text-muted text-sm font-medium">Este veículo já foi vendido.</p>
                   <Link
                     href="/veiculos"
                     className="text-accent hover:text-accent mt-1 inline-block text-sm font-semibold"
@@ -223,10 +221,7 @@ function Breadcrumbs({ title }: { title: string }) {
   return (
     // O breadcrumb serve ao usuário e ao Google: ele aparece no resultado da
     // busca e ajuda o rastreador a entender a hierarquia do site.
-    <nav
-      aria-label="Você está aqui"
-      className="text-faint flex items-center gap-1.5 text-sm"
-    >
+    <nav aria-label="Você está aqui" className="text-faint flex items-center gap-1.5 text-sm">
       <Link href="/" className="hover:text-content transition-colors">
         Home
       </Link>
@@ -276,9 +271,7 @@ function Specs({ vehicle }: { vehicle: VehicleDetail }) {
       <dl className="mt-4 grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-3">
         {items.map(({ label, value }) => (
           <div key={label} className="border-line border-b pb-3">
-            <dt className="text-muted text-xs font-medium tracking-wide uppercase">
-              {label}
-            </dt>
+            <dt className="text-muted text-xs font-medium tracking-wide uppercase">{label}</dt>
             <dd className="text-content mt-1 font-medium">{value}</dd>
           </div>
         ))}

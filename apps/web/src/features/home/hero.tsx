@@ -123,9 +123,7 @@ export function Hero({ destaque }: { destaque?: ArticleSummary | null }) {
   // inesperado no banco deixaria o topo do site sem imagem nenhuma.
   const artigo = destaque?.cover_url ? destaque : null;
 
-  const imagem = artigo?.cover_url
-    ? { src: artigo.cover_url, alt: artigo.title }
-    : FOTO_PADRAO;
+  const imagem = artigo?.cover_url ? { src: artigo.cover_url, alt: artigo.title } : FOTO_PADRAO;
 
   // A foto padrão é decorativa: o texto ao lado já diz tudo que ela mostra, e
   // repeti-lo para leitor de tela seria ruído. A capa do artigo não — ela vem
@@ -166,9 +164,13 @@ export function Hero({ destaque }: { destaque?: ArticleSummary | null }) {
           />
           <div
             className="absolute inset-0"
-            style={{ clipPath: 'polygon(calc(24% + 2.5px) 0, 100% 0, 100% 100%, calc(5% + 2.5px) 100%)' }}
+            style={{
+              clipPath:
+                'polygon(calc(24% + 2.5px) 0, 100% 0, 100% 100%, calc(5% + 2.5px) 100%)',
+            }}
           >
             <Image
+              quality={90}
               src={imagem.src}
               alt={decorativa ? '' : imagem.alt}
               fill
@@ -288,8 +290,9 @@ export function Hero({ destaque }: { destaque?: ArticleSummary | null }) {
                   tempo de compilação. `fill` fixa o quadro e deixa o recorte
                   para o `object-cover`, que é justamente o que o formato
                   quadrado pedido no painel foi pensado para atravessar. */}
-              <div className="relative mt-8 -mx-4 aspect-video overflow-hidden sm:-mx-6 lg:hidden">
+              <div className="relative -mx-4 mt-8 aspect-video overflow-hidden sm:-mx-6 lg:hidden">
                 <Image
+                  quality={90}
                   src={imagem.src}
                   alt={decorativa ? '' : imagem.alt}
                   fill
@@ -316,7 +319,6 @@ export function Hero({ destaque }: { destaque?: ArticleSummary | null }) {
                 </ButtonLink>
               </div>
             </div>
-
           </div>
         </div>
       </div>

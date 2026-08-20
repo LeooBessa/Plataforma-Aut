@@ -184,6 +184,16 @@ const nextConfig: NextConfig = {
       },
     ],
     formats: ['image/avif', 'image/webp'],
+
+    // O NEXT 16 TRAVA A QUALIDADE EM 75 se esta lista não existir: qualquer
+    // `quality` diferente do padrão devolve 400. Foi o que segurava as fotos
+    // dos carros num patamar de blog quando elas são o produto da loja.
+    //
+    // 75 continua sendo o padrão, usado por logo e imagens acessórias. 90 é
+    // para a foto do veículo e a capa do artigo — em AVIF a diferença de peso é
+    // pequena, e é justamente em pintura de carro e céu que o 75 aparece,
+    // porque degradê suave é onde artefato de compressão fica visível.
+    qualities: [75, 90],
   },
 };
 

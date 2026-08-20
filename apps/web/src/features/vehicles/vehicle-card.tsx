@@ -45,6 +45,12 @@ export function VehicleCard({
             src={cover.url}
             alt={cover.alt_text ?? vehicle.title}
             fill
+            // SEM `quality`, ou seja, no padrão 75 — e isso é deliberado.
+            // A miniatura tem 390px na tela: artefato de compressão quase não
+            // aparece nesse tamanho, e a listagem carrega doze delas de uma vez.
+            // Subir para 90 dobraria o peso da página no 4G para ganhar um
+            // detalhe que ninguém vê. A qualidade alta fica onde a foto é
+            // grande e a pessoa está decidindo: galeria e topo da home.
             // `sizes` impede o navegador de baixar uma imagem de 1200px para um
             // card de 300px no celular — onde está a maioria dos compradores.
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -70,9 +76,7 @@ export function VehicleCard({
       </div>
 
       <div className="flex flex-1 flex-col p-5">
-        <h3 className="text-content line-clamp-2 leading-snug font-medium">
-          {vehicle.title}
-        </h3>
+        <h3 className="text-content line-clamp-2 leading-snug font-medium">{vehicle.title}</h3>
 
         <p className="text-faint mt-1 text-sm">
           {formatYears(vehicle.year_manufacture, vehicle.year_model)}

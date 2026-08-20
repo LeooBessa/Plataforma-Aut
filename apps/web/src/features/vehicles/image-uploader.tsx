@@ -62,7 +62,21 @@ export function ImageUploader({
       const compressed = await imageCompression(file, {
         maxSizeMB: MAX_SIZE_MB,
         maxWidthOrHeight: MAX_DIMENSION,
-        useWebWorker: true, // não trava a interface durante a compressão
+        // ALVO DE QUALIDADE, NÃO DE DIMENSÃO.
+        //
+        // Sem estas duas linhas a biblioteca persegue o limite de bytes
+        // ENCOLHENDO A FOTO. O resultado em produção foram originais de
+        // 953x1270 pesando 1,5 MB: resolução de miniatura num arquivo grande,
+        // o pior dos dois mundos. Na tela, a foto do carro aparecia com menos
+        // da metade dos pixels que a vitrine precisa e saía borrada.
+        //
+        // `alwaysKeepResolution` impede o encolhimento, e `initialQuality`
+        // começa a compressão num ponto que já cabe no orçamento. O corte
+        // inicial em MAX_DIMENSIONpx continua valendo — ele acontece antes, e é o que
+        // impede uma foto de 4000px do iPhone de subir inteira.
+        initialQuality: 0.82,
+        alwaysKeepResolution: true,
+        useWebWorker: true,
         fileType: 'image/webp',
       });
 

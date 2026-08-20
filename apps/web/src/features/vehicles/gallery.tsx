@@ -68,6 +68,10 @@ export function Gallery({ images, title }: { images: VehicleImage[]; title: stri
             alt={active.alt_text ?? `${title}, foto ${current + 1} de ${total}`}
             fill
             sizes="(max-width: 1024px) 100vw, 60vw"
+            // 90 em vez do padrão 75: esta é a maior foto do carro no site, e
+            // é nela que o comprador decide se vai agendar visita. Artefato de
+            // compressão aparece justamente em pintura e vidro.
+            quality={90}
             // A foto principal é quase certamente o LCP da página. No Next 16,
             // `priority` está deprecado; a forma atual é esta.
             loading="eager"
@@ -147,6 +151,9 @@ export function Gallery({ images, title }: { images: VehicleImage[]; title: stri
             <Image
               src={active.url}
               alt={active.alt_text ?? title}
+              // Ampliada é onde se procura risco na lataria e desgaste no
+              // pneu. Se há um lugar onde compressão não pode aparecer, é aqui.
+              quality={90}
               fill
               sizes="100vw"
               className="object-contain"
