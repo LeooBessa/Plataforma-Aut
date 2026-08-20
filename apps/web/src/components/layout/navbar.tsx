@@ -56,7 +56,7 @@ export function Navbar() {
             className="h-9 w-auto"
             priority
           />
-          <span className="text-content font-logo text-xl font-[700] tracking-[0.22em]">
+          <span className="text-content font-logo text-2xl font-[700] tracking-[0.16em]">
             Giro Auto
           </span>
         </Link>

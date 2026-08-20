@@ -47,7 +47,7 @@ export function Footer() {
           {/* `text-accent`, não `text-brand-gradient`: o degradê tem quase-branco
               no meio e desaparece no papel — está escrito no próprio utilitário,
               em globals.css. */}
-          <span className="text-accent font-logo text-xl font-[700] tracking-[0.22em]">
+          <span className="text-accent font-logo text-2xl font-[700] tracking-[0.16em]">
             Giro Auto
           </span>
           <p className="text-faint mt-1 text-[10px] font-medium tracking-[0.22em] uppercase">
