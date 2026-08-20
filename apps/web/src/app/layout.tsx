@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Plus_Jakarta_Sans } from 'next/font/google';
+import { Barlow_Condensed, Plus_Jakarta_Sans } from 'next/font/google';
 
 import './globals.css';
 
@@ -27,6 +27,24 @@ const jakarta = Plus_Jakarta_Sans({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-jakarta',
+});
+
+// SÓ PARA O LOGOTIPO — a palavra "Giro Auto" ao lado do símbolo, na barra do
+// topo e no rodapé. Não é usada em mais nada.
+//
+// Logotipo é o lugar onde uma fonte de personalidade forte ganha o download que
+// custa: ele aparece em toda página, é a assinatura da marca, e escrito na
+// mesma fonte da interface ele lê como mais um texto da tela em vez de como uma
+// marca. A condensada, com o espacejamento largo que já existia, dá o aperto
+// vertical que se espera de logotipo automotivo.
+//
+// Um peso só (700) e o subconjunto latino: são nove letras na tela inteira, não
+// faz sentido baixar a família.
+const barlowCondensed = Barlow_Condensed({
+  subsets: ['latin'],
+  weight: ['700'],
+  display: 'swap',
+  variable: '--font-barlow-condensed',
 });
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
@@ -67,7 +85,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     // `lang="pt-BR"` não é detalhe: é o que faz o leitor de tela pronunciar o
     // conteúdo em português, e o que diz ao Google em que idioma indexar.
-    <html lang="pt-BR" className={jakarta.variable}>
+    <html lang="pt-BR" className={`${jakarta.variable} ${barlowCondensed.variable}`}>
       <body className="flex min-h-dvh flex-col font-sans">{children}</body>
     </html>
   );

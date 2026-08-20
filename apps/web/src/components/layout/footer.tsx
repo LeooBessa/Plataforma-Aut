@@ -47,7 +47,9 @@ export function Footer() {
           {/* `text-accent`, não `text-brand-gradient`: o degradê tem quase-branco
               no meio e desaparece no papel — está escrito no próprio utilitário,
               em globals.css. */}
-          <span className="text-accent text-lg font-semibold tracking-[0.2em]">Giro Auto</span>
+          <span className="text-accent font-logo text-xl font-[700] tracking-[0.22em]">
+            Giro Auto
+          </span>
           <p className="text-faint mt-1 text-[10px] font-medium tracking-[0.22em] uppercase">
             Bons carros, preço justo
           </p>
@@ -139,7 +141,10 @@ export function Footer() {
               </a>
             </li>
             <li>
-              <Link href="/contato" className="text-accent block py-3 transition-colors hover:underline sm:py-1.5">
+              <Link
+                href="/contato"
+                className="text-accent block py-3 transition-colors hover:underline sm:py-1.5"
+              >
                 Falar com a gente
               </Link>
             </li>

@@ -46,6 +46,10 @@
   --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
 
+  /* Exclusiva do logotipo. Separada das outras duas de propósito: se um dia a
+     marca mudar de fonte, muda aqui e não arrasta a interface junto. */
+  --font-logo: var(--font-barlow-condensed), var(--font-jakarta), sans-serif;
+
   /* TÍTULO EM 800, não 700.
      `font-bold` aparece 39 vezes no projeto e quase só em título e preço, então
      subir o token acerta todos de uma vez sem tocar em botão ou rótulo, que

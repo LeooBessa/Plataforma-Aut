@@ -56,7 +56,9 @@ export function Navbar() {
             className="h-9 w-auto"
             priority
           />
-          <span className="text-content text-lg font-semibold tracking-[0.2em]">Giro Auto</span>
+          <span className="text-content font-logo text-xl font-[700] tracking-[0.22em]">
+            Giro Auto
+          </span>
         </Link>
 
         {/* CENTRALIZADO na barra: posicionado no meio absoluto, não empurrado
