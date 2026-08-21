@@ -1,6 +1,6 @@
 import type { Route } from 'next';
 import Image from 'next/image';
-import { ArrowRight, Search, Tag } from 'lucide-react';
+import { ArrowRight, ChevronDown, Search, Tag } from 'lucide-react';
 
 import AnimatedTextCycle from '@/components/ui/animated-text-cycle';
 import { ButtonLink } from '@/components/ui/button';
@@ -132,6 +132,30 @@ export function Hero({ destaque }: { destaque?: ArticleSummary | null }) {
 
   return (
     <section className="bg-canvas relative overflow-hidden">
+      {/* ------ FUNDO DO CELULAR ------
+          No desktop a foto é o painel diagonal à direita, ao LADO do texto. No
+          celular ela sai de cena desde que o estoque subiu — e o topo ficou
+          branco demais, que foi a queixa.
+          Aqui ela volta como FUNDO, atrás do texto, sem ocupar altura própria:
+          é a única forma de a foto existir no celular sem empurrar a vitrine
+          para baixo de novo.
+          O véu escuro por cima não é enfeite: sem ele o texto preto sobre foto
+          clara desaparece. Com ele o texto vira branco e fica legível sobre
+          qualquer capa que a loja escolher. */}
+      <div aria-hidden className="absolute inset-0 lg:hidden">
+        <Image
+          src={imagem.src}
+          alt=""
+          fill
+          sizes="100vw"
+          quality={85}
+          loading="eager"
+          fetchPriority="high"
+          className="object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-black/70" />
+      </div>
+
       {/* ------ HERO — ocupa a tela inteira (menos a navbar) ------ */}
       <div className="relative flex lg:min-h-[calc(100svh-4rem)]">
         {/* FOTO — painel à direita, sangrando até a borda da tela.
@@ -253,7 +277,7 @@ export function Hero({ destaque }: { destaque?: ArticleSummary | null }) {
                   ouve a frase inteira, uma vez. */}
               <h1
                 aria-label="Carros para quem quer mais: preço acessível, economia, qualidade e conforto."
-                className="text-content text-[2rem] font-bold tracking-tight text-balance sm:text-5xl lg:text-[3.4rem] lg:leading-[1.05]"
+                className="lg:text-content text-[2rem] font-bold tracking-tight text-balance text-white sm:text-5xl lg:text-[3.4rem] lg:leading-[1.05]"
               >
                 Carros para quem quer mais
                 {/* `animateWidth={false}`: a palavra está sozinha na linha, não
@@ -261,7 +285,7 @@ export function Hero({ destaque }: { destaque?: ArticleSummary | null }) {
                     componente renderiza todas as variações num bloco oculto para
                     medi-las — e esse bloco entra no texto do h1, deixando o
                     título da página com as quatro palavras concatenadas no DOM. */}
-                <span className="text-accent mt-1 block">
+                <span className="text-brand-400 lg:text-accent mt-1 block">
                   <AnimatedTextCycle words={QUALIDADES} interval={3000} animateWidth={false} />
                 </span>
               </h1>
@@ -302,7 +326,7 @@ export function Hero({ destaque }: { destaque?: ArticleSummary | null }) {
                   No desktop nada muda — lá a foto é o painel diagonal à
                   direita, que não empurra nada para baixo. */}
 
-              <p className="text-muted mx-auto mt-5 max-w-md text-base leading-relaxed text-pretty sm:mt-6 lg:mx-0">
+              <p className="lg:text-muted mx-auto mt-5 max-w-md text-base leading-relaxed text-pretty text-white/75 sm:mt-6 lg:mx-0">
                 Boas oportunidades, carros selecionados e preços que fazem sentido para você.
                 Confira nossos veículos e encontre uma opção que cabe no seu bolso.
               </p>
@@ -325,6 +349,25 @@ export function Hero({ destaque }: { destaque?: ArticleSummary | null }) {
                   Vamos achar seu carro
                 </ShinyButtonLink>
               </div>
+
+              {/* A CHAMADA PARA ROLAR, no pé do topo e só no celular.
+                  Ela substitui o "Nosso estoque / busque e filtre" que abria a
+                  vitrine logo abaixo: dizer duas vezes que existe um estoque,
+                  a 100px de distância, é repetição.
+                  Aqui ela ganha outra função — a seta indica que a página
+                  continua. Sem nada no pé, um topo que preenche a tela inteira
+                  parece a página toda, e parte das pessoas não rola.
+                  É um link para a âncora, não só um enfeite: quem tocar vai
+                  direto para a vitrine. */}
+              <a
+                href="#estoque"
+                className="mt-10 flex flex-col items-center gap-1 text-white/70 transition-colors hover:text-white sm:hidden"
+              >
+                <span className="text-xs font-semibold tracking-[0.14em] uppercase">
+                  Confira nosso estoque
+                </span>
+                <ChevronDown className="size-5 animate-bounce" />
+              </a>
 
               {/* OS BOTÕES SOMEM NO CELULAR.
                   "Ver Estoque" mandava para uma seção que agora começa 100px

@@ -87,18 +87,23 @@ function EstoqueSection({ params }: { params: Record<string, string | string[] |
   return (
     <section
       id="estoque"
-      className="mx-auto max-w-7xl px-4 pt-10 pb-4 sm:px-6 sm:pt-16 lg:px-8 lg:pt-20"
+      className="mx-auto max-w-7xl px-4 pt-6 pb-4 sm:px-6 sm:pt-16 lg:px-8 lg:pt-20"
     >
       <div>
-        <h2 className="text-content text-2xl font-semibold tracking-tight sm:text-3xl">
+        {/* O TÍTULO SOME NO CELULAR: quem anuncia a vitrine ali é a chamada
+            "Confira nosso estoque" no pé do topo, 100px acima. Repetir o mesmo
+            aviso duas vezes a essa distância só gasta a primeira tela. */}
+        <h2 className="text-content hidden text-2xl font-semibold tracking-tight sm:block sm:text-3xl">
           Nosso estoque
         </h2>
-        {/* Filete azul sob o título — o detalhe que amarra a identidade. */}
+        {/* Filete azul sob o título — o detalhe que amarra a identidade.
+            Some junto com o título no celular: sem ele acima, o filete vira um
+            risco solto pairando entre o topo e a busca. */}
         <div
           aria-hidden
-          className="from-brand-500 mt-2 h-px w-16 bg-gradient-to-r to-transparent"
+          className="from-brand-500 mt-2 hidden h-px w-16 bg-gradient-to-r to-transparent sm:block"
         />
-        <p className="text-faint mt-2.5 text-sm">
+        <p className="text-faint mt-2.5 hidden text-sm sm:block">
           Busque e filtre sem sair da página. Os resultados aparecem aqui embaixo.
         </p>
       </div>
