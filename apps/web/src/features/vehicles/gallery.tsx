@@ -122,7 +122,12 @@ export function Gallery({ images, title }: { images: VehicleImage[]; title: stri
                   aria-label={`Ver foto ${index + 1}`}
                   aria-current={index === current}
                   className={cn(
-                    'rounded-btn relative aspect-[4/3] w-full overflow-hidden ring-2 transition-all',
+                    // QUADRADA, como o cartão da grade e pelo mesmo motivo: a foto
+                    // em pé perde 25% da altura aqui contra 44% no 4:3. Ficou
+                    // de fora quando a foto principal passou a encaixar, e o
+                    // resultado eram miniaturas mostrando um pedaço diferente
+                    // do carro que a foto grande logo acima.
+                    'rounded-btn relative aspect-square w-full overflow-hidden ring-2 transition-all',
                     index === current
                       ? 'ring-brand-600'
                       : 'opacity-60 ring-transparent hover:opacity-100',
