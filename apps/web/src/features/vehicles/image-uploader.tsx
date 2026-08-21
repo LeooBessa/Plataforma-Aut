@@ -46,9 +46,15 @@ import { cn } from '@/lib/utils';
 // `MAX_SIZE_MB` é TETO, não alvo: com `alwaysKeepResolution` a biblioteca não
 // pode encolher a foto para caber, então ela chega perto disso baixando
 // qualidade e para. Folga aqui é o que garante que 2560px sobrevivam.
-//: Abaixo disto a foto já entra no site sem pixel suficiente para a galeria,
-//: e nada mais adiante recupera — o otimizador nunca amplia.
-const LARGURA_MINIMA = 1600;
+//: 900, não 1600. O limite era 1600 quando a galeria CORTAVA a foto para
+//: preencher um quadro deitado: ali a largura inteira ia para a tela e faltava
+//: pixel. Agora ela ENCAIXA a foto, então uma foto em pé de 960px aparece com
+//: 393px de largura e sobra resolução.
+//:
+//: O aviso continua existindo para o caso que ainda quebra: miniatura de
+//: verdade, print de tela, foto salva de rede social. Abaixo de 900px nem
+//: encaixando dá.
+const LARGURA_MINIMA = 900;
 
 const MAX_SIZE_MB = 2.5;
 const MAX_DIMENSION = 2560;
@@ -108,12 +114,7 @@ export function ImageUploader({
         const novos: string[] = [];
         if (medida.largura < LARGURA_MINIMA) {
           novos.push(
-            `Esta foto tem ${medida.largura}px de largura. O site mostra melhor a partir de ${LARGURA_MINIMA}px — abaixo disso ela aparece macia na tela grande, e não há como recuperar depois.`,
-          );
-        }
-        if (medida.altura > medida.largura) {
-          novos.push(
-            'Foto em pé. O site mostra as fotos deitadas, então o corte vai tirar a parte de cima e de baixo do carro. Foto na horizontal mostra bem mais carro no mesmo espaço.',
+            `Esta foto tem ${medida.largura}px de largura. O site precisa de pelo menos ${LARGURA_MINIMA}px para mostrar bem — abaixo disso ela aparece macia, e não há como recuperar depois. Vale procurar a foto original.`,
           );
         }
         if (novos.length) setAvisos((a) => [...new Set([...a, ...novos])]);
@@ -316,7 +317,7 @@ export function ImageUploader({
                     <button
                       type="button"
                       onClick={() => void setCover(image.id)}
-                      className="rounded-btn text-content flex size-9 items-center justify-center bg-surface/90 transition-colors hover:bg-sunken"
+                      className="rounded-btn text-content bg-surface/90 hover:bg-sunken flex size-9 items-center justify-center transition-colors"
                       aria-label="Definir como capa"
                       title="Definir como capa"
                     >
@@ -326,7 +327,7 @@ export function ImageUploader({
                   <button
                     type="button"
                     onClick={() => void remove(image.id)}
-                    className="rounded-btn text-danger-700 flex size-9 items-center justify-center bg-surface/90 transition-colors hover:bg-sunken"
+                    className="rounded-btn text-danger-700 bg-surface/90 hover:bg-sunken flex size-9 items-center justify-center transition-colors"
                     aria-label="Remover foto"
                     title="Remover foto"
                   >
@@ -365,7 +366,6 @@ async function readDimensions(file: Blob): Promise<{ width: number; height: numb
     return null;
   }
 }
-
 
 /**
  * Largura e altura do arquivo já comprimido.

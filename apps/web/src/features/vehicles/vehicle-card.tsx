@@ -39,7 +39,12 @@ export function VehicleCard({
         'motion-reduce:hover:translate-y-0',
       )}
     >
-      <div className="bg-sunken relative aspect-[4/3] overflow-hidden">
+      {/* QUADRO QUADRADO, não 4:3. Na grade os cartões precisam ter a
+          mesma forma, então aqui a foto é cortada mesmo — mas o quadrado corta
+          bem menos foto em pé: 25% da altura contra 44% do 4:3 anterior. E
+          continua equilibrado para foto deitada, que perde os mesmos 25% de
+          largura. Medido com a foto real do admin, 960x1280. */}
+      <div className="bg-sunken relative aspect-square overflow-hidden">
         {cover ? (
           <Image
             src={cover.url}

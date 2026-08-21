@@ -62,7 +62,19 @@ export function Gallery({ images, title }: { images: VehicleImage[]; title: stri
   return (
     <>
       <div className="space-y-3">
-        <div className="group rounded-card border-line bg-surface relative aspect-[4/3] overflow-hidden border">
+        {/* ENCAIXA A FOTO INTEIRA, não corta.
+            O site foi feito supondo foto deitada, e a loja fotografa em pé —
+            como quase toda revenda, porque o celular na mão fica em pé. Cortar
+            para caber num quadro deitado jogava fora 44% da altura do carro, e
+            ainda por cima ampliava o que sobrava, deixando borrado.
+            Medido com a foto real do admin (960x1280) num quadro de 699x524:
+              cortando    exibe 699px · densidade 0,69 · perde 44% do carro
+              encaixando  exibe 393px · densidade 1,22 · perde nada
+            Encaixar resolve a nitidez E o enquadramento de uma vez, sem a loja
+            mudar como fotografa. O fundo escuro é o que faz as faixas laterais
+            lerem como visualizador de foto em vez de erro de layout — e faz a
+            cor do carro aparecer como ela é. */}
+        <div className="group rounded-card border-line bg-ink-900 relative aspect-[4/3] overflow-hidden border">
           <Image
             src={active.url}
             alt={active.alt_text ?? `${title}, foto ${current + 1} de ${total}`}
@@ -76,7 +88,7 @@ export function Gallery({ images, title }: { images: VehicleImage[]; title: stri
             // `priority` está deprecado; a forma atual é esta.
             loading="eager"
             fetchPriority="high"
-            className="object-cover"
+            className="object-contain"
           />
 
           <button
