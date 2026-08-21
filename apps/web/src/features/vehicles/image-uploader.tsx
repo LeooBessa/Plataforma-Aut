@@ -3,7 +3,15 @@
 import { useCallback, useRef, useState } from 'react';
 import Image from 'next/image';
 import imageCompression from 'browser-image-compression';
-import { AlertCircle, ImagePlus, Loader2, Star, Trash2 } from 'lucide-react';
+import {
+  AlertCircle,
+  ChevronLeft,
+  ChevronRight,
+  ImagePlus,
+  Loader2,
+  Star,
+  Trash2,
+} from 'lucide-react';
 
 import { Badge } from '@/components/ui/badge';
 import type { Image as VehicleImage } from '@/lib/api';
@@ -213,6 +221,35 @@ export function ImageUploader({
     }
   };
 
+  /**
+   * Move a foto uma posição para trás ou para frente.
+   *
+   * SETAS, NÃO ARRASTAR. Arrastar é mais elegante no computador, mas não
+   * funciona no toque sem biblioteca — e é do celular que a loja publica. Setas
+   * funcionam nos dois, sem dependência nenhuma.
+   *
+   * A API recebe a lista inteira de ids na ordem nova, não "mova o item X".
+   * Assim ela não precisa saber de posições intermediárias e nunca fica com
+   * duas fotos na mesma posição.
+   */
+  const mover = async (imageId: string, direcao: -1 | 1) => {
+    const de = images.findIndex((i) => i.id === imageId);
+    const para = de + direcao;
+    if (de < 0 || para < 0 || para >= images.length) return;
+
+    const nova = [...images];
+    [nova[de], nova[para]] = [nova[para], nova[de]];
+
+    try {
+      await http.patch(`/admin/vehicles/${vehicleId}/images/order`, {
+        image_ids: nova.map((i) => i.id),
+      });
+      onChange();
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  };
+
   const setCover = async (imageId: string) => {
     try {
       await http.patch(`/admin/vehicles/${vehicleId}/images/${imageId}/cover`);
@@ -293,7 +330,7 @@ export function ImageUploader({
       {images.length > 0 && (
         <>
           <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {images.map((image) => (
+            {images.map((image, indice) => (
               <li
                 key={image.id}
                 className="group rounded-btn bg-sunken ring-line relative aspect-[4/3] overflow-hidden ring-1"
@@ -312,26 +349,56 @@ export function ImageUploader({
                   </span>
                 )}
 
-                <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/50 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+                {/* SEMPRE VISÍVEL, não só ao passar o mouse.
+                    Antes esta barra dependia de `group-hover`, e no celular não
+                    existe passar o mouse: quem publica pelo telefone — que é
+                    como a loja trabalha — simplesmente não alcançava capa nem
+                    excluir. Um toque na foto abria nada.
+                    A barra escura no rodapé da miniatura custa um pedaço da
+                    imagem e devolve as ações em qualquer aparelho. */}
+                <div className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1 bg-black/60 p-1.5">
+                  <button
+                    type="button"
+                    onClick={() => void mover(image.id, -1)}
+                    disabled={indice === 0}
+                    className="rounded-btn flex size-8 items-center justify-center text-white transition-colors hover:bg-white/20 disabled:opacity-30"
+                    aria-label="Mover para trás"
+                    title="Mover para trás"
+                  >
+                    <ChevronLeft className="size-4" />
+                  </button>
+
                   {!image.is_cover && (
                     <button
                       type="button"
                       onClick={() => void setCover(image.id)}
-                      className="rounded-btn text-content bg-surface/90 hover:bg-sunken flex size-9 items-center justify-center transition-colors"
+                      className="rounded-btn flex size-8 items-center justify-center text-white transition-colors hover:bg-white/20"
                       aria-label="Definir como capa"
                       title="Definir como capa"
                     >
                       <Star className="size-4" />
                     </button>
                   )}
+
                   <button
                     type="button"
                     onClick={() => void remove(image.id)}
-                    className="rounded-btn text-danger-700 bg-surface/90 hover:bg-sunken flex size-9 items-center justify-center transition-colors"
+                    className="rounded-btn text-danger-400 flex size-8 items-center justify-center transition-colors hover:bg-white/20"
                     aria-label="Remover foto"
                     title="Remover foto"
                   >
                     <Trash2 className="size-4" />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => void mover(image.id, 1)}
+                    disabled={indice === images.length - 1}
+                    className="rounded-btn flex size-8 items-center justify-center text-white transition-colors hover:bg-white/20 disabled:opacity-30"
+                    aria-label="Mover para frente"
+                    title="Mover para frente"
+                  >
+                    <ChevronRight className="size-4" />
                   </button>
                 </div>
               </li>
@@ -341,8 +408,9 @@ export function ImageUploader({
           <p className="text-faint text-xs">
             {/* A capa é o que aparece no card da listagem. Se ela for a foto do
                 porta-malas, ninguém clica. */}
-            A foto de <strong>capa</strong> é a que aparece na busca. Passe o mouse sobre uma
-            imagem para trocá-la.
+            A <strong>ordem</strong> aqui é a que o cliente vê no anúncio. Use as setas para
+            mudar, e a estrela para escolher a <strong>capa</strong>, que é a foto que aparece
+            na busca.
           </p>
         </>
       )}
