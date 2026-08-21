@@ -307,7 +307,16 @@ export function Hero({ destaque }: { destaque?: ArticleSummary | null }) {
                 Confira nossos veículos e encontre uma opção que cabe no seu bolso.
               </p>
 
-              <div className="mt-7 flex flex-wrap justify-center gap-3 sm:mt-9 lg:justify-start">
+              {/* OS BOTÕES SOMEM NO CELULAR.
+                  "Ver Estoque" mandava para uma seção que agora começa 100px
+                  abaixo — pedir um toque para rolar o que já está à vista é
+                  desperdiçar a primeira tela. E "Falar com a Equipe" está no
+                  rodapé de toda página e na página de cada carro, com o
+                  WhatsApp junto.
+                  Sem eles o topo do telefone cabe em ~320px e a vitrine sobe.
+                  Do `sm` para cima os dois voltam: lá o topo ocupa a tela
+                  inteira por desenho, e um herói sem ação seria um herói mudo. */}
+              <div className="mt-7 hidden flex-wrap justify-center gap-3 sm:mt-9 sm:flex lg:justify-start">
                 <ShinyButtonLink href="/veiculos">
                   Ver Estoque
                   <ArrowRight className="size-4" />
