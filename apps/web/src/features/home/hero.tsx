@@ -361,12 +361,31 @@ export function Hero({ destaque }: { destaque?: ArticleSummary | null }) {
                   direto para a vitrine. */}
               <a
                 href="#estoque"
-                className="mt-10 flex flex-col items-center gap-1 text-white/70 transition-colors hover:text-white sm:hidden"
+                className="mt-10 flex flex-col items-center text-white/80 transition-colors hover:text-white sm:hidden"
               >
-                <span className="text-xs font-semibold tracking-[0.14em] uppercase">
+                <span className="text-sm font-bold tracking-[0.16em] uppercase">
                   Confira nosso estoque
                 </span>
-                <ChevronDown className="size-5 animate-bounce" />
+
+                {/* TRÊS SETAS CRESCENDO PARA BAIXO.
+                    Uma seta sozinha é um ícone; três em tamanhos diferentes
+                    viram movimento, e movimento é o que diz "continua abaixo".
+                    O crescimento dá a direção sem precisar de texto.
+
+                    Os `-mt` encaixam uma na outra: soltas, as três viravam uma
+                    coluna alta demais e empurravam o topo. Encaixadas ocupam
+                    ~34px no total.
+
+                    O atraso escalonado faz a onda descer em vez de as três
+                    pularem juntas — junto vira tremor, escalonado vira gesto.
+                    Quem pediu menos movimento no sistema não vê nenhuma delas
+                    mexer: a regra global de `prefers-reduced-motion` já zera
+                    toda animação do site. */}
+                <span aria-hidden className="mt-1.5 flex flex-col items-center">
+                  <ChevronDown className="size-3.5 animate-bounce opacity-50" />
+                  <ChevronDown className="-mt-1.5 size-5 animate-bounce opacity-75 [animation-delay:120ms]" />
+                  <ChevronDown className="-mt-2 size-7 animate-bounce [animation-delay:240ms]" />
+                </span>
               </a>
 
               {/* OS BOTÕES SOMEM NO CELULAR.
