@@ -290,18 +290,24 @@ export function Hero({ destaque }: { destaque?: ArticleSummary | null }) {
                   tempo de compilação. `fill` fixa o quadro e deixa o recorte
                   para o `object-cover`, que é justamente o que o formato
                   quadrado pedido no painel foi pensado para atravessar. */}
-              <div className="relative -mx-4 mt-8 aspect-video overflow-hidden sm:-mx-6 lg:hidden">
+              {/* NO CELULAR, SEMPRE A FOTO DE VITRINE — nunca a capa do artigo.
+                  No desktop o destaque ocupa o painel ao lado do texto e não
+                  empurra nada. No celular tudo empilha, e o destaque com título
+                  e botão tomava a primeira tela: numa revenda, a primeira tela
+                  do telefone tem de ser carro.
+                  O artigo continua na home, em seção própria no fim da página
+                  — ver `ArtigoEmDestaque`. */}
+              <div className="relative -mx-4 mt-6 aspect-video overflow-hidden sm:-mx-6 lg:hidden">
                 <Image
                   quality={90}
-                  src={imagem.src}
-                  alt={decorativa ? '' : imagem.alt}
+                  src={FOTO_PADRAO.src}
+                  alt=""
                   fill
                   sizes="100vw"
                   loading="eager"
                   fetchPriority="high"
                   className="object-cover object-center"
                 />
-                {artigo && <TarjaDoArtigo artigo={artigo} />}
               </div>
 
               <p className="text-muted mx-auto mt-5 max-w-md text-base leading-relaxed text-pretty sm:mt-6 lg:mx-0">
