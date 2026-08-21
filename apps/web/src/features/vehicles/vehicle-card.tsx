@@ -50,12 +50,19 @@ export function VehicleCard({
             src={cover.url}
             alt={cover.alt_text ?? vehicle.title}
             fill
-            // SEM `quality`, ou seja, no padrão 75 — e isso é deliberado.
-            // A miniatura tem 390px na tela: artefato de compressão quase não
-            // aparece nesse tamanho, e a listagem carrega doze delas de uma vez.
-            // Subir para 90 dobraria o peso da página no 4G para ganhar um
-            // detalhe que ninguém vê. A qualidade alta fica onde a foto é
-            // grande e a pessoa está decidindo: galeria e topo da home.
+            // 85, não o padrão 75 e não os 90 da galeria.
+            //
+            // Eu tinha deixado no 75 supondo que a 390px o artefato não
+            // apareceria. Aparece: a foto da vitrine ficava visivelmente pior
+            // que as de dentro do anúncio, e pintura de carro é degradê suave,
+            // que é exatamente onde compressão se denuncia.
+            //
+            // Medido nesta foto, no tamanho que o cartão pede (828px):
+            //   75 → 76KB    85 → 104KB    90 → 132KB
+            // O 85 recupera o que se via; o 90 custaria o dobro do acréscimo
+            // para um ganho que já não aparece nessa escala. E é a vitrine: é
+            // a foto que decide se alguém clica.
+            quality={85}
             // `sizes` MEDIDO, não estimado. A versão anterior dizia `33vw` na
             // faixa larga, e isso mentia: o contêiner trava em 1280px, então o
             // cartão nunca passa de 390px por mais larga que seja a tela. A

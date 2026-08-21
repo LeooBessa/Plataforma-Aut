@@ -189,11 +189,18 @@ const nextConfig: NextConfig = {
     // `quality` diferente do padrão devolve 400. Foi o que segurava as fotos
     // dos carros num patamar de blog quando elas são o produto da loja.
     //
-    // 75 continua sendo o padrão, usado por logo e imagens acessórias. 90 é
-    // para a foto do veículo e a capa do artigo — em AVIF a diferença de peso é
-    // pequena, e é justamente em pintura de carro e céu que o 75 aparece,
-    // porque degradê suave é onde artefato de compressão fica visível.
-    qualities: [75, 90, 95],
+    // Cada valor tem um lugar, medido no tamanho em que cada um é servido:
+    //
+    //   75   imagens acessórias (logo, marca d'água). Padrão do Next.
+    //   85   cartão da vitrine — 104KB contra 76KB do 75
+    //   90   galeria do anúncio e topo da home
+    //   95   foto ampliada em tela cheia
+    //
+    // O 85 no cartão substituiu o 75: a diferença ERA visível na pintura do
+    // carro, que é onde o olho do comprador vai. Degradê suave é justamente
+    // onde artefato de compressão aparece. Ir a 90 custaria o dobro (+56KB por
+    // foto) para um ganho que já não se vê nessa escala de exibição.
+    qualities: [75, 85, 90, 95],
   },
 };
 
