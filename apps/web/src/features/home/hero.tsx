@@ -1,6 +1,6 @@
 import type { Route } from 'next';
 import Image from 'next/image';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Search, Tag } from 'lucide-react';
 
 import AnimatedTextCycle from '@/components/ui/animated-text-cycle';
 import { ButtonLink } from '@/components/ui/button';
@@ -306,6 +306,25 @@ export function Hero({ destaque }: { destaque?: ArticleSummary | null }) {
                 Boas oportunidades, carros selecionados e preços que fazem sentido para você.
                 Confira nossos veículos e encontre uma opção que cabe no seu bolso.
               </p>
+
+              {/* SÓ NO CELULAR: os dois atalhos para os formulários.
+                  Eles ficam entre a promessa da marca e a vitrine porque é ali
+                  que a pessoa ainda está decidindo o que veio fazer. Quem veio
+                  comprar rola e acha o estoque logo abaixo; quem veio vender,
+                  ou quem procura um carro que a loja não tem hoje, tinha de
+                  rolar sete e nove telas para achar o formulário — medido.
+                  No desktop eles não existem: lá o topo já tem "Ver Estoque" e
+                  "Falar com a Equipe", e a página inteira é bem mais curta. */}
+              <div className="mt-7 flex flex-col gap-3 sm:hidden">
+                <ShinyButtonLink href="/#anuncie" className="w-full justify-center">
+                  <Tag className="size-4" />
+                  Anuncie seu carro
+                </ShinyButtonLink>
+                <ShinyButtonLink href="/#avise-me" className="w-full justify-center">
+                  <Search className="size-4" />
+                  Vamos achar seu carro
+                </ShinyButtonLink>
+              </div>
 
               {/* OS BOTÕES SOMEM NO CELULAR.
                   "Ver Estoque" mandava para uma seção que agora começa 100px
