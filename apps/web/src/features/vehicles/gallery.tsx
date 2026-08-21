@@ -62,19 +62,38 @@ export function Gallery({ images, title }: { images: VehicleImage[]; title: stri
   return (
     <>
       <div className="space-y-3">
-        {/* ENCAIXA A FOTO INTEIRA, não corta.
-            O site foi feito supondo foto deitada, e a loja fotografa em pé —
-            como quase toda revenda, porque o celular na mão fica em pé. Cortar
-            para caber num quadro deitado jogava fora 44% da altura do carro, e
-            ainda por cima ampliava o que sobrava, deixando borrado.
-            Medido com a foto real do admin (960x1280) num quadro de 699x524:
-              cortando    exibe 699px · densidade 0,69 · perde 44% do carro
-              encaixando  exibe 393px · densidade 1,22 · perde nada
-            Encaixar resolve a nitidez E o enquadramento de uma vez, sem a loja
-            mudar como fotografa. O fundo escuro é o que faz as faixas laterais
-            lerem como visualizador de foto em vez de erro de layout — e faz a
-            cor do carro aparecer como ela é. */}
-        <div className="group rounded-card border-line bg-ink-900 relative aspect-[4/3] overflow-hidden border">
+        {/* O QUADRO ASSUME A PROPORÇÃO DA FOTO.
+            Três tentativas até aqui, e vale registrar por quê.
+
+            Cortar para caber num quadro deitado jogava fora 44% da altura do
+            carro e ainda ampliava o que sobrava, deixando borrado — a loja
+            fotografa em pé, como quase toda revenda, porque o celular na mão
+            fica em pé.
+
+            Encaixar a foto num quadro deitado resolvia o corte e a nitidez,
+            mas deixava duas tarjas pretas nas laterais.
+
+            Agora o quadro tem a proporção da PRÓPRIA foto, que vem do banco:
+            ela preenche de borda a borda, sem tarja e sem corte. Funciona
+            igual para foto deitada, se um dia entrar uma.
+
+            `maxWidth` é o que impede uma foto em pé de virar uma coluna de
+            930px de altura no desktop: a altura fica limitada a 70% da tela e
+            a largura acompanha, mantendo a proporção. Sem isso o bloco
+            empurraria preço e botões para fora da primeira tela.
+
+            Sem medida gravada (foto antiga), cai no 4:3 de sempre. */}
+        <div
+          className="group rounded-card border-line bg-ink-900 relative mx-auto w-full overflow-hidden border"
+          style={
+            active.width && active.height
+              ? {
+                  aspectRatio: `${active.width} / ${active.height}`,
+                  maxWidth: `calc(70vh * ${active.width / active.height})`,
+                }
+              : { aspectRatio: '4 / 3' }
+          }
+        >
           <Image
             src={active.url}
             alt={active.alt_text ?? `${title}, foto ${current + 1} de ${total}`}
@@ -88,7 +107,7 @@ export function Gallery({ images, title }: { images: VehicleImage[]; title: stri
             // `priority` está deprecado; a forma atual é esta.
             loading="eager"
             fetchPriority="high"
-            className="object-contain"
+            className="object-cover"
           />
 
           <button
