@@ -46,6 +46,10 @@ import { cn } from '@/lib/utils';
 // `MAX_SIZE_MB` é TETO, não alvo: com `alwaysKeepResolution` a biblioteca não
 // pode encolher a foto para caber, então ela chega perto disso baixando
 // qualidade e para. Folga aqui é o que garante que 2560px sobrevivam.
+//: Abaixo disto a foto já entra no site sem pixel suficiente para a galeria,
+//: e nada mais adiante recupera — o otimizador nunca amplia.
+const LARGURA_MINIMA = 1600;
+
 const MAX_SIZE_MB = 2.5;
 const MAX_DIMENSION = 2560;
 
@@ -62,6 +66,10 @@ export function ImageUploader({
   const [uploading, setUploading] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [dragging, setDragging] = useState(false);
+  //: Avisos, não erros: a foto sobe do mesmo jeito. Bloquear obrigaria a loja a
+  //: abrir um editor de imagem para conseguir anunciar um carro, o que faria
+  //: ela simplesmente não anunciar.
+  const [avisos, setAvisos] = useState<string[]>([]);
 
   const uploadOne = useCallback(
     async (file: File) => {
@@ -91,6 +99,25 @@ export function ImageUploader({
         useWebWorker: true,
         fileType: 'image/webp',
       });
+
+      // CONFERE A FOTO E AVISA. Sem isto o painel aceita em silêncio uma foto
+      // pequena ou em pé, e o defeito só aparece no site depois de publicado —
+      // que foi exatamente como as fotos de 953px em pé chegaram lá.
+      const medida = await medirImagem(compressed);
+      if (medida) {
+        const novos: string[] = [];
+        if (medida.largura < LARGURA_MINIMA) {
+          novos.push(
+            `Esta foto tem ${medida.largura}px de largura. O site mostra melhor a partir de ${LARGURA_MINIMA}px — abaixo disso ela aparece macia na tela grande, e não há como recuperar depois.`,
+          );
+        }
+        if (medida.altura > medida.largura) {
+          novos.push(
+            'Foto em pé. O site mostra as fotos deitadas, então o corte vai tirar a parte de cima e de baixo do carro. Foto na horizontal mostra bem mais carro no mesmo espaço.',
+          );
+        }
+        if (novos.length) setAvisos((a) => [...new Set([...a, ...novos])]);
+      }
 
       // 2. Pedir autorização. O caminho do arquivo é gerado pelo SERVIDOR — um
       //    nome vindo do cliente poderia conter `../` ou sobrescrever a foto de
@@ -196,6 +223,17 @@ export function ImageUploader({
 
   return (
     <div className="space-y-4">
+      {avisos.length > 0 && (
+        <div className="rounded-btn bg-warning-500/10 text-warning-700 mb-3 space-y-1.5 p-3.5 text-sm">
+          {avisos.map((a) => (
+            <p key={a} className="flex items-start gap-2.5">
+              <AlertCircle className="mt-0.5 size-4 shrink-0" />
+              {a}
+            </p>
+          ))}
+        </div>
+      )}
+
       {error && (
         <div
           role="alert"
@@ -323,6 +361,27 @@ async function readDimensions(file: Blob): Promise<{ width: number; height: numb
     const size = { width: bitmap.width, height: bitmap.height };
     bitmap.close();
     return size;
+  } catch {
+    return null;
+  }
+}
+
+
+/**
+ * Largura e altura do arquivo já comprimido.
+ *
+ * Mede DEPOIS da compressão de propósito: é esse arquivo que vai para o
+ * Storage e vira o teto de tudo. Medir o original diria o que a loja escolheu,
+ * não o que o site vai ter.
+ *
+ * Navegador sem `createImageBitmap` só perde o aviso; o envio segue igual.
+ */
+async function medirImagem(arquivo: Blob): Promise<{ largura: number; altura: number } | null> {
+  try {
+    const bitmap = await createImageBitmap(arquivo);
+    const medida = { largura: bitmap.width, altura: bitmap.height };
+    bitmap.close();
+    return medida;
   } catch {
     return null;
   }

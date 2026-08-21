@@ -51,9 +51,15 @@ export function VehicleCard({
             // Subir para 90 dobraria o peso da página no 4G para ganhar um
             // detalhe que ninguém vê. A qualidade alta fica onde a foto é
             // grande e a pessoa está decidindo: galeria e topo da home.
-            // `sizes` impede o navegador de baixar uma imagem de 1200px para um
-            // card de 300px no celular — onde está a maioria dos compradores.
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            // `sizes` MEDIDO, não estimado. A versão anterior dizia `33vw` na
+            // faixa larga, e isso mentia: o contêiner trava em 1280px, então o
+            // cartão nunca passa de 390px por mais larga que seja a tela. A
+            // 1920px o navegador baixava um arquivo de 1920px para uma caixa de
+            // 390px — três vezes o pixel que cabe, em doze cartões de uma vez.
+            //
+            // Medido em sete larguras: 356px no celular, ~350 em tablet, e 390
+            // fixos de 1024px para cima. Os 400px cobrem o maior com folga.
+            sizes="(min-width: 1024px) 400px, (min-width: 640px) 50vw, 100vw"
             loading={priority ? 'eager' : 'lazy'}
             fetchPriority={priority ? 'high' : 'auto'}
             className={cn(
