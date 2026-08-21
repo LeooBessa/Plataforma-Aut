@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { BellRing, CarFront, SearchX } from 'lucide-react';
 
+import { ArtigoEmDestaque } from '@/features/articles/featured-article-section';
 import { ConsignmentSection } from '@/features/consignment/consignment-section';
 import { ShinyButtonLink } from '@/components/ui/shiny-button';
 import { InterestSection } from '@/features/interest/interest-section';
@@ -36,13 +37,15 @@ type Props = {
 
 export default async function HomePage({ searchParams }: Props) {
   const params = await searchParams;
+  const destaque = await safely(getFeaturedArticle());
 
   return (
     <>
-      {/* O texto do hero é fixo; só a IMAGEM pode vir de um artigo destacado.
-          `safely` porque o destaque é acessório: se a API não responder, o topo
+      {/* O destaque é buscado UMA vez e usado em dois lugares, conforme a tela:
+          no desktop ele é a imagem do topo; no celular, uma seção no fim da
+          página. `safely` porque é acessório — se a API não responder, o topo
           cai na foto de vitrine padrão em vez de derrubar a home inteira. */}
-      <Hero destaque={await safely(getFeaturedArticle())} />
+      <Hero destaque={destaque} />
 
       <EstoqueSection params={params} />
 
@@ -57,6 +60,10 @@ export default async function HomePage({ searchParams }: Props) {
       {/* Por último: quem chega quer comprar, e só depois de rolar a vitrine é
           que quem TEM um carro para vender se reconhece. */}
       <ConsignmentSection />
+
+      {/* Só no celular, e por último de propósito: a ordem de prioridade da
+          página é comprar, ser avisado, vender, ler. */}
+      <ArtigoEmDestaque artigo={destaque} />
     </>
   );
 }
@@ -78,7 +85,10 @@ function EstoqueSection({ params }: { params: Record<string, string | string[] |
   // o `mt` da seção "anuncie seu carro", que vem logo abaixo. Somar os dois
   // abriria um vão grande demais entre o fim da vitrine e o bloco escuro.
   return (
-    <section id="estoque" className="mx-auto max-w-7xl px-4 pt-16 pb-4 sm:px-6 lg:px-8 lg:pt-20">
+    <section
+      id="estoque"
+      className="mx-auto max-w-7xl px-4 pt-10 pb-4 sm:px-6 sm:pt-16 lg:px-8 lg:pt-20"
+    >
       <div>
         <h2 className="text-content text-2xl font-semibold tracking-tight sm:text-3xl">
           Nosso estoque

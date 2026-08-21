@@ -195,7 +195,7 @@ export function Hero({ destaque }: { destaque?: ArticleSummary | null }) {
         </div>
 
         {/* `items-center` centra o texto na vertical agora que a área é alta. */}
-        <div className="relative mx-auto flex w-full max-w-7xl items-center px-4 py-10 sm:px-6 sm:py-20 lg:px-8">
+        <div className="relative mx-auto flex w-full max-w-7xl items-center px-4 py-6 sm:px-6 sm:py-20 lg:px-8">
           {/* Bloco de texto: no desktop ocupa a metade esquerda; a foto cuida
               da direita. */}
           <div className="relative w-full text-center lg:w-[50%] lg:text-left">
@@ -304,12 +304,12 @@ export function Hero({ destaque }: { destaque?: ArticleSummary | null }) {
                 {artigo && <TarjaDoArtigo artigo={artigo} />}
               </div>
 
-              <p className="text-muted mx-auto mt-6 max-w-md text-base leading-relaxed text-pretty lg:mx-0">
+              <p className="text-muted mx-auto mt-5 max-w-md text-base leading-relaxed text-pretty sm:mt-6 lg:mx-0">
                 Boas oportunidades, carros selecionados e preços que fazem sentido para você.
                 Confira nossos veículos e encontre uma opção que cabe no seu bolso.
               </p>
 
-              <div className="mt-9 flex flex-wrap justify-center gap-3 lg:justify-start">
+              <div className="mt-7 flex flex-wrap justify-center gap-3 sm:mt-9 lg:justify-start">
                 <ShinyButtonLink href="/veiculos">
                   Ver Estoque
                   <ArrowRight className="size-4" />
