@@ -6,7 +6,7 @@ import uuid
 from datetime import UTC, datetime
 
 from slugify import slugify
-from sqlalchemy import func, select, update
+from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -513,16 +513,40 @@ class SqlAlchemyVehicleAdminRepository:
         return True
 
     async def set_cover_image(self, vehicle_id: uuid.UUID, image_id: uuid.UUID) -> bool:
-        target = await self._session.get(VehicleImage, image_id)
-        if target is None or target.vehicle_id != vehicle_id:
+        """Marca a capa E leva a foto para o primeiro lugar da galeria.
+
+        As duas coisas juntas porque separadas viravam pegadinha: dava para ter
+        a capa na terceira posição, e o visitante via uma foto na busca e outra
+        ao abrir o anúncio. Ninguém quer isso — quem escolhe a capa está
+        escolhendo a melhor foto do carro, e a melhor foto abre a galeria.
+
+        Quem quiser reordenar sem mexer na capa continua tendo as setas e o
+        "levar para o começo", que só mudam posição.
+        """
+        todas = list(
+            await self._session.scalars(
+                select(VehicleImage)
+                .where(VehicleImage.vehicle_id == vehicle_id)
+                .order_by(VehicleImage.position)
+            )
+        )
+        target = next((i for i in todas if i.id == image_id), None)
+        if target is None:
             return False
 
         # Zera a capa de todas e marca a nova: garante que exista UMA capa, nunca
         # duas. Duas capas fariam a listagem escolher uma ao acaso, e o card
         # mostraria uma foto diferente a cada carregamento.
-        await self._session.execute(
-            update(VehicleImage).where(VehicleImage.vehicle_id == vehicle_id).values(is_cover=False)
-        )
+        for imagem in todas:
+            imagem.is_cover = False
         target.is_cover = True
+
+        # Reescreve as posições com a escolhida na frente, mantendo a ordem
+        # relativa das outras. Trocar só a posição dela deixaria duas fotos na
+        # mesma posição e a galeria voltaria a depender de desempate do banco.
+        nova_ordem = [target] + [i for i in todas if i.id != image_id]
+        for posicao, imagem in enumerate(nova_ordem):
+            imagem.position = posicao
+
         await self._session.flush()
         return True

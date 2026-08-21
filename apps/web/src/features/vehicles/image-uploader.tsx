@@ -7,6 +7,7 @@ import {
   AlertCircle,
   ChevronLeft,
   ChevronRight,
+  ChevronsLeft,
   ImagePlus,
   Loader2,
   Star,
@@ -250,6 +251,31 @@ export function ImageUploader({
     }
   };
 
+  /**
+   * Leva a foto para o primeiro lugar, sem mexer na capa.
+   *
+   * Existe porque com as setas a oitava foto levaria sete toques para chegar
+   * ao começo. Aqui é um só.
+   *
+   * Separado da estrela de propósito: a estrela escolhe o que aparece na busca
+   * (e leva para o começo junto); este botão só muda a ordem de leitura da
+   * galeria, para quem quer a foto na frente sem trocar a vitrine.
+   */
+  const levarParaOComeco = async (imageId: string) => {
+    const de = images.findIndex((i) => i.id === imageId);
+    if (de <= 0) return;
+
+    const nova = [images[de], ...images.filter((i) => i.id !== imageId)];
+    try {
+      await http.patch(`/admin/vehicles/${vehicleId}/images/order`, {
+        image_ids: nova.map((i) => i.id),
+      });
+      onChange();
+    } catch (err) {
+      setError(errorMessage(err));
+    }
+  };
+
   const setCover = async (imageId: string) => {
     try {
       await http.patch(`/admin/vehicles/${vehicleId}/images/${imageId}/cover`);
@@ -329,7 +355,14 @@ export function ImageUploader({
 
       {images.length > 0 && (
         <>
-          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+          {/* UMA COLUNA NO CELULAR, e isso é por causa dos botões.
+              Em duas colunas a miniatura fica com 145px e as cinco ações
+              espremem para 23px cada — metade do mínimo que o dedo acerta.
+              Numa coluna a miniatura vai a ~358px e cada botão fica com 44px.
+              Custa rolagem, e vale: é no celular que a loja publica, e uma
+              ação que não dá para tocar é uma ação que não existe. Do `sm`
+              para cima o ponteiro é preciso e a grade volta a adensar. */}
+          <ul className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-4">
             {images.map((image, indice) => (
               <li
                 key={image.id}
@@ -359,9 +392,20 @@ export function ImageUploader({
                 <div className="absolute inset-x-0 bottom-0 flex items-center justify-center gap-1 bg-black/60 p-1.5">
                   <button
                     type="button"
+                    onClick={() => void levarParaOComeco(image.id)}
+                    disabled={indice === 0}
+                    className="rounded-btn flex size-11 items-center justify-center text-white transition-colors hover:bg-white/20 disabled:opacity-30 sm:size-8"
+                    aria-label="Levar para o começo"
+                    title="Levar para o começo"
+                  >
+                    <ChevronsLeft className="size-4" />
+                  </button>
+
+                  <button
+                    type="button"
                     onClick={() => void mover(image.id, -1)}
                     disabled={indice === 0}
-                    className="rounded-btn flex size-8 items-center justify-center text-white transition-colors hover:bg-white/20 disabled:opacity-30"
+                    className="rounded-btn flex size-11 items-center justify-center text-white transition-colors hover:bg-white/20 disabled:opacity-30 sm:size-8"
                     aria-label="Mover para trás"
                     title="Mover para trás"
                   >
@@ -372,7 +416,7 @@ export function ImageUploader({
                     <button
                       type="button"
                       onClick={() => void setCover(image.id)}
-                      className="rounded-btn flex size-8 items-center justify-center text-white transition-colors hover:bg-white/20"
+                      className="rounded-btn flex size-11 items-center justify-center text-white transition-colors hover:bg-white/20 sm:size-8"
                       aria-label="Definir como capa"
                       title="Definir como capa"
                     >
@@ -383,7 +427,7 @@ export function ImageUploader({
                   <button
                     type="button"
                     onClick={() => void remove(image.id)}
-                    className="rounded-btn text-danger-400 flex size-8 items-center justify-center transition-colors hover:bg-white/20"
+                    className="rounded-btn text-danger-400 flex size-11 items-center justify-center transition-colors hover:bg-white/20 sm:size-8"
                     aria-label="Remover foto"
                     title="Remover foto"
                   >
@@ -394,7 +438,7 @@ export function ImageUploader({
                     type="button"
                     onClick={() => void mover(image.id, 1)}
                     disabled={indice === images.length - 1}
-                    className="rounded-btn flex size-8 items-center justify-center text-white transition-colors hover:bg-white/20 disabled:opacity-30"
+                    className="rounded-btn flex size-11 items-center justify-center text-white transition-colors hover:bg-white/20 disabled:opacity-30 sm:size-8"
                     aria-label="Mover para frente"
                     title="Mover para frente"
                   >
@@ -408,9 +452,9 @@ export function ImageUploader({
           <p className="text-faint text-xs">
             {/* A capa é o que aparece no card da listagem. Se ela for a foto do
                 porta-malas, ninguém clica. */}
-            A <strong>ordem</strong> aqui é a que o cliente vê no anúncio. Use as setas para
-            mudar, e a estrela para escolher a <strong>capa</strong>, que é a foto que aparece
-            na busca.
+            A <strong>ordem</strong> aqui é a que o cliente vê no anúncio. As setas movem uma
+            posição e a seta dupla leva direto para o começo. A <strong>estrela</strong> escolhe
+            a capa — a foto que aparece na busca — e já a coloca em primeiro.
           </p>
         </>
       )}
