@@ -53,8 +53,11 @@ import { Markdown } from '@/features/articles/markdown';
  * nenhuma, e o botão de pré-visualizar mostra o resultado antes de publicar.
  */
 
-const TAMANHO_MAXIMO_MB = 1;
-const DIMENSAO_MAXIMA = 1920;
+// Menor que o das fotos de veículo de propósito: a capa nunca é ampliada em
+// tela cheia, e o maior recorte dela é o painel do topo da home, que numa tela
+// Full HD 2x pede ~2200px. 2048 cobre com folga.
+const TAMANHO_MAXIMO_MB = 1.6;
+const DIMENSAO_MAXIMA = 2048;
 
 type Faq = { question: string; answer: string };
 
@@ -199,7 +202,7 @@ export function ArticleForm({ article }: { article?: Article }) {
         // começa a compressão num ponto que já cabe no orçamento. O corte
         // inicial em DIMENSAO_MAXIMApx continua valendo — ele acontece antes, e é o que
         // impede uma foto de 4000px do iPhone de subir inteira.
-        initialQuality: 0.82,
+        initialQuality: 0.9,
         alwaysKeepResolution: true,
         useWebWorker: true,
         fileType: 'image/webp',

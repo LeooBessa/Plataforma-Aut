@@ -193,7 +193,7 @@ const nextConfig: NextConfig = {
     // para a foto do veículo e a capa do artigo — em AVIF a diferença de peso é
     // pequena, e é justamente em pintura de carro e céu que o 75 aparece,
     // porque degradê suave é onde artefato de compressão fica visível.
-    qualities: [75, 90],
+    qualities: [75, 90, 95],
   },
 };
 

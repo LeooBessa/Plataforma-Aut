@@ -151,9 +151,12 @@ export function Gallery({ images, title }: { images: VehicleImage[]; title: stri
             <Image
               src={active.url}
               alt={active.alt_text ?? title}
-              // Ampliada é onde se procura risco na lataria e desgaste no
-              // pneu. Se há um lugar onde compressão não pode aparecer, é aqui.
-              quality={90}
+              // 95, o teto do site. Ampliada é onde se procura risco na
+              // lataria e desgaste no pneu — é a única tela em que o visitante
+              // está caçando defeito, e compressão ali vira dúvida sobre o
+              // carro. É também uma imagem por vez, sob ação deliberada da
+              // pessoa, então o peso extra não pesa em quem só navega.
+              quality={95}
               fill
               sizes="100vw"
               className="object-contain"

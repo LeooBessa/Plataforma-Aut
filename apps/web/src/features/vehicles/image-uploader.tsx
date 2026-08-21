@@ -34,8 +34,20 @@ import { cn } from '@/lib/utils';
  * para o admin, que é quem espera na frente da tela.
  */
 
-const MAX_SIZE_MB = 1.5;
-const MAX_DIMENSION = 1920;
+// O ARQUIVO GUARDADO É O TETO DE TUDO. O otimizador do site nunca amplia:
+// se o mestre tem 1920px, nenhuma tela recebe mais que isso, por melhor que
+// seja o monitor. E como o Next recomprime na entrega, todo byte economizado
+// aqui é detalhe que morre antes de o site sequer ver a foto.
+//
+// 2560 porque a galeria numa tela Full HD 2x pede 2304px — com 1920 ela já
+// nasceria curta. Medido: notebook comum pede 1728, Full HD pede 2304, iPhone
+// 3x pede 1170.
+//
+// `MAX_SIZE_MB` é TETO, não alvo: com `alwaysKeepResolution` a biblioteca não
+// pode encolher a foto para caber, então ela chega perto disso baixando
+// qualidade e para. Folga aqui é o que garante que 2560px sobrevivam.
+const MAX_SIZE_MB = 2.5;
+const MAX_DIMENSION = 2560;
 
 export function ImageUploader({
   vehicleId,
@@ -74,7 +86,7 @@ export function ImageUploader({
         // começa a compressão num ponto que já cabe no orçamento. O corte
         // inicial em MAX_DIMENSIONpx continua valendo — ele acontece antes, e é o que
         // impede uma foto de 4000px do iPhone de subir inteira.
-        initialQuality: 0.82,
+        initialQuality: 0.9,
         alwaysKeepResolution: true,
         useWebWorker: true,
         fileType: 'image/webp',
