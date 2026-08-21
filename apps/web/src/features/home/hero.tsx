@@ -285,11 +285,6 @@ export function Hero({ destaque }: { destaque?: ArticleSummary | null }) {
                   horizontal.
                   No desktop nada muda — lá a foto é o painel diagonal à direita
                   e este bloco fica oculto (`lg:hidden`). */}
-              {/* `fill` dentro de uma caixa 16:9, e não `width`/`height`: a
-                  imagem do banner vem do painel e não tem medida conhecida em
-                  tempo de compilação. `fill` fixa o quadro e deixa o recorte
-                  para o `object-cover`, que é justamente o que o formato
-                  quadrado pedido no painel foi pensado para atravessar. */}
               {/* NO CELULAR, SEMPRE A FOTO DE VITRINE — nunca a capa do artigo.
                   No desktop o destaque ocupa o painel ao lado do texto e não
                   empurra nada. No celular tudo empilha, e o destaque com título
@@ -297,18 +292,15 @@ export function Hero({ destaque }: { destaque?: ArticleSummary | null }) {
                   do telefone tem de ser carro.
                   O artigo continua na home, em seção própria no fim da página
                   — ver `ArtigoEmDestaque`. */}
-              <div className="relative -mx-4 mt-6 aspect-video overflow-hidden sm:-mx-6 lg:hidden">
-                <Image
-                  quality={90}
-                  src={FOTO_PADRAO.src}
-                  alt=""
-                  fill
-                  sizes="100vw"
-                  loading="eager"
-                  fetchPriority="high"
-                  className="object-cover object-center"
-                />
-              </div>
+              {/* SEM FOTO NO CELULAR.
+                  O topo do telefone tinha manchete, foto, parágrafo e dois
+                  botões: 759px, quase uma tela inteira antes do primeiro
+                  carro. Numa revenda o que vende é o estoque, e ele estava
+                  abaixo da dobra.
+                  A foto era o maior pedaço: 219px mais 24px de respiro. Sem
+                  ela o topo cabe na tela e a vitrine começa logo em seguida.
+                  No desktop nada muda — lá a foto é o painel diagonal à
+                  direita, que não empurra nada para baixo. */}
 
               <p className="text-muted mx-auto mt-5 max-w-md text-base leading-relaxed text-pretty sm:mt-6 lg:mx-0">
                 Boas oportunidades, carros selecionados e preços que fazem sentido para você.
